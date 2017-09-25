@@ -1,0 +1,7 @@
+{
+  "scaffold": {
+    "dependencies": {
+      "az-common": "^0.1.0"
+    }
+  }
+}

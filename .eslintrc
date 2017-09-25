@@ -1,0 +1,26 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+  },
+  "rules": {
+    // Disable camelcase check
+    // "camelcase": false,
+
+    // Strict mode
+    "strict": [2, "never"],
+
+    // allow console
+    "no-console": 0,
+
+    // Code style
+    "indent": [2, 2],
+    "quotes": [2, "single"],
+
+    "space-in-parens": [2, "never"],
+    "comma-dangle": [2, "always-multiline"],
+    "no-underscore-dangle": 0
+  }
+}
