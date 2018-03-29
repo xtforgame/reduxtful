@@ -19,7 +19,7 @@
     "lint": "eslint --ext .jsx,.js ./src",
     "lint-fix": "eslint --fix --ext .jsx,.js ./src",
     "build": "cross-env NODE_ENV=production gulp library:build",
-    "start": "cross-env NODE_ENV=development gulp library:watch",
+    "start": "cross-env NODE_ENV=development gulp library:watch:dev",
     "test": "eslint ./test/library && cross-env NODE_ENV=test mocha --compilers js:babel-core/register ./test/library/**/*.spec.js",
     "test-watch": "eslint ./test/library && cross-env NODE_ENV=test mocha --watch ./test --watch-extensions js,jsx --compilers js:babel-core/register ./test/library/**/*.spec.js"
   },
@@ -29,7 +29,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "az-gulp-env-lite": "git+https://github.com/xtforgame/az-gulp-env-lite#v0.4.0",
+    "az-gulp-env-lite": "git+https://github.com/xtforgame/az-gulp-env-lite#v1.0.0-alpha.1",
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
     "babel-plugin-transform-class-properties": "^6.11.5",
@@ -43,7 +43,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "mocha": "^3.0.2",
     "rimraf": "^2.5.4"
   },
