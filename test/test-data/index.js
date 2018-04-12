@@ -1,13 +1,5 @@
-let data01 = {
-  val01: 1,
-  val02: 'val02',
-};
-
-let err01 = {
-  message: 'Error',
-};
+import modelsDefine01 from './modelsDefine01';
 
 export {
-  data01,
-  err01,
+  modelsDefine01,
 };

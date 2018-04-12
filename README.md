@@ -1,6 +1,6 @@
-# AzDevBase
+# Reduxtful
 
-A general purpose seed project base
+Redux + RESTful
 
 Run `npm install`
 
