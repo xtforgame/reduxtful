@@ -1,7 +1,7 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import mainFunc from '../../src/library';
+import mainFunc from 'library';
 
 import {
   data01,
