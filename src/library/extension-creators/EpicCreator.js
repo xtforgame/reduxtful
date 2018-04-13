@@ -52,14 +52,14 @@ export default class EpicCreator {
               data: action.data,
               params: query,
             }, {
-              success: (response) => actions.success(
+              success: (response) => actions.respond(
                 response.data,
                 action.urlParams,
                 { timestamp: new Date().getTime() },
               ),
               error: (error) => {
                 console.log('error :', error);
-                return actions.error({ error });
+                return actions.respondError({ error });
               },
               cancel: actions.clearError,
             }, {

@@ -47,7 +47,7 @@ const genStartFunc = (method, options) => (state = {}, action) => {
   }));
 };
 
-const genCollSuccessFunc = (method, options) => (state = {}, action) => {
+const genCollectionRespondFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     isPending: {
@@ -62,7 +62,7 @@ const genCollSuccessFunc = (method, options) => (state = {}, action) => {
   }));
 };
 
-const genSuccessFunc = (method, options) => (state = {}, action) => {
+const genRepondFunc = (method, options) => (state = {}, action) => {
   const id = options.getId(action);
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
@@ -81,7 +81,7 @@ const genSuccessFunc = (method, options) => (state = {}, action) => {
   }));
 };
 
-const genClearSuccessFunc = (method, options) => (state = {}, action) => {
+const genClearFunc = (options) => (state = {}, action) => {
   const id = options.getId(action);
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
@@ -92,7 +92,7 @@ const genClearSuccessFunc = (method, options) => (state = {}, action) => {
   }));
 };
 
-const genDeleteSuccessFunc = (method, options) => (state = {}, action) => {
+const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
   const id = options.getId(action);
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
@@ -111,7 +111,7 @@ const genDeleteSuccessFunc = (method, options) => (state = {}, action) => {
   }));
 };
 
-const genErrorFunc = (method, options) => (state = {}, action) => {
+const genRepondErrorFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     isPending: {
@@ -143,45 +143,45 @@ const genReducerFunctionCreators = (options) => ({
   selectPath: {
     start: genSelectFunc('selectPath', options),
   },
-  create: {
-    start: genStartFunc('create', options),
-    success: genSuccessFunc('create', options),
-    error: genErrorFunc('create', options),
+  post: {
+    start: genStartFunc('post', options),
+    respond: genRepondFunc('post', options),
+    respondError: genRepondErrorFunc('post', options),
     cancel: null,
-    clearError: genClearErrorFunc('create', options),
+    clearError: genClearErrorFunc('post', options),
   },
-  read: {
-    start: genStartFunc('read', options),
-    success: genSuccessFunc('read', options),
-    error: genErrorFunc('read', options),
+  get: {
+    start: genStartFunc('get', options),
+    respond: genRepondFunc('get', options),
+    respondError: genRepondErrorFunc('get', options),
     cancel: null,
-    clearError: genClearErrorFunc('read', options),
+    clearError: genClearErrorFunc('get', options),
   },
-  readColl: {
-    start: genStartFunc('readColl', options),
-    success: genCollSuccessFunc('readColl', options),
-    error: genErrorFunc('readColl', options),
+  getCollection: {
+    start: genStartFunc('getCollection', options),
+    respond: genCollectionRespondFunc('getCollection', options),
+    respondError: genRepondErrorFunc('getCollection', options),
     cancel: null,
-    clearError: genClearErrorFunc('readColl', options),
+    clearError: genClearErrorFunc('getCollection', options),
   },
-  update: {
-    start: genStartFunc('update', options),
-    success: genSuccessFunc('update', options),
-    error: genErrorFunc('update', options),
+  patch: {
+    start: genStartFunc('patch', options),
+    respond: genRepondFunc('patch', options),
+    respondError: genRepondErrorFunc('patch', options),
     cancel: null,
-    clearError: genClearErrorFunc('update', options),
+    clearError: genClearErrorFunc('patch', options),
   },
   clear: {
-    start: genClearSuccessFunc('clear', options),
-    success: null,
-    error: null,
+    start: genClearFunc(options),
+    respond: null,
+    respondError: null,
     cancel: null,
     clearError: null,
   },
   delete: {
     start: genStartFunc('delete', options),
-    success: genDeleteSuccessFunc('delete', options),
-    error: genErrorFunc('delete', options),
+    respond: genRespondDeleteFunc('delete', options),
+    respondError: genRepondErrorFunc('delete', options),
     cancel: null,
     clearError: genClearErrorFunc('delete', options),
   },

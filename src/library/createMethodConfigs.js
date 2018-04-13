@@ -2,8 +2,8 @@ import { toUnderscore, capitalizeFirstLetter } from './utils';
 
 let supportedActions = [
   'start',
-  'success',
-  'error',
+  'respond',
+  'respondError',
   'cancel',
   'clearError',
 ];
@@ -13,20 +13,47 @@ let getActionTypeName = ({methodName, names, actionTypeName}) => {
   const upperCasedSingleName = toUnderscore(names.singular).toUpperCase();
   const upperCasedActionTypeName = toUnderscore(actionTypeName).toUpperCase();
 
+  switch(actionTypeName){
+  case 'respond':
+    return `${upperCasedSingleName}_RESPOND_${upperCasedMethod}`;
+  case 'respondError':
+    return `${upperCasedSingleName}_RESPOND_${upperCasedMethod}_ERROR`;
+  case 'cancel':
+    return `${upperCasedSingleName}_CANCEL_${upperCasedMethod}`;
+  default:
+    break;
+  }
+
   return `${upperCasedSingleName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
 };
 
-let getActionName = ({methodName, names, actionTypeName}) => {
-  let _actionTypeName = (actionTypeName === 'start' ? '' : actionTypeName);
-  return `${methodName}${capitalizeFirstLetter(names.singular)}${capitalizeFirstLetter(_actionTypeName)}`;
+let getActionName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
+  const resourceName = isCollection ? `${names.singular}Collection` : names.singular;
+  const _methodName = isCollection ? methodName.substr(0, methodName.length - 'Collection'.length) : methodName;
+  let _actionTypeName = actionTypeName;
+  switch(actionTypeName){
+  case 'start':
+    _actionTypeName = '';
+    break;
+  case 'respond':
+    return `${_actionTypeName}${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}`;
+  case 'respondError':
+    return `respond${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}Error`;
+  case 'cancel':
+    return `${_actionTypeName}${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}`;
+  default:
+    break;
+  }
+  return `${_methodName}${capitalizeFirstLetter(resourceName)}${capitalizeFirstLetter(_actionTypeName)}`;
 };
 
 let getReducerName = ({names}) => {
   return `${names.singular}Reducer`;
 };
 
-let getEpicName = ({methodName, names}) => {
-  return `${methodName}${capitalizeFirstLetter(names.singular)}Epic`;
+let getEpicName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
+  const _getActionName = getActionName(isCollection);
+  return `${_getActionName({methodName, names, actionTypeName: 'start'})}Epic`;
 };
 
 export default function createMethodConfigs(ns, names) {
@@ -45,59 +72,54 @@ export default function createMethodConfigs(ns, names) {
       getReducerName,
     },
     {
-      name: 'create',
+      name: 'post',
       method: 'post',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
       getActionTypeName,
-      getActionName,
+      getActionName: getActionName(),
       getReducerName,
-      getEpicName,
+      getEpicName: getEpicName(),
     },
     {
-      name: 'read',
+      name: 'get',
       method: 'get',
       supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
       getActionTypeName,
-      getActionName,
+      getActionName: getActionName(),
       getReducerName,
-      getEpicName,
+      getEpicName: getEpicName(),
     },
     {
-      name: 'readColl',
+      name: 'getCollection',
       method: 'get',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
       getActionTypeName,
-      getActionName: ({methodName, names, actionTypeName}) => {
-        let _actionTypeName = (actionTypeName === 'start' ? '' : actionTypeName);
-        return `read${capitalizeFirstLetter(names.singular)}Coll${capitalizeFirstLetter(_actionTypeName)}`;
-      },
+      getActionName: getActionName(true),
       getReducerName,
-      getEpicName: ({methodName, names}) => {
-        return `read${capitalizeFirstLetter(names.singular)}CollEpic`;
-      },
+      getEpicName: getEpicName(true),
     },
     {
-      name: 'update',
+      name: 'patch',
       method: 'patch',
       supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
       getActionTypeName,
-      getActionName,
+      getActionName: getActionName(),
       getReducerName,
-      getEpicName,
+      getEpicName: getEpicName(),
     },
     {
       name: 'clear',
       method: 'patch',
-      supportedActions,
+      supportedActions: ['start'],
       getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
       getActionTypeName,
-      getActionName,
+      getActionName: getActionName(),
       getReducerName,
-      getEpicName,
+      getEpicName: getEpicName(),
     },
     {
       name: 'delete',
@@ -105,9 +127,9 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
       getActionTypeName,
-      getActionName,
+      getActionName: getActionName(),
       getReducerName,
-      getEpicName,
+      getEpicName: getEpicName(),
     },
   ];
 }
