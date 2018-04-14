@@ -11,6 +11,8 @@ import createReduxWaitForMiddleware,
 {
   WAIT_FOR_ACTION,
   ERROR_ACTION,
+  CALLBACK_ARGUMENT,
+  CALLBACK_ERROR_ARGUMENT,
 } from 'redux-wait-for-action';
 import { Map as ImmutableMap } from 'immutable';
 import {
@@ -44,9 +46,11 @@ describe('Full Test Cases', function(){
       const store = mockStore(ImmutableMap({ global: {} }));
 
       return store.dispatch({
-        ...modelMap.actions.getApi(undefined, { id: 'ssss' }),
+        ...modelMap.actions.getApi('api-member-01'),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
+        [CALLBACK_ARGUMENT]: action => action,
+        [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -74,9 +78,11 @@ describe('Full Test Cases', function(){
         )
       );
       return store.dispatch({
-        ...modelMap.actions.getApi(undefined, { id: 'ssss' }),
+        ...modelMap.actions.getApi('api-member-01'),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
+        [CALLBACK_ARGUMENT]: action => action,
+        [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -86,9 +92,9 @@ describe('Full Test Cases', function(){
         expect(global.api, 'Not existed: global.api').to.exist;
         expect(global.api.hierarchy, 'Not existed: global.api.hierarchy').to.exist;
         expect(global.api.hierarchy.byId, 'Not existed: global.api.hierarchy.byId').to.exist;
-        expect(global.api.hierarchy.byId.api, 'Not existed: global.api.hierarchy.byId.api').to.exist;
-        expect(global.api.hierarchy.byId.api.url, 'Not equal: global.api.hierarchy.byId.api.url')
-          .to.equal('/api/ssss');
+        expect(global.api.hierarchy.byId['api-member-01'], 'Not existed: global.api.hierarchy.byId["api-member-01"]').to.exist;
+        expect(global.api.hierarchy.byId['api-member-01'].url, 'Not equal: global.api.hierarchy.byId["api-member-01"].url')
+          .to.equal('/api/api-member-01');
       });
     });
   });
@@ -126,6 +132,8 @@ describe('Full Test Cases', function(){
         ...modelMap.actions.postUsers({id: 1}),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPostUsers,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondPostUsersError,
+        [CALLBACK_ARGUMENT]: action => action,
+        [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -146,6 +154,8 @@ describe('Full Test Cases', function(){
         ...modelMap.actions.getUsers(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUsers,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUsersError,
+        [CALLBACK_ARGUMENT]: action => action,
+        [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -165,6 +175,8 @@ describe('Full Test Cases', function(){
         ...modelMap.actions.patchUsers(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPatchUsers,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondPatchUsersError,
+        [CALLBACK_ARGUMENT]: action => action,
+        [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -184,6 +196,8 @@ describe('Full Test Cases', function(){
         ...modelMap.actions.deleteUsers(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondDeleteUsers,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondDeleteUsersError,
+        [CALLBACK_ARGUMENT]: action => action,
+        [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
       .then(payload => {
         // console.log('payload :', payload);

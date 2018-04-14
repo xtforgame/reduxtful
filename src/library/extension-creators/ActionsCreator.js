@@ -1,5 +1,31 @@
 import ActionTypesCreator from './ActionTypesCreator';
 
+const createActionCreatorForCollection = (type) => (
+  data,
+  urlParams = {},
+  otherParams = {}
+) => ({
+  type,
+  data,
+  urlParams,
+  ...otherParams,
+});
+
+const createActionCreatorForMember = (type) => (
+  id,
+  data,
+  urlParams = {},
+  otherParams = {}
+) => ({
+  type,
+  data,
+  urlParams: {
+    ...urlParams,
+    id,
+  },
+  ...otherParams,
+});
+
 export default class ActionsCreator {
   static $name = 'actions';
 
@@ -20,16 +46,11 @@ export default class ActionsCreator {
           actionTypeName: key,
         };
 
-        shared[methodConfig.name][key] = (
-          data,
-          urlParams = {},
-          otherParams = {}
-        ) => ({
-          type,
-          data,
-          urlParams,
-          ...otherParams,
-        });
+        const create = (methodConfig.isForCollection === true) && !(methodConfig.method === 'post' && key === 'respond') ?
+          createActionCreatorForCollection
+          : createActionCreatorForMember;
+
+        shared[methodConfig.name][key] = create(type);
         exposed[methodConfig.getActionName(arg)] = shared[methodConfig.name][key];
       });
     });

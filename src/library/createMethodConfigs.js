@@ -93,6 +93,7 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'postCollection',
       method: 'post',
+      isForCollection: true,
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
       getActionContantName,

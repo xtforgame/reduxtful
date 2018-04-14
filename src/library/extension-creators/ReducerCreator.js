@@ -85,7 +85,7 @@ const genCollectionClearFunc = (options) => (state = {}, action) => {
 };
 
 const genRepondFunc = (method, options) => (state = {}, action) => {
-  const id = options.getId(action);
+  const id = action.urlParams.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     // isPending: {
@@ -104,7 +104,7 @@ const genRepondFunc = (method, options) => (state = {}, action) => {
 };
 
 const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
-  const id = options.getId(action);
+  const id = action.urlParams.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     // isPending: {
@@ -123,7 +123,7 @@ const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
 };
 
 const genClearFunc = (options) => (state = {}, action) => {
-  const id = options.getId(action);
+  const id = action.urlParams.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     byId: {
@@ -227,7 +227,7 @@ function createReducerFromFuncMap(funcMap){
 export default class ReducerCreator {
   static $name = 'reducers';
 
-  create({ ns, names, url, getShared, methodConfigs }, { getId = (action => action.data.id) }){
+  create({ ns, names, url, getShared, methodConfigs }){
     let shared = {};
     let exposed = {};
 
@@ -248,7 +248,6 @@ export default class ReducerCreator {
       const reducerExposedFuncMapName = `${reducerExposedName}FuncMap`;
       const reducerFunctionCreators = genReducerFunctionCreators({
         urlInfo,
-        getId,
       });
 
       let local = shared[methodConfig.name][reducerExposedFuncMapName] = {};

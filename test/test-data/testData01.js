@@ -15,7 +15,7 @@ export default {
       names: { model:'api', member: 'api', collection: 'apis' },
       singleton: true,
       config: {
-        getId: action => 'api', // action.data.user_id,
+        getId: data => 'api', // data.user_id,
       },
       extensionConfigs: {
         epics: {
@@ -28,7 +28,7 @@ export default {
       url: '/api/sessions',
       names: { model:'session', member: 'session', collection: 'sessions' },
       config: {
-        getId: action => 'me', // action.data.user_id,
+        getId: data => 'me', // data.user_id,
       },
       extensionConfigs: {
         epics: {
@@ -44,7 +44,7 @@ export default {
       url: '/api/users',
       names: { model:'user', member: 'user', collection: 'users' },
       config: {
-        getId: action => action.data.id,
+        getId: data => data.id,
       },
       extensionConfigs: {
         epics: {
@@ -59,7 +59,7 @@ export default {
   },
   setupMock: (mock) => {
     return mock
-    .onGet('/api/ssss').reply(200, { url: '/api/ssss' })
+    .onGet('/api/api-member-01').reply(200, { url: '/api/api-member-01' })
     .onPost('/api/users').reply(200, { url: '/api/users/1', id: 1 })
     .onGet('/api/users').reply(200, { url: '/api/users' })
     .onPatch('/api/users').reply(200, { url: '/api/users' })

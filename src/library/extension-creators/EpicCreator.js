@@ -4,6 +4,36 @@ import ActionsCreator from './ActionsCreator';
 import AxiosObservable from '../utils/AxiosObservable';
 import UrlInfo from '../UrlInfo';
 
+const createRespondActionCreatorForCollection = (actions, startAction) => (response) => actions.respond(
+  response.data,
+  startAction.urlParams,
+  { timestamp: new Date().getTime() },
+);
+
+const createRespondActionCreatorForPostCollection = (actions, startAction, getId) => (response) => actions.respond(
+  getId(response.data),
+  response.data,
+  startAction.urlParams,
+  { timestamp: new Date().getTime() },
+);
+
+const createRespondActionCreatorForMember = (actions, startAction, getId) => (response) => actions.respond(
+  startAction.urlParams.id,
+  response.data,
+  startAction.urlParams,
+  { timestamp: new Date().getTime() },
+);
+
+const createRespondErrorActionCreatorForCollection = (actions, startAction) => (error) => {
+  // console.log('error :', error);
+  return actions.respondError({ error });
+}
+
+const createRespondErrorActionCreatorForMember = (actions, startAction) => (error) => {
+  // console.log('error :', error);
+  return actions.respondError(startAction.urlParams.id, { error });
+}
+
 export default class EpicCreator {
   static $name = 'epics';
 
@@ -38,6 +68,18 @@ export default class EpicCreator {
       const epicName = methodConfig.getEpicName(arg);
       const urlInfo = new UrlInfo(methodConfig.getUrlTemplate({url, names}));
 
+      // special case for posting a collection
+      let getRespondActionCreator = createRespondActionCreatorForCollection;
+      if(methodConfig.isForCollection !== true){
+        getRespondActionCreator = createRespondActionCreatorForMember;
+      }else if(methodConfig.method === 'post'){
+        getRespondActionCreator = createRespondActionCreatorForPostCollection;
+      }
+
+      const getRespondErrorActionCreator = (methodConfig.isForCollection === true) ?
+        createRespondErrorActionCreatorForCollection
+        : createRespondErrorActionCreatorForMember;
+
       shared[methodConfig.name] = (action$, store) => {
         return action$.ofType(actionTypes.start)
           .mergeMap(action => {
@@ -52,15 +94,8 @@ export default class EpicCreator {
               data: action.data,
               params: query,
             }, {
-              success: (response) => actions.respond(
-                response.data,
-                action.urlParams,
-                { timestamp: new Date().getTime() },
-              ),
-              error: (error) => {
-                // console.log('error :', error);
-                return actions.respondError({ error });
-              },
+              success: getRespondActionCreator(actions, action, getId),
+              error: getRespondErrorActionCreator(actions, action),
               cancel: actions.clearError,
             }, {
               responseMiddleware,
