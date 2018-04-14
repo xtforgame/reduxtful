@@ -7,44 +7,52 @@ let supportedActions = [
   'cancel',
 ];
 
+const getResourceCollectionName = (names) => (names.member === names.collection) ? `${names.member}Collection` : names.collection;
+
 let getActionTypeName = ({methodName, names, actionTypeName}) => {
   const upperCasedMethod = toUnderscore(methodName).toUpperCase();
-  const upperCasedSingleName = toUnderscore(names.singular).toUpperCase();
+  const upperCasedModelName = toUnderscore(names.model).toUpperCase();
+  const upperCasedCollecionName = toUnderscore(getResourceCollectionName(names)).toUpperCase();
+  const upperCasedMemberName = toUnderscore(names.member).toUpperCase();
   const upperCasedActionTypeName = toUnderscore(actionTypeName).toUpperCase();
 
   switch(methodName){
   case 'selectPath':
+  case 'clearCollectionCache':
   case 'clearCache':
-    return `${upperCasedSingleName}_${upperCasedMethod}`;
+    return `${upperCasedModelName}_${upperCasedMethod}`;
   default:
     break;
   }
 
   switch(actionTypeName){
   case 'respond':
-    return `${upperCasedSingleName}_RESPOND_${upperCasedMethod}`;
+    return `${upperCasedMemberName}_RESPOND_${upperCasedMethod}`;
   case 'respondError':
-    return `${upperCasedSingleName}_RESPOND_${upperCasedMethod}_ERROR`;
+    return `${upperCasedMemberName}_RESPOND_${upperCasedMethod}_ERROR`;
   case 'cancel':
-    return `${upperCasedSingleName}_CANCEL_${upperCasedMethod}`;
+    return `${upperCasedMemberName}_CANCEL_${upperCasedMethod}`;
   default:
     break;
   }
 
-  return `${upperCasedSingleName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
+  return `${upperCasedMemberName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
 };
 
 let getActionName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
   switch(methodName){
   case 'selectPath':
-    return `select${capitalizeFirstLetter(names.singular)}Path`;
+    return `select${capitalizeFirstLetter(names.model)}Path`;
+  case 'clearCollectionCache':
+    return `clear${capitalizeFirstLetter(getResourceCollectionName(names))}Cache`;
   case 'clearCache':
-    return `clear${capitalizeFirstLetter(names.singular)}Cache`;
+    return `clear${capitalizeFirstLetter(names.member)}Cache`;
   default:
     break;
   }
 
-  const resourceName = isCollection ? `${names.singular}Collection` : names.singular;
+  const resourceCollectionName = getResourceCollectionName(names);
+  const resourceName = isCollection ? resourceCollectionName : names.member;
   const _methodName = isCollection ? methodName.substr(0, methodName.length - 'Collection'.length) : methodName;
   let _actionTypeName = actionTypeName;
 
@@ -65,7 +73,7 @@ let getActionName = (isCollection = false) => ({methodName, names, actionTypeNam
 };
 
 let getReducerName = ({names}) => {
-  return `${names.singular}Reducer`;
+  return `${names.model}Reducer`;
 };
 
 let getEpicName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
@@ -123,6 +131,15 @@ export default function createMethodConfigs(ns, names) {
       getEpicName: getEpicName(true),
     },
     {
+      name: 'clearCollectionCache',
+      supportedActions: ['start'],
+      getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
+      getActionTypeName,
+      getActionName: getActionName(),
+      getReducerName,
+      getEpicName: getEpicName(),
+    },
+    {
       name: 'post',
       method: 'post',
       supportedActions,
@@ -136,7 +153,7 @@ export default function createMethodConfigs(ns, names) {
       name: 'get',
       method: 'get',
       supportedActions,
-      getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
+      getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
       getActionTypeName,
       getActionName: getActionName(),
       getReducerName,
@@ -146,7 +163,7 @@ export default function createMethodConfigs(ns, names) {
       name: 'patch',
       method: 'patch',
       supportedActions,
-      getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
+      getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
       getActionTypeName,
       getActionName: getActionName(),
       getReducerName,
@@ -156,7 +173,7 @@ export default function createMethodConfigs(ns, names) {
       name: 'delete',
       method: 'delete',
       supportedActions,
-      getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
+      getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
       getActionTypeName,
       getActionName: getActionName(),
       getReducerName,
@@ -165,7 +182,7 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'clearCache',
       supportedActions: ['start'],
-      getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
+      getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
       getActionTypeName,
       getActionName: getActionName(),
       getReducerName,

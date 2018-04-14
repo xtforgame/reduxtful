@@ -17,33 +17,38 @@ describe('ActionTypesCreator Test Cases', function(){
       const modelMap = new ModelMap('global', testData01.modelsDefine);
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
-      expect(modelMap.types, 'Not existed: modelMap.types').to.exist;
+      expect(modelMap.types, 'Not equal: modelMap.types').to.exist;
 
       const types = modelMap.types;
 
-      ['api', 'session', 'user']
-      .map(resourceName => {
-        const upperCasedResourceName = toUnderscore(resourceName).toUpperCase();
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      .map(({
+        collection: collectionName,
+        member: memberName,
+        model: modelName,
+      }) => {
+        const upperCasedModelName = toUnderscore(modelName).toUpperCase();
+        expect(types[`${upperCasedModelName}_SELECT_PATH`], `Not equal: ${upperCasedModelName}_SELECT_PATH`)
+          .to.equal(`@@app/global/${upperCasedModelName}_SELECT_PATH`);
 
-        expect(types[`${upperCasedResourceName}_SELECT_PATH`], `Not existed: ${upperCasedResourceName}_SELECT_PATH`)
-          .to.equal(`@@app/global/${upperCasedResourceName}_SELECT_PATH`);
-
-        ['post', 'get', 'patch', 'delete']
-        .map(methodName => {
-          const upperCasedMethodName = toUnderscore(methodName).toUpperCase();
-
-          expect(types[`${upperCasedResourceName}_${upperCasedMethodName}_START`], `Not existed: ${upperCasedResourceName}_${upperCasedMethodName}_START`)
-            .to.equal(`@@app/global/${upperCasedResourceName}_${upperCasedMethodName}_START`);
-          expect(types[`${upperCasedResourceName}_RESPOND_${upperCasedMethodName}`], `Not existed: ${upperCasedResourceName}_RESPOND_${upperCasedMethodName}`)
-            .to.equal(`@@app/global/${upperCasedResourceName}_RESPOND_${upperCasedMethodName}`);
-          expect(types[`${upperCasedResourceName}_RESPOND_${upperCasedMethodName}_ERROR`], `Not existed: ${upperCasedResourceName}_RESPOND_${upperCasedMethodName}_ERROR`)
-            .to.equal(`@@app/global/${upperCasedResourceName}_RESPOND_${upperCasedMethodName}_ERROR`);
-          expect(types[`${upperCasedResourceName}_CANCEL_${upperCasedMethodName}`], `Not existed: ${upperCasedResourceName}_CANCEL_${upperCasedMethodName}`)
-            .to.equal(`@@app/global/${upperCasedResourceName}_CANCEL_${upperCasedMethodName}`);
+        ['', '_COLLECTION'].map(suffix => {
+          ['post', 'get', 'patch', 'delete']
+          .map(methodName => {
+            const upperCasedMethodName = toUnderscore(methodName).toUpperCase();
+  
+            expect(types[`${upperCasedModelName}_${upperCasedMethodName}${suffix}_START`], `Not equal: ${upperCasedModelName}_${upperCasedMethodName}${suffix}_START`)
+              .to.equal(`@@app/global/${upperCasedModelName}_${upperCasedMethodName}${suffix}_START`);
+            expect(types[`${upperCasedModelName}_RESPOND_${upperCasedMethodName}${suffix}`], `Not equal: ${upperCasedModelName}_RESPOND_${upperCasedMethodName}${suffix}`)
+              .to.equal(`@@app/global/${upperCasedModelName}_RESPOND_${upperCasedMethodName}${suffix}`);
+            expect(types[`${upperCasedModelName}_RESPOND_${upperCasedMethodName}${suffix}_ERROR`], `Not equal: ${upperCasedModelName}_RESPOND_${upperCasedMethodName}${suffix}_ERROR`)
+              .to.equal(`@@app/global/${upperCasedModelName}_RESPOND_${upperCasedMethodName}${suffix}_ERROR`);
+            expect(types[`${upperCasedModelName}_CANCEL_${upperCasedMethodName}${suffix}`], `Not equal: ${upperCasedModelName}_CANCEL_${upperCasedMethodName}${suffix}`)
+              .to.equal(`@@app/global/${upperCasedModelName}_CANCEL_${upperCasedMethodName}${suffix}`);
+          });
+  
+          expect(types[`${upperCasedModelName}_CLEAR${suffix}_CACHE`], `Not equal: ${upperCasedModelName}_CLEAR${suffix}_CACHE`)
+            .to.equal(`@@app/global/${upperCasedModelName}_CLEAR${suffix}_CACHE`);
         });
-
-        expect(types[`${upperCasedResourceName}_CLEAR_CACHE`], `Not existed: ${upperCasedResourceName}_CLEAR_CACHE`)
-          .to.equal(`@@app/global/${upperCasedResourceName}_CLEAR_CACHE`);
       });
     });
 

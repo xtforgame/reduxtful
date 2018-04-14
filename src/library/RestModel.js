@@ -5,8 +5,9 @@ const normalizeModelDefine = modelDefine => {
 
   if(typeof normalized.names === 'string'){
     normalized.names = {
-      singular: normalized.names,
-      plural: `${normalized.names}s`,
+      model: normalized.names,
+      member: normalized.names,
+      collection: `${normalized.names}s`,
     }
   }
 

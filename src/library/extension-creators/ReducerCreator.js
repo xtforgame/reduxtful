@@ -175,6 +175,12 @@ const genReducerFunctionCreators = (options) => ({
     respondError: genRepondErrorFunc('deleteCollection', options),
     cancel: null,
   },
+  clearCollectionCache: {
+    start: genCollectionClearFunc(options),
+    respond: null,
+    respondError: null,
+    cancel: null,
+  },
   post: {
     start: genStartFunc('post', options),
     respond: null,

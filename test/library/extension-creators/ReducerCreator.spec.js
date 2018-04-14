@@ -19,9 +19,9 @@ describe('ReducerCreator Test Cases', function(){
       expect(modelMap.reducers, 'Not existed: modelMap.reducers').to.exist;
 
       const reducers = modelMap.reducers;
-      ['api', 'session', 'user']
-      .map(resourceName => {
-        expect(reducers[`${resourceName}Reducer`], `Not existed: ${resourceName}Reducer`).to.be.an.instanceof(Function);
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      .map(({ model: modelName }) => {
+        expect(reducers[`${modelName}Reducer`], `Not existed: ${modelName}Reducer`).to.be.an.instanceof(Function);
       });
     });
   });

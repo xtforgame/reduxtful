@@ -12,7 +12,7 @@ export default {
   modelsDefine: {
     api: {
       url: '/api',
-      names: { singular: 'api', plural: 'apis' },
+      names: { model:'api', member: 'api', collection: 'apis' },
       singleton: true,
       extensionConfigs: {
         epics: {
@@ -26,7 +26,7 @@ export default {
     },
     sessions: {
       url: '/api/sessions',
-      names: { singular: 'session', plural: 'sessions' },
+      names: { model:'session', member: 'session', collection: 'sessions' },
       extensionConfigs: {
         epics: {
           getHeaders,
@@ -42,7 +42,7 @@ export default {
     },
     users: {
       url: '/api/users',
-      names: { singular: 'user', plural: 'users' },
+      names: { model:'user', member: 'user', collection: 'users' },
       extensionConfigs: {
         epics: {
           getHeaders,

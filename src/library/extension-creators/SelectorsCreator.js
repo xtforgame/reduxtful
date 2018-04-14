@@ -48,7 +48,7 @@ const createSelectors = (names, baseSelector) => {
     }
   )
 
-  const modelName = names.singular;
+  const modelName = names.model;
   const capitalizeModelName = capitalizeFirstLetter(modelName);
 
   return {

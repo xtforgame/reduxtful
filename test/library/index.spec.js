@@ -123,7 +123,7 @@ describe('Full Test Cases', function(){
 
     it('should be able to post collection', () => {
       return store.dispatch({
-        ...modelMap.actions.postUserCollection({id: 1}),
+        ...modelMap.actions.postUsers({id: 1}),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_POST_COLLECTION,
         [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_POST_COLLECTION_ERROR,
       })
@@ -143,7 +143,7 @@ describe('Full Test Cases', function(){
 
     it('should be able to get collection', () => {
       return store.dispatch({
-        ...modelMap.actions.getUserCollection(),
+        ...modelMap.actions.getUsers(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_GET_COLLECTION,
         [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_GET_COLLECTION_ERROR,
       })
@@ -162,7 +162,7 @@ describe('Full Test Cases', function(){
 
     it('should be able to patch collection', () => {
       return store.dispatch({
-        ...modelMap.actions.patchUserCollection(),
+        ...modelMap.actions.patchUsers(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_PATCH_COLLECTION,
         [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_PATCH_COLLECTION_ERROR,
       })
@@ -181,7 +181,7 @@ describe('Full Test Cases', function(){
 
     it('should be able to delete collection', () => {
       return store.dispatch({
-        ...modelMap.actions.deleteUserCollection(),
+        ...modelMap.actions.deleteUsers(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_DELETE_COLLECTION,
         [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_DELETE_COLLECTION_ERROR,
       })
