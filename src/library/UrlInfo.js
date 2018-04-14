@@ -1,5 +1,58 @@
 export default class UrlInfo
 {
+  static test(url, reservedVars = ['id']){
+    UrlInfo.parse(url, (varPart) => {
+      reservedVars.map(reservedVar => {
+        if(varPart.varName === reservedVar){
+          throw new Error(`Invalid url pattern: ${url}, '${reservedVar}' is the reserved variable name.`);
+        }
+      });
+    });
+  }
+
+  static parse(url, onVarParsed = varPart => {}){
+    const paramsRegex = /[^{}]+(?=\})/g;
+    // url = 'test/abcd{ string1 }test{ string2 }test';
+    let regexResult = null;
+    const urlParts = [];
+    const varParts = [];
+    let nextPos = 0;
+    while ((regexResult = paramsRegex.exec(url)) !== null) {
+      let startPos = regexResult.index - 1;
+      let totalLength = regexResult[0].length + 2;
+      let finishPos = startPos + totalLength;
+      if(nextPos !== startPos){
+        urlParts.push(
+          url.substr(nextPos, startPos - nextPos)
+        );
+      }
+      let varPart = {
+        startPos,
+        totalLength,
+        finishPos,
+        fullStr: url.substr(startPos, totalLength),
+        varName: regexResult[0].trim(),
+        regexResult,
+      };
+      onVarParsed(varPart);
+      varParts.push(varPart);
+      urlParts.push(varPart);
+      nextPos = finishPos;
+      // console.log('paramsRegex.lastIndex :', this.paramsRegex.lastIndex);
+    }
+    if(nextPos < url.length){
+      urlParts.push(
+        url.substr(nextPos, url.length - nextPos)
+      );
+    }
+    // console.log('urlParts :', urlParts);
+    return {
+      paramsRegex,
+      urlParts,
+      varParts,
+    };
+  }
+
   constructor(url){
     this.url = url;
     this.paramsRegex = /[^{}]+(?=\})/g;
@@ -7,40 +60,15 @@ export default class UrlInfo
   }
 
   parseUrl(){
-    this.paramsRegex = /[^{}]+(?=\})/g;
-    // this.url = 'test/abcd{ string1 }test{ string2 }test';
-    let regexResult = null;
-    this.urlParts = [];
-    this.varParts = [];
-    let nextPos = 0;
-    while ((regexResult = this.paramsRegex.exec(this.url)) !== null) {
-      let startPos = regexResult.index - 1;
-      let totalLength = regexResult[0].length + 2;
-      let finishPos = startPos + totalLength;
-      if(nextPos !== startPos){
-        this.urlParts.push(
-          this.url.substr(nextPos, startPos - nextPos)
-        );
-      }
-      let varPart = {
-        startPos,
-        totalLength,
-        finishPos,
-        fullStr: this.url.substr(startPos, totalLength),
-        varName: regexResult[0].trim(),
-        regexResult,
-      };
-      this.varParts.push(varPart);
-      this.urlParts.push(varPart);
-      nextPos = finishPos;
-      // console.log('this.paramsRegex.lastIndex :', this.paramsRegex.lastIndex);
-    }
-    if(nextPos < this.url.length){
-      this.urlParts.push(
-        this.url.substr(nextPos, this.url.length - nextPos)
-      );
-    }
-    // console.log('this.urlParts :', this.urlParts);
+    const {
+      paramsRegex,
+      urlParts,
+      varParts,
+    } = UrlInfo.parse(this.url);
+
+    this.paramsRegex = paramsRegex;
+    this.urlParts = urlParts;
+    this.varParts = varParts;
   }
 
   compile(urlParams = {}){

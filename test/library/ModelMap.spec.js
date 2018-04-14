@@ -20,7 +20,6 @@ const expect = chai.expect;
 
 describe('Main Test Cases', function(){
   describe('Basic', function(){
-    this.timeout(10000);
     it('ModelMap should be a function', () => {
       expect(ModelMap).to.be.an.instanceof(Function);
       return true;

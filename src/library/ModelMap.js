@@ -1,4 +1,5 @@
 import createMethodConfigs from './createMethodConfigs';
+import UrlInfo from './UrlInfo';
 import RestModel from './RestModel';
 import ActionTypesCreator from './extension-creators/ActionTypesCreator';
 import ActionsCreator from './extension-creators/ActionsCreator';
@@ -9,6 +10,15 @@ import SelectorsCreator from './extension-creators/SelectorsCreator';
 export default class ModelMap
 {
   constructor(ns, modelsDefine){
+    Object.keys(modelsDefine).forEach(key => {
+      const modelDefine = modelsDefine[key];
+      const url = modelDefine.url;
+      if(!url){
+        throw new Error(`No url provided: ${key}`);
+      }
+      UrlInfo.test(url, ['id']);
+    });
+
     this.models = {};
     this.Creators = [
       ActionTypesCreator,

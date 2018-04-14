@@ -11,8 +11,6 @@ const expect = chai.expect;
 
 describe('EpicCreator Test Cases', function(){
   describe('Basic', function(){
-    this.timeout(10000);
-
     it('should export all epics', () => {
       const modelMap = new ModelMap('global', testData01.modelsDefine);
 

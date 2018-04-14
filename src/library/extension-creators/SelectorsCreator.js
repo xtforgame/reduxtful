@@ -64,16 +64,16 @@ const createSelectors = (names, baseSelector) => {
 export default class SelectorsCreator {
   static $name = 'selectors';
 
-  create({ names, methodConfigs }, config){
+  create({ names, methodConfigs }, config, extensionConfig){
     let shared = {};
     let exposed = {};
 
-    // console.log('config :', config);
-    if(!config.baseSelector){
+    // console.log('extensionConfig :', extensionConfig);
+    if(!extensionConfig.baseSelector){
       return { shared, exposed };
     }
 
-    shared = createSelectors(names, config.baseSelector);
+    shared = createSelectors(names, extensionConfig.baseSelector);
     exposed = { ...shared };
 
     return { shared, exposed };

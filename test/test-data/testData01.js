@@ -14,19 +14,22 @@ export default {
       url: '/api',
       names: { model:'api', member: 'api', collection: 'apis' },
       singleton: true,
+      config: {
+        getId: action => 'api', // action.data.user_id,
+      },
       extensionConfigs: {
         epics: {
           getHeaders,
           responseMiddleware,
-        },
-        reducers: {
-          getId: action => 'api', // action.data.user_id,
         },
       },
     },
     sessions: {
       url: '/api/sessions',
       names: { model:'session', member: 'session', collection: 'sessions' },
+      config: {
+        getId: action => 'me', // action.data.user_id,
+      },
       extensionConfigs: {
         epics: {
           getHeaders,
@@ -35,14 +38,14 @@ export default {
         selectors: {
           baseSelector: state => state.get('global').sessions,
         },
-        reducers: {
-          getId: action => 'me', // action.data.user_id,
-        },
       },
     },
     users: {
       url: '/api/users',
       names: { model:'user', member: 'user', collection: 'users' },
+      config: {
+        getId: action => action.data.id,
+      },
       extensionConfigs: {
         epics: {
           getHeaders,
@@ -50,9 +53,6 @@ export default {
         },
         selectors: {
           baseSelector: state => state.get('global').users,
-        },
-        reducers: {
-          getId: action => action.data.id,
         },
       },
     },

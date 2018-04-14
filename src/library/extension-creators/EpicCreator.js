@@ -7,7 +7,7 @@ import UrlInfo from '../UrlInfo';
 export default class EpicCreator {
   static $name = 'epics';
 
-  create({ ns, names, url, getShared, methodConfigs }, config){
+  create({ ns, names, url, getShared, methodConfigs }, { getId = (action => action.data.id) }, extensionConfig){
     let shared = {};
     let exposed = {};
 
@@ -15,10 +15,10 @@ export default class EpicCreator {
       getHeaders = () => ({}),
       responseMiddleware,
       errorMiddleware,
-    } = config;
+    } = extensionConfig;
 
     methodConfigs.forEach(methodConfig => {
-      if(methodConfig.name === 'clearCache' || methodConfig.name === 'selectPath'){
+      if(methodConfig.supportedActions.length <= 1){
         return ;
       }
       let actionTypes = getShared(ActionTypesCreator.$name)[methodConfig.name];

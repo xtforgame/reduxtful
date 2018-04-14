@@ -43,7 +43,7 @@ export default class RestModel
       this.extensions.exposed[Creator.$name] = {};
 
       const creator = new Creator();
-      const { shared, exposed } = creator.create(args, this.modelDefine.extensionConfigs[Creator.$name] || {});
+      const { shared, exposed } = creator.create(args, this.modelDefine.config || {}, this.modelDefine.extensionConfigs[Creator.$name] || {});
       this.extensions.shared[Creator.$name] = shared;
       this.extensions.exposed[Creator.$name] = {
         ...this.extensions.exposed[Creator.$name],

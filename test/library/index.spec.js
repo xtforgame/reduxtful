@@ -44,7 +44,7 @@ describe('Full Test Cases', function(){
       const store = mockStore(ImmutableMap({ global: {} }));
 
       return store.dispatch({
-        ...modelMap.actions.getApi(undefined, { apiId: 'ssss' }),
+        ...modelMap.actions.getApi(undefined, { id: 'ssss' }),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
       })
@@ -74,7 +74,7 @@ describe('Full Test Cases', function(){
         )
       );
       return store.dispatch({
-        ...modelMap.actions.getApi(undefined, { apiId: 'ssss' }),
+        ...modelMap.actions.getApi(undefined, { id: 'ssss' }),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
       })
