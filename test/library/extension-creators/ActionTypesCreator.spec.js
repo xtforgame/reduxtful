@@ -4,7 +4,7 @@ import chai from 'chai';
 import ModelMap from 'library/ModelMap';
 import { toUnderscore } from 'library/utils';
 import {
-  modelsDefine01,
+  testData01,
 } from '../../test-data';
 
 const expect = chai.expect;
@@ -14,7 +14,7 @@ describe('ActionTypesCreator Test Cases', function(){
     this.timeout(10000);
 
     it('should export all types', () => {
-      const modelMap = new ModelMap('global', modelsDefine01);
+      const modelMap = new ModelMap('global', testData01.modelsDefine);
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.types, 'Not existed: modelMap.types').to.exist;
@@ -40,9 +40,10 @@ describe('ActionTypesCreator Test Cases', function(){
             .to.equal(`@@app/global/${upperCasedResourceName}_RESPOND_${upperCasedMethodName}_ERROR`);
           expect(types[`${upperCasedResourceName}_CANCEL_${upperCasedMethodName}`], `Not existed: ${upperCasedResourceName}_CANCEL_${upperCasedMethodName}`)
             .to.equal(`@@app/global/${upperCasedResourceName}_CANCEL_${upperCasedMethodName}`);
-          expect(types[`${upperCasedResourceName}_${upperCasedMethodName}_CLEAR_ERROR`], `Not existed: ${upperCasedResourceName}_${upperCasedMethodName}_CLEAR_ERROR`)
-            .to.equal(`@@app/global/${upperCasedResourceName}_${upperCasedMethodName}_CLEAR_ERROR`);
         });
+
+        expect(types[`${upperCasedResourceName}_CLEAR_CACHE`], `Not existed: ${upperCasedResourceName}_CLEAR_CACHE`)
+          .to.equal(`@@app/global/${upperCasedResourceName}_CLEAR_CACHE`);
       });
     });
 

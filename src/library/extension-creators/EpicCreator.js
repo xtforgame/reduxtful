@@ -18,7 +18,7 @@ export default class EpicCreator {
     } = config;
 
     methodConfigs.forEach(methodConfig => {
-      if(methodConfig.name === 'clear'){
+      if(methodConfig.name === 'clearCache' || methodConfig.name === 'selectPath'){
         return ;
       }
       let actionTypes = getShared(ActionTypesCreator.$name)[methodConfig.name];
@@ -58,7 +58,7 @@ export default class EpicCreator {
                 { timestamp: new Date().getTime() },
               ),
               error: (error) => {
-                console.log('error :', error);
+                // console.log('error :', error);
                 return actions.respondError({ error });
               },
               cancel: actions.clearError,

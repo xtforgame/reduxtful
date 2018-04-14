@@ -40,25 +40,47 @@ const genSelectFunc = (method, { urlInfo }) => (state = {}, action) => {
 const genStartFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    isPending: {
-      ...partialState.isPending,
-      [method]: true,
-    },
+    // isPending: {
+    //   ...partialState.isPending,
+    //   [method]: true,
+    // },
   }));
 };
 
 const genCollectionRespondFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    isPending: {
-      ...partialState.isPending,
-      [method]: false,
-    },
+    // isPending: {
+    //   ...partialState.isPending,
+    //   [method]: false,
+    // },
     collection: action.data,
-    error: {
-      ...partialState.error,
-      [method]: null,
-    },
+    // error: {
+    //   ...partialState.error,
+    //   [method]: null,
+    // },
+  }));
+};
+
+const genCollectionRespondDeleteFunc = (method, options) => (state = {}, action) => {
+  return deepMergeByPathArray(state, action, options)(partialState => ({
+    ...partialState,
+    // isPending: {
+    //   ...partialState.isPending,
+    //   [method]: false,
+    // },
+    collection: null,
+    // error: {
+    //   ...partialState.error,
+    //   [method]: null,
+    // },
+  }));
+};
+
+const genCollectionClearFunc = (options) => (state = {}, action) => {
+  return deepMergeByPathArray(state, action, options)(partialState => ({
+    ...partialState,
+    collection: null,
   }));
 };
 
@@ -66,18 +88,37 @@ const genRepondFunc = (method, options) => (state = {}, action) => {
   const id = options.getId(action);
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    isPending: {
-      ...partialState.isPending,
-      [method]: false,
-    },
+    // isPending: {
+    //   ...partialState.isPending,
+    //   [method]: false,
+    // },
     byId: {
       ...partialState.byId,
       [id]: action.data,
     },
-    error: {
-      ...partialState.error,
-      [method]: null,
+    // error: {
+    //   ...partialState.error,
+    //   [method]: null,
+    // },
+  }));
+};
+
+const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
+  const id = options.getId(action);
+  return deepMergeByPathArray(state, action, options)(partialState => ({
+    ...partialState,
+    // isPending: {
+    //   ...partialState.isPending,
+    //   [method]: false,
+    // },
+    byId: {
+      ...partialState.byId,
+      [id]: null,
     },
+    // error: {
+    //   ...partialState.error,
+    //   [method]: null,
+    // },
   }));
 };
 
@@ -92,50 +133,17 @@ const genClearFunc = (options) => (state = {}, action) => {
   }));
 };
 
-const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
-  const id = options.getId(action);
-  return deepMergeByPathArray(state, action, options)(partialState => ({
-    ...partialState,
-    isPending: {
-      ...partialState.isPending,
-      [method]: false,
-    },
-    byId: {
-      ...partialState.byId,
-      [id]: null,
-    },
-    error: {
-      ...partialState.error,
-      [method]: null,
-    },
-  }));
-};
-
 const genRepondErrorFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    isPending: {
-      ...partialState.isPending,
-      [method]: false,
-    },
-    error: {
-      ...partialState.error,
-      [method]: action.data && action.data.error,
-    },
-  }));
-};
-
-const genClearErrorFunc = (method, options) => (state = {}, action) => {
-  return deepMergeByPathArray(state, action, options)(partialState => ({
-    ...partialState,
-    isPending: {
-      ...partialState.isPending,
-      [method]: false,
-    },
-    error: {
-      ...partialState.error,
-      [method]: null,
-    },
+    // isPending: {
+    //   ...partialState.isPending,
+    //   [method]: false,
+    // },
+    // error: {
+    //   ...partialState.error,
+    //   [method]: action.data && action.data.error,
+    // },
   }));
 };
 
@@ -143,47 +151,59 @@ const genReducerFunctionCreators = (options) => ({
   selectPath: {
     start: genSelectFunc('selectPath', options),
   },
-  post: {
-    start: genStartFunc('post', options),
-    respond: genRepondFunc('post', options),
-    respondError: genRepondErrorFunc('post', options),
+  postCollection: {
+    start: genStartFunc('postCollection', options),
+    respond: genRepondFunc('postCollection', options),
+    respondError: genRepondErrorFunc('postCollection', options),
     cancel: null,
-    clearError: genClearErrorFunc('post', options),
-  },
-  get: {
-    start: genStartFunc('get', options),
-    respond: genRepondFunc('get', options),
-    respondError: genRepondErrorFunc('get', options),
-    cancel: null,
-    clearError: genClearErrorFunc('get', options),
   },
   getCollection: {
     start: genStartFunc('getCollection', options),
     respond: genCollectionRespondFunc('getCollection', options),
     respondError: genRepondErrorFunc('getCollection', options),
     cancel: null,
-    clearError: genClearErrorFunc('getCollection', options),
+  },
+  patchCollection: {
+    start: genStartFunc('patchCollection', options),
+    respond: genCollectionRespondFunc('patchCollection', options),
+    respondError: genRepondErrorFunc('patchCollection', options),
+    cancel: null,
+  },
+  deleteCollection: {
+    start: genStartFunc('deleteCollection', options),
+    respond: genCollectionRespondDeleteFunc('deleteCollection', options),
+    respondError: genRepondErrorFunc('deleteCollection', options),
+    cancel: null,
+  },
+  post: {
+    start: genStartFunc('post', options),
+    respond: null,
+    respondError: genRepondErrorFunc('post', options),
+    cancel: null,
+  },
+  get: {
+    start: genStartFunc('get', options),
+    respond: genRepondFunc('get', options),
+    respondError: genRepondErrorFunc('get', options),
+    cancel: null,
   },
   patch: {
     start: genStartFunc('patch', options),
     respond: genRepondFunc('patch', options),
     respondError: genRepondErrorFunc('patch', options),
     cancel: null,
-    clearError: genClearErrorFunc('patch', options),
-  },
-  clear: {
-    start: genClearFunc(options),
-    respond: null,
-    respondError: null,
-    cancel: null,
-    clearError: null,
   },
   delete: {
     start: genStartFunc('delete', options),
     respond: genRespondDeleteFunc('delete', options),
     respondError: genRepondErrorFunc('delete', options),
     cancel: null,
-    clearError: genClearErrorFunc('delete', options),
+  },
+  clearCache: {
+    start: genClearFunc(options),
+    respond: null,
+    respondError: null,
+    cancel: null,
   },
 });
 

@@ -5,13 +5,20 @@ let supportedActions = [
   'respond',
   'respondError',
   'cancel',
-  'clearError',
 ];
 
 let getActionTypeName = ({methodName, names, actionTypeName}) => {
   const upperCasedMethod = toUnderscore(methodName).toUpperCase();
   const upperCasedSingleName = toUnderscore(names.singular).toUpperCase();
   const upperCasedActionTypeName = toUnderscore(actionTypeName).toUpperCase();
+
+  switch(methodName){
+  case 'selectPath':
+  case 'clearCache':
+    return `${upperCasedSingleName}_${upperCasedMethod}`;
+  default:
+    break;
+  }
 
   switch(actionTypeName){
   case 'respond':
@@ -28,9 +35,19 @@ let getActionTypeName = ({methodName, names, actionTypeName}) => {
 };
 
 let getActionName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
+  switch(methodName){
+  case 'selectPath':
+    return `select${capitalizeFirstLetter(names.singular)}Path`;
+  case 'clearCache':
+    return `clear${capitalizeFirstLetter(names.singular)}Cache`;
+  default:
+    break;
+  }
+
   const resourceName = isCollection ? `${names.singular}Collection` : names.singular;
   const _methodName = isCollection ? methodName.substr(0, methodName.length - 'Collection'.length) : methodName;
   let _actionTypeName = actionTypeName;
+
   switch(actionTypeName){
   case 'start':
     _actionTypeName = '';
@@ -61,15 +78,49 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'selectPath',
       supportedActions: ['start'],
-      getActionTypeName: ({methodName, names, actionTypeName}) => {
-        const upperCasedMethod = toUnderscore(methodName).toUpperCase();
-        const upperCasedSingleName = toUnderscore(names.singular).toUpperCase();
-        return `${upperCasedSingleName}_${upperCasedMethod}`;
-      },
-      getActionName: ({methodName, names, actionTypeName}) => {
-        return `select${capitalizeFirstLetter(names.singular)}Path`;
-      },
+      getActionTypeName,
+      getActionName: getActionName(),
       getReducerName,
+    },
+    {
+      name: 'postCollection',
+      method: 'post',
+      supportedActions,
+      getUrlTemplate: ({names, url}) => url,
+      getActionTypeName,
+      getActionName: getActionName(true),
+      getReducerName,
+      getEpicName: getEpicName(true),
+    },
+    {
+      name: 'getCollection',
+      method: 'get',
+      supportedActions,
+      getUrlTemplate: ({names, url}) => url,
+      getActionTypeName,
+      getActionName: getActionName(true),
+      getReducerName,
+      getEpicName: getEpicName(true),
+    },
+    {
+      name: 'patchCollection',
+      method: 'patch',
+      supportedActions,
+      getUrlTemplate: ({names, url}) => url,
+      getActionTypeName,
+      getActionName: getActionName(true),
+      getReducerName,
+      getEpicName: getEpicName(true),
+    },
+    {
+      name: 'deleteCollection',
+      method: 'delete',
+      supportedActions,
+      getUrlTemplate: ({names, url}) => url,
+      getActionTypeName,
+      getActionName: getActionName(true),
+      getReducerName,
+      getEpicName: getEpicName(true),
     },
     {
       name: 'post',
@@ -92,16 +143,6 @@ export default function createMethodConfigs(ns, names) {
       getEpicName: getEpicName(),
     },
     {
-      name: 'getCollection',
-      method: 'get',
-      supportedActions,
-      getUrlTemplate: ({names, url}) => url,
-      getActionTypeName,
-      getActionName: getActionName(true),
-      getReducerName,
-      getEpicName: getEpicName(true),
-    },
-    {
       name: 'patch',
       method: 'patch',
       supportedActions,
@@ -112,9 +153,9 @@ export default function createMethodConfigs(ns, names) {
       getEpicName: getEpicName(),
     },
     {
-      name: 'clear',
-      method: 'patch',
-      supportedActions: ['start'],
+      name: 'delete',
+      method: 'delete',
+      supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
       getActionTypeName,
       getActionName: getActionName(),
@@ -122,9 +163,8 @@ export default function createMethodConfigs(ns, names) {
       getEpicName: getEpicName(),
     },
     {
-      name: 'delete',
-      method: 'delete',
-      supportedActions,
+      name: 'clearCache',
+      supportedActions: ['start'],
       getUrlTemplate: ({names, url}) => `${url}/{${names.singular}Id}`,
       getActionTypeName,
       getActionName: getActionName(),

@@ -4,7 +4,7 @@ import chai from 'chai';
 import ModelMap from 'library/ModelMap';
 import { capitalizeFirstLetter } from 'library/utils';
 import {
-  modelsDefine01,
+  testData01,
 } from '../../test-data';
 
 const expect = chai.expect;
@@ -14,7 +14,7 @@ describe('ActionsCreator Test Cases', function(){
     this.timeout(10000);
 
     it('should export all actions', () => {
-      const modelMap = new ModelMap('global', modelsDefine01);
+      const modelMap = new ModelMap('global', testData01.modelsDefine);
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.actions, 'Not existed: modelMap.actions').to.exist;
@@ -32,8 +32,9 @@ describe('ActionsCreator Test Cases', function(){
           expect(actions[`respond${capitalizeMethodName}${capitalizeResourceName}`], `Not existed: respond${capitalizeMethodName}${capitalizeResourceName}`).to.be.an.instanceof(Function);
           expect(actions[`respond${capitalizeMethodName}${capitalizeResourceName}Error`], `Not existed: respond${capitalizeMethodName}${capitalizeResourceName}Error`).to.be.an.instanceof(Function);
           expect(actions[`cancel${capitalizeMethodName}${capitalizeResourceName}`], `Not existed: cancel${capitalizeMethodName}${capitalizeResourceName}`).to.be.an.instanceof(Function);
-          expect(actions[`${methodName}${capitalizeResourceName}ClearError`], `Not existed: ${methodName}${capitalizeResourceName}ClearError`).to.be.an.instanceof(Function);
         });
+
+        expect(actions[`clear${capitalizeResourceName}Cache`], `Not existed: clear${capitalizeResourceName}Cache`).to.be.an.instanceof(Function);
       });
     });
   });

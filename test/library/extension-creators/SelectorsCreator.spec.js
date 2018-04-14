@@ -4,7 +4,7 @@ import chai from 'chai';
 import ModelMap from 'library/ModelMap';
 import { capitalizeFirstLetter } from 'library/utils';
 import {
-  modelsDefine01,
+  testData01,
 } from '../../test-data';
 
 const expect = chai.expect;
@@ -14,7 +14,7 @@ describe('SelectorsCreator Test Cases', function(){
     this.timeout(10000);
 
     it('should export all selectors', () => {
-      const modelMap = new ModelMap('global', modelsDefine01);
+      const modelMap = new ModelMap('global', testData01.modelsDefine);
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.selectors, 'Not existed: modelMap.selectors').to.exist;
