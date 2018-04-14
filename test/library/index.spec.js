@@ -34,7 +34,7 @@ describe('Full Test Cases', function(){
   });
 
   describe('Basic', function(){
-    this.timeout(10000);
+    this.timeout(100);
 
     it('should be able to pass the mockStore test', () => {
       const modelMap = new ModelMap('global', testData01.modelsDefine);
@@ -45,8 +45,8 @@ describe('Full Test Cases', function(){
 
       return store.dispatch({
         ...modelMap.actions.getApi(undefined, { apiId: 'ssss' }),
-        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.API_RESPOND_GET,
-        [ERROR_ACTION]: action => action.type === modelMap.types.API_RESPOND_GET_ERROR,
+        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -75,8 +75,8 @@ describe('Full Test Cases', function(){
       );
       return store.dispatch({
         ...modelMap.actions.getApi(undefined, { apiId: 'ssss' }),
-        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.API_RESPOND_GET,
-        [ERROR_ACTION]: action => action.type === modelMap.types.API_RESPOND_GET_ERROR,
+        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -94,7 +94,7 @@ describe('Full Test Cases', function(){
   });
 
   describe('Collection', function(){
-    this.timeout(10000);
+    this.timeout(100);
     let mock = null;
     let store = null;
     let modelMap = null;
@@ -124,8 +124,8 @@ describe('Full Test Cases', function(){
     it('should be able to post collection', () => {
       return store.dispatch({
         ...modelMap.actions.postUsers({id: 1}),
-        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_POST_COLLECTION,
-        [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_POST_COLLECTION_ERROR,
+        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPostUsers,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondPostUsersError,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -144,8 +144,8 @@ describe('Full Test Cases', function(){
     it('should be able to get collection', () => {
       return store.dispatch({
         ...modelMap.actions.getUsers(),
-        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_GET_COLLECTION,
-        [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_GET_COLLECTION_ERROR,
+        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUsers,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUsersError,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -163,8 +163,8 @@ describe('Full Test Cases', function(){
     it('should be able to patch collection', () => {
       return store.dispatch({
         ...modelMap.actions.patchUsers(),
-        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_PATCH_COLLECTION,
-        [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_PATCH_COLLECTION_ERROR,
+        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPatchUsers,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondPatchUsersError,
       })
       .then(payload => {
         // console.log('payload :', payload);
@@ -182,8 +182,8 @@ describe('Full Test Cases', function(){
     it('should be able to delete collection', () => {
       return store.dispatch({
         ...modelMap.actions.deleteUsers(),
-        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_DELETE_COLLECTION,
-        [ERROR_ACTION]: action => action.type === modelMap.types.USER_RESPOND_DELETE_COLLECTION_ERROR,
+        [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondDeleteUsers,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondDeleteUsersError,
       })
       .then(payload => {
         // console.log('payload :', payload);

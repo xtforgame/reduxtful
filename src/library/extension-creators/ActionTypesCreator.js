@@ -16,10 +16,11 @@ export default class ActionTypesCreator {
           actionTypeName,
         };
 
-        let actionTypeConstant = methodConfig.getActionTypeName(arg);
+        let actionTypeConstantName = methodConfig.getActionName(arg);
+        let actionTypeConstant = methodConfig.getActionContantName(arg);
 
         shared[methodConfig.name][actionTypeName] = `@@app/${ns}/${actionTypeConstant}`;
-        exposed[actionTypeConstant] = shared[methodConfig.name][actionTypeName];
+        exposed[actionTypeConstantName] = shared[methodConfig.name][actionTypeName];
       });
     });
   

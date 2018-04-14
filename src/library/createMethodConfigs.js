@@ -9,7 +9,7 @@ let supportedActions = [
 
 const getResourceCollectionName = (names) => (names.member === names.collection) ? `${names.member}Collection` : names.collection;
 
-let getActionTypeName = ({methodName, names, actionTypeName}) => {
+let getActionContantName = ({methodName, names, actionTypeName}) => {
   const upperCasedMethod = toUnderscore(methodName).toUpperCase();
   const upperCasedModelName = toUnderscore(names.model).toUpperCase();
   const upperCasedCollecionName = toUnderscore(getResourceCollectionName(names)).toUpperCase();
@@ -86,7 +86,7 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'selectPath',
       supportedActions: ['start'],
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
     },
@@ -95,7 +95,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'post',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
@@ -105,7 +105,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'get',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
@@ -115,7 +115,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'patch',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
@@ -125,7 +125,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'delete',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
@@ -134,7 +134,7 @@ export default function createMethodConfigs(ns, names) {
       name: 'clearCollectionCache',
       supportedActions: ['start'],
       getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
@@ -144,7 +144,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'post',
       supportedActions,
       getUrlTemplate: ({names, url}) => url,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
@@ -154,7 +154,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'get',
       supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
@@ -164,7 +164,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'patch',
       supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
@@ -174,7 +174,7 @@ export default function createMethodConfigs(ns, names) {
       method: 'delete',
       supportedActions,
       getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
@@ -183,7 +183,7 @@ export default function createMethodConfigs(ns, names) {
       name: 'clearCache',
       supportedActions: ['start'],
       getUrlTemplate: ({names, url}) => `${url}/{${names.member}Id}`,
-      getActionTypeName,
+      getActionContantName,
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
