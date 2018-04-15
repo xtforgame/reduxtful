@@ -71,10 +71,10 @@ export default class UrlInfo
     this.varParts = varParts;
   }
 
-  compile(urlParams = {}){
+  compile(entry = {}){
     return this.urlParts.map(part => {
       if(typeof part !== 'string'){
-        let strPart = urlParams[part.varName]
+        let strPart = entry[part.varName]
         if(strPart == null){
           throw new Error(`Url param not found :${part.varName}`);
         }
@@ -85,7 +85,7 @@ export default class UrlInfo
     .join('');
   }
 
-  urlParamsToArray(urlParams = {}){
-    return this.varParts.map(part => urlParams[part.varName]);
+  entryToPath(entry = {}){
+    return this.varParts.map(part => entry[part.varName]);
   }
 }

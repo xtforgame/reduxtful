@@ -1,10 +1,10 @@
 import { toUnderscore, capitalizeFirstLetter } from './utils';
 
 let supportedActions = [
-  'start',
-  'respond',
-  'respondError',
-  'cancel',
+  { name: 'start' },
+  { name: 'respond' },
+  { name: 'respondError' },
+  { name: 'cancel' },
 ];
 
 const getResourceCollectionName = (names) => (names.member === names.collection) ? `${names.member}Collection` : names.collection;
@@ -20,6 +20,7 @@ let getActionContantName = ({methodName, names, actionTypeName}) => {
   case 'selectPath':
   case 'clearCollectionCache':
   case 'clearCache':
+  case 'clearEachCache':
     return `${upperCasedModelName}_${upperCasedMethod}`;
   default:
     break;
@@ -39,7 +40,7 @@ let getActionContantName = ({methodName, names, actionTypeName}) => {
   return `${upperCasedMemberName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
 };
 
-let getActionName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
+let getActionName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {
   switch(methodName){
   case 'selectPath':
     return `select${capitalizeFirstLetter(names.model)}Path`;
@@ -47,13 +48,15 @@ let getActionName = (isCollection = false) => ({methodName, names, actionTypeNam
     return `clear${capitalizeFirstLetter(getResourceCollectionName(names))}Cache`;
   case 'clearCache':
     return `clear${capitalizeFirstLetter(names.member)}Cache`;
+  case 'clearEachCache':
+    return `clearEach${capitalizeFirstLetter(names.member)}Cache`;
   default:
     break;
   }
 
   const resourceCollectionName = getResourceCollectionName(names);
-  const resourceName = isCollection ? resourceCollectionName : names.member;
-  const _methodName = isCollection ? methodName.substr(0, methodName.length - 'Collection'.length) : methodName;
+  const resourceName = isForCollection ? resourceCollectionName : names.member;
+  const _methodName = isForCollection ? methodName.substr(0, methodName.length - 'Collection'.length) : methodName;
   let _actionTypeName = actionTypeName;
 
   switch(actionTypeName){
@@ -76,8 +79,8 @@ let getReducerName = ({names}) => {
   return `${names.model}Reducer`;
 };
 
-let getEpicName = (isCollection = false) => ({methodName, names, actionTypeName}) => {
-  const _getActionName = getActionName(isCollection);
+let getEpicName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {
+  const _getActionName = getActionName(isForCollection);
   return `${_getActionName({methodName, names, actionTypeName: 'start'})}Epic`;
 };
 
@@ -85,7 +88,8 @@ export default function createMethodConfigs(ns, names) {
   return [
     {
       name: 'selectPath',
-      supportedActions: ['start'],
+      supportedActions: [{ name: 'start' }],
+      needBody: false,
       getActionContantName,
       getActionName: getActionName(),
       getReducerName,
@@ -93,8 +97,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'postCollection',
       method: 'post',
-      isForCollection: true,
       supportedActions,
+      isForCollection: true,
+      needBody: true,
       getUrlTemplate: ({names, url}) => url,
       getActionContantName,
       getActionName: getActionName(true),
@@ -104,8 +109,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'getCollection',
       method: 'get',
-      isForCollection: true,
       supportedActions,
+      isForCollection: true,
+      needBody: false,
       getUrlTemplate: ({names, url}) => url,
       getActionContantName,
       getActionName: getActionName(true),
@@ -115,8 +121,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'patchCollection',
       method: 'patch',
-      isForCollection: true,
       supportedActions,
+      isForCollection: true,
+      needBody: true,
       getUrlTemplate: ({names, url}) => url,
       getActionContantName,
       getActionName: getActionName(true),
@@ -126,8 +133,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'deleteCollection',
       method: 'delete',
-      isForCollection: true,
       supportedActions,
+      isForCollection: true,
+      needBody: false,
       getUrlTemplate: ({names, url}) => url,
       getActionContantName,
       getActionName: getActionName(true),
@@ -136,8 +144,9 @@ export default function createMethodConfigs(ns, names) {
     },
     {
       name: 'clearCollectionCache',
+      supportedActions: [{ name: 'start' }],
       isForCollection: true,
-      supportedActions: ['start'],
+      needBody: false,
       getUrlTemplate: ({names, url}) => url,
       getActionContantName,
       getActionName: getActionName(true),
@@ -147,8 +156,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'post',
       method: 'post',
-      isForCollection: false,
       supportedActions,
+      isForCollection: false,
+      needBody: true,
       getUrlTemplate: ({names, url}) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
@@ -158,8 +168,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'get',
       method: 'get',
-      isForCollection: false,
       supportedActions,
+      isForCollection: false,
+      needBody: false,
       getUrlTemplate: ({names, url}) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
@@ -169,8 +180,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'patch',
       method: 'patch',
-      isForCollection: false,
       supportedActions,
+      isForCollection: false,
+      needBody: true,
       getUrlTemplate: ({names, url}) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
@@ -180,8 +192,9 @@ export default function createMethodConfigs(ns, names) {
     {
       name: 'delete',
       method: 'delete',
-      isForCollection: false,
       supportedActions,
+      isForCollection: false,
+      needBody: false,
       getUrlTemplate: ({names, url}) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
@@ -190,9 +203,20 @@ export default function createMethodConfigs(ns, names) {
     },
     {
       name: 'clearCache',
-      supportedActions: ['start'],
+      supportedActions: [{ name: 'start' }],
       isForCollection: false,
-      getUrlTemplate: ({names, url}) => `${url}/{id}`,
+      needBody: false,
+      getActionContantName,
+      getActionName: getActionName(),
+      getReducerName,
+      getEpicName: getEpicName(),
+    },
+    {
+      name: 'clearEachCache',
+      supportedActions: [{ name: 'start' }],
+      isForCollection: false,
+      needId: false,
+      needBody: false,
       getActionContantName,
       getActionName: getActionName(),
       getReducerName,

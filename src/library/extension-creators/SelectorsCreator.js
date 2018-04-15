@@ -18,11 +18,11 @@ const createSelectors = (names, baseSelector) => {
     makeResourceHierarchySelector(),
     makeResourceSelectionSelector(),
     (hierarchy, selection) => {
-      if(!hierarchy || !selection || !selection.pathArray){
+      if(!hierarchy || !selection || !selection.entryPath){
         return null;
       }
       let node = hierarchy;
-      selection.pathArray.map(part => node = node && node[part]);
+      selection.entryPath.map(part => node = node && node[part]);
       return node;
     }
   )

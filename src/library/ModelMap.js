@@ -7,9 +7,17 @@ import ReducerCreator from './extension-creators/ReducerCreator';
 import EpicCreator from './extension-creators/EpicCreator';
 import SelectorsCreator from './extension-creators/SelectorsCreator';
 
+export const defaultExtensions = [
+  ActionTypesCreator,
+  ActionsCreator,
+  ReducerCreator,
+  EpicCreator,
+  SelectorsCreator,
+];
+
 export default class ModelMap
 {
-  constructor(ns, modelsDefine){
+  constructor(ns, modelsDefine, extensions = defaultExtensions){
     Object.keys(modelsDefine).forEach(key => {
       const modelDefine = modelsDefine[key];
       const url = modelDefine.url;
@@ -20,13 +28,7 @@ export default class ModelMap
     });
 
     this.models = {};
-    this.Creators = [
-      ActionTypesCreator,
-      ActionsCreator,
-      ReducerCreator,
-      EpicCreator,
-      SelectorsCreator,
-    ];
+    this.Creators = extensions;
 
     this.Creators.map(Creator => {
       this[Creator.$name] = {};

@@ -1,9 +1,9 @@
 import ActionTypesCreator from './ActionTypesCreator';
 import UrlInfo from '../UrlInfo';
 
-const mergePartialState = (state = {}, action, pathArray, mergeFunc) => {
-  if(pathArray.length != 0){
-    let [id, ...rest] = pathArray;
+const mergePartialState = (state = {}, action, entryPath, mergeFunc) => {
+  if(entryPath.length != 0){
+    let [id, ...rest] = entryPath;
     return {
       ...state,
       [id]: mergePartialState(state[id], action, rest, mergeFunc),
@@ -13,25 +13,28 @@ const mergePartialState = (state = {}, action, pathArray, mergeFunc) => {
   }
 }
 
-const deepMergeByPathArray= (state, action, { urlInfo }) => mergeFunc => {
-  const pathArray = urlInfo.urlParamsToArray(action.urlParams);
-  return mergePartialState(state, action, ['hierarchy', ...pathArray], mergeFunc);
+const deepMergeByPathArray = (state, action, { urlInfo }) => mergeFunc => {
+  const entryPath = urlInfo.entryToPath(action.entry);
+  return mergePartialState(state, action, ['hierarchy', ...entryPath], mergeFunc);
 }
 
 // ===============================
 
 const genSelectFunc = (method, { urlInfo }) => (state = {}, action) => {
-  if(action.urlParams === undefined){
+  if(action.entry === undefined){
     return {
       ...state,
       selection: null,
     };
   }
-  const pathArray = urlInfo.urlParamsToArray(action.urlParams);
+  const entryPath = urlInfo.entryToPath(action.entry);
   return {
     ...state,
     selection: {
-      pathArray,
+      entry: {
+        ...action.entry,
+      },
+      entryPath,
       id: action.data.id,
     },
   };
@@ -85,7 +88,7 @@ const genCollectionClearFunc = (options) => (state = {}, action) => {
 };
 
 const genRepondFunc = (method, options) => (state = {}, action) => {
-  const id = action.urlParams.id;
+  const id = action.entry.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     // isPending: {
@@ -104,7 +107,7 @@ const genRepondFunc = (method, options) => (state = {}, action) => {
 };
 
 const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
-  const id = action.urlParams.id;
+  const id = action.entry.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     // isPending: {
@@ -123,13 +126,20 @@ const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
 };
 
 const genClearFunc = (options) => (state = {}, action) => {
-  const id = action.urlParams.id;
+  const id = action.entry.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
     byId: {
       ...partialState.byId,
       [id]: null,
     },
+  }));
+};
+
+const genClearEachFunc = (options) => (state = {}, action) => {
+  return deepMergeByPathArray(state, action, options)(partialState => ({
+    ...partialState,
+    byId: {},
   }));
 };
 
@@ -211,6 +221,14 @@ const genReducerFunctionCreators = (options) => ({
     respondError: null,
     cancel: null,
   },
+  clearEachCache: {
+    start: genClearEachFunc(options),
+    respond: null,
+    respondError: null,
+    cancel: null,
+  },
+
+  
 });
 
 function createReducerFromFuncMap(funcMap){

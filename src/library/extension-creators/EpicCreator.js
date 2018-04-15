@@ -6,22 +6,31 @@ import UrlInfo from '../UrlInfo';
 
 const createRespondActionCreatorForCollection = (actions, startAction) => (response) => actions.respond(
   response.data,
-  startAction.urlParams,
-  { timestamp: new Date().getTime() },
+  startAction.entry,
+  {
+    timestamp: new Date().getTime(),
+    transferables: startAction.options.transferables,
+  },
 );
 
 const createRespondActionCreatorForPostCollection = (actions, startAction, getId) => (response) => actions.respond(
   getId(response.data),
   response.data,
-  startAction.urlParams,
-  { timestamp: new Date().getTime() },
+  startAction.entry,
+  {
+    timestamp: new Date().getTime(),
+    transferables: startAction.options.transferables,
+  },
 );
 
 const createRespondActionCreatorForMember = (actions, startAction, getId) => (response) => actions.respond(
-  startAction.urlParams.id,
+  startAction.entry.id,
   response.data,
-  startAction.urlParams,
-  { timestamp: new Date().getTime() },
+  startAction.entry,
+  {
+    timestamp: new Date().getTime(),
+    transferables: startAction.options.transferables,
+  },
 );
 
 const createRespondErrorActionCreatorForCollection = (actions, startAction) => (error) => {
@@ -31,7 +40,7 @@ const createRespondErrorActionCreatorForCollection = (actions, startAction) => (
 
 const createRespondErrorActionCreatorForMember = (actions, startAction) => (error) => {
   // console.log('error :', error);
-  return actions.respondError(startAction.urlParams.id, { error });
+  return actions.respondError(startAction.entry.id, { error });
 }
 
 export default class EpicCreator {
@@ -77,14 +86,13 @@ export default class EpicCreator {
       }
 
       const getRespondErrorActionCreator = (methodConfig.isForCollection === true) ?
-        createRespondErrorActionCreatorForCollection
-        : createRespondErrorActionCreatorForMember;
+        createRespondErrorActionCreatorForCollection : createRespondErrorActionCreatorForMember;
 
       shared[methodConfig.name] = (action$, store) => {
         return action$.ofType(actionTypes.start)
           .mergeMap(action => {
-            const url = urlInfo.compile(action.urlParams);
-            const query = action.urlParams.query;
+            const url = urlInfo.compile(action.entry);
+            const query = action.options.query;
             const source = axios.CancelToken.source();
 
             return AxiosObservable({

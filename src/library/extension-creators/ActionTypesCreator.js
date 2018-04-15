@@ -9,7 +9,7 @@ export default class ActionTypesCreator {
 
     methodConfigs.forEach(methodConfig => {
       shared[methodConfig.name] = {};
-      methodConfig.supportedActions.forEach(actionTypeName => {
+      methodConfig.supportedActions.forEach(({ name: actionTypeName }) => {
         let arg = {
           methodName: methodConfig.name,
           names,

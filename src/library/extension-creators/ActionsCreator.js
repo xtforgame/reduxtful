@@ -1,35 +1,43 @@
 import ActionTypesCreator from './ActionTypesCreator';
 
-const createActionCreatorForCollection = (type) => (
-  data,
-  urlParams = {},
-  otherParams = {}
-) => ({
-  type,
-  data,
-  urlParams,
-  ...otherParams,
-});
+const createActionCreatorForCollection = (type, withDataArg = true) => {
+  if(withDataArg){
+    return (data, entry = {}, options = {}) =>
+      ({ type, data, entry, options: { transferables: {}, ...options } });
+  }else{
+    return (entry = {}, options = {}) =>
+      ({ type, entry, options: { transferables: {}, ...options } });
+  }
+};
 
-const createActionCreatorForMember = (type) => (
-  id,
-  data,
-  urlParams = {},
-  otherParams = {}
-) => ({
-  type,
-  data,
-  urlParams: {
-    ...urlParams,
-    id,
-  },
-  ...otherParams,
-});
+const createActionCreatorForMember = (type, withDataArg = true) => {
+  if(withDataArg){
+    return (id, data, entry = {}, options = {}) =>
+      ({ type, data, entry: { ...entry, id }, options: { transferables: {}, ...options } });
+  }else{
+    return (id, entry = {}, options = {}) =>
+      ({ type, entry: { ...entry, id }, options: { transferables: {}, ...options } });
+  }
+};
+
+const getCreateFunction = (methodConfig, actionType) => {
+  if(methodConfig.needId === true){
+    return createActionCreatorForMember;
+  }else if(methodConfig.needId === false){
+    return createActionCreatorForCollection;
+  }
+
+  if((methodConfig.isForCollection === true)
+    && !(methodConfig.method === 'post' && actionType === 'respond')){
+    return createActionCreatorForCollection;
+  }
+  return createActionCreatorForMember;
+}
 
 export default class ActionsCreator {
   static $name = 'actions';
 
-  create({ ns, names, getShared, methodConfigs }){
+  create({ ns, names, getShared, methodConfigs }, config, { noRedundantBody = true }){
     let shared = {};
     let exposed = {};
 
@@ -46,11 +54,14 @@ export default class ActionsCreator {
           actionTypeName: key,
         };
 
-        const create = (methodConfig.isForCollection === true) && !(methodConfig.method === 'post' && key === 'respond') ?
-          createActionCreatorForCollection
-          : createActionCreatorForMember;
+        let withBody = true;
+        if(noRedundantBody && key === 'start' && !methodConfig.needBody){
+          withBody = false;
+        }
+        // special case for posting a collection
+        const create = getCreateFunction(methodConfig, key);
 
-        shared[methodConfig.name][key] = create(type);
+        shared[methodConfig.name][key] = create(type, withBody);
         exposed[methodConfig.getActionName(arg)] = shared[methodConfig.name][key];
       });
     });
