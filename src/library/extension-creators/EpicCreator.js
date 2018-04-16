@@ -1,4 +1,3 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
 import AxiosObservable from '../utils/AxiosObservable';
@@ -35,12 +34,27 @@ const createRespondActionCreatorForMember = (actions, startAction, getId) => (re
 
 const createRespondErrorActionCreatorForCollection = (actions, startAction) => (error) => {
   // console.log('error :', error);
-  return actions.respondError({ error });
+  return actions.respondError(
+    { error },
+    {},
+    {
+      timestamp: new Date().getTime(),
+      transferables: startAction.options.transferables,
+    }
+  );
 }
 
 const createRespondErrorActionCreatorForMember = (actions, startAction) => (error) => {
   // console.log('error :', error);
-  return actions.respondError(startAction.entry.id, { error });
+  return actions.respondError(
+    startAction.entry.id,
+    { error },
+    {},
+    {
+      timestamp: new Date().getTime(),
+      transferables: startAction.options.transferables,
+    }
+  );
 }
 
 export default class EpicCreator {
@@ -51,10 +65,14 @@ export default class EpicCreator {
     let exposed = {};
 
     const {
+      axios,
+      Observable,
       getHeaders = () => ({}),
       responseMiddleware,
       errorMiddleware,
     } = extensionConfig;
+
+    const axiosObservable = AxiosObservable(axios, Observable);
 
     methodConfigs.forEach(methodConfig => {
       if(methodConfig.supportedActions.length <= 1){
@@ -95,7 +113,7 @@ export default class EpicCreator {
             const query = action.options.query;
             const source = axios.CancelToken.source();
 
-            return AxiosObservable({
+            return axiosObservable({
               method: methodConfig.method,
               url,
               headers: getHeaders(),

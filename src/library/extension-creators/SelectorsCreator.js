@@ -1,7 +1,6 @@
-import { createSelector } from 'reselect';
 import { capitalizeFirstLetter } from '../utils';
 
-const createSelectors = (names, baseSelector) => {
+const createSelectors = (createSelector, names, baseSelector) => {
   const resourceSelector = baseSelector;
 
   const makeResourceHierarchySelector = () => createSelector(
@@ -73,7 +72,11 @@ export default class SelectorsCreator {
       return { shared, exposed };
     }
 
-    shared = createSelectors(names, extensionConfig.baseSelector);
+    const {
+      createSelector,
+    } = extensionConfig;
+
+    shared = createSelectors(createSelector, names, extensionConfig.baseSelector);
     exposed = { ...shared };
 
     return { shared, exposed };

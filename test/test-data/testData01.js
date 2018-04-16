@@ -1,4 +1,7 @@
 import { getHeaders } from '../test-utils/HeaderManager';
+import axios from 'axios';
+import { Observable } from 'rxjs';
+import { createSelector } from 'reselect';
 
 const responseMiddleware = (response, info) => {
   if(response.status === 200 && response.data.error){
@@ -7,6 +10,13 @@ const responseMiddleware = (response, info) => {
   }
   return Promise.resolve(response);
 };
+
+const epics = {
+  axios,
+  Observable,
+  getHeaders,
+  responseMiddleware,
+}
 
 export default {
   modelsDefine: {
@@ -19,10 +29,7 @@ export default {
         getId: data => 'api', // data.user_id,
       },
       extensionConfigs: {
-        epics: {
-          getHeaders,
-          responseMiddleware,
-        },
+        epics,
       },
     },
     sessions: {
@@ -33,11 +40,9 @@ export default {
         getId: data => 'me', // data.user_id,
       },
       extensionConfigs: {
-        epics: {
-          getHeaders,
-          responseMiddleware,
-        },
+        epics,
         selectors: {
+          createSelector,
           baseSelector: state => state.get('global').sessions,
         },
       },
@@ -50,11 +55,9 @@ export default {
         getId: data => data.id,
       },
       extensionConfigs: {
-        epics: {
-          getHeaders,
-          responseMiddleware,
-        },
+        epics,
         selectors: {
+          createSelector,
           baseSelector: state => state.get('global').users,
         },
       },
@@ -67,11 +70,9 @@ export default {
         getId: data => data.id,
       },
       extensionConfigs: {
-        epics: {
-          getHeaders,
-          responseMiddleware,
-        },
+        epics,
         selectors: {
+          createSelector,
           baseSelector: state => state.get('global').ownedTasks,
         },
       },
@@ -99,7 +100,7 @@ export default {
     .onPatch('/api/users/1/tasks/1', { name: 'develop reduxtful lib.' }).reply(200, { name: 'develop reduxtful lib.', url: '/api/users/1/tasks/1' })
     .onPatch('/api/users/1/tasks/1').reply(200, { url: '/api/users/1/tasks/1' })
     .onDelete('/api/users/1/tasks/1').reply(200, { url: '/api/users/1/tasks/1' })
-    
+
     .onGet('/api/users/1/tasks/2').reply(200, { url: '/api/users/1/tasks/2' })
     .onPatch('/api/users/1/tasks/2', { name: 'develop back-end api.' }).reply(200, { name: 'develop back-end api.', url: '/api/users/1/tasks/2' })
     .onPatch('/api/users/1/tasks/2').reply(200, { url: '/api/users/1/tasks/2' })

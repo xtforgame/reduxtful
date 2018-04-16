@@ -1,6 +1,4 @@
 import { promiseWait } from '../utils';
-import axios from 'axios';
-import { Observable } from 'rxjs';
 
 class ErrorFromMiddleware {
   constructor(error){
@@ -10,7 +8,7 @@ class ErrorFromMiddleware {
 
 const toNull = () => { type: 'TO_NULL' };
 
-export default (axiosOptions, {
+export default (axios, Observable) => (axiosOptions, {
     success: successAction = toNull,
     error: errorAction = toNull,
     cancel: cancelAction = toNull,
