@@ -1,43 +1,48 @@
 import ActionTypesCreator from './ActionTypesCreator';
 
-const createActionCreatorForCollection = (type, withDataArg = true) => {
-  if(withDataArg){
-    return (data, entry = {}, options = {}) =>
-      ({ type, data, entry, options: { transferables: {}, ...options } });
-  }else{
-    return (entry = {}, options = {}) =>
-      ({ type, entry, options: { transferables: {}, ...options } });
-  }
-};
-
-const createActionCreatorForMember = (type, withDataArg = true) => {
-  if(withDataArg){
-    return (id, data, entry = {}, options = {}) =>
-      ({ type, data, entry: { ...entry, id }, options: { transferables: {}, ...options } });
-  }else{
-    return (id, entry = {}, options = {}) =>
-      ({ type, entry: { ...entry, id }, options: { transferables: {}, ...options } });
-  }
-};
-
-const getCreateFunction = (methodConfig, actionType) => {
-  if(methodConfig.needId === true){
-    return createActionCreatorForMember;
-  }else if(methodConfig.needId === false){
-    return createActionCreatorForCollection;
-  }
-
-  if((methodConfig.isForCollection === true)
-    && !(methodConfig.method === 'post' && actionType === 'respond')){
-    return createActionCreatorForCollection;
-  }
-  return createActionCreatorForMember;
-}
-
 export default class ActionsCreator {
   static $name = 'actions';
 
-  create({ ns, names, getShared, methodConfigs }, config, { noRedundantBody = true }){
+  static needIdArg = (methodConfig, actionType) => {
+    if(methodConfig.needId != null){
+      return !!methodConfig.needId;
+    }
+  
+    // special case for posting a collection
+    if((methodConfig.isForCollection === true)
+      && !(methodConfig.method === 'post' && actionType === 'respond')){
+      return false;
+    }
+    return true;
+  }
+  
+  static needBodyArg = (methodConfig, actionType, actionNoRedundantBody) => {
+    if(actionNoRedundantBody && actionType === 'start' && !methodConfig.needBody){
+      return false;
+    }
+    return true;
+  }
+  
+  static getActionCreator = (type, methodConfig, actionType, actionNoRedundantBody) => {
+    const withIdArg = ActionsCreator.needIdArg(methodConfig, actionType);
+    const withBodyArg = ActionsCreator.needBodyArg(methodConfig, actionType, actionNoRedundantBody);
+  
+    if(withIdArg){
+      return withBodyArg ? ((id, data, entry = {}, options = {}) =>
+        ({ type, data, entry: { ...entry, id }, options: { transferables: {}, ...options } })
+      ): ((id, entry = {}, options = {}) =>
+        ({ type, entry: { ...entry, id }, options: { transferables: {}, ...options } })
+      );
+    }else{
+      return withBodyArg ? ((data, entry = {}, options = {}) =>
+        ({ type, data, entry, options: { transferables: {}, ...options } })
+      ): ((entry = {}, options = {}) =>
+        ({ type, entry, options: { transferables: {}, ...options } })
+      );
+    }
+  }
+
+  create({ ns, names, getShared, methodConfigs }, { actionNoRedundantBody }){
     let shared = {};
     let exposed = {};
 
@@ -54,15 +59,15 @@ export default class ActionsCreator {
           actionTypeName: key,
         };
 
-        let withBody = true;
-        if(noRedundantBody && key === 'start' && !methodConfig.needBody){
-          withBody = false;
-        }
-        // special case for posting a collection
-        const create = getCreateFunction(methodConfig, key);
+        const exposedName = methodConfig.getActionName(arg);
+        const sharedName = methodConfig.name;
+        const action = shared[sharedName][key] = ActionsCreator.getActionCreator(type, methodConfig, key, actionNoRedundantBody);
+        action.type = type;
+        action.actionSet = shared[sharedName];
+        action.sharedName = sharedName;
+        action.exposedName = exposedName;
 
-        shared[methodConfig.name][key] = create(type, withBody);
-        exposed[methodConfig.getActionName(arg)] = shared[methodConfig.name][key];
+        exposed[exposedName] = action;
       });
     });
 

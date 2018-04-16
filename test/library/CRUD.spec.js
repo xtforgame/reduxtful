@@ -1,7 +1,7 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import ModelMap from 'library/ModelMap';
+import { ModelMap, defaultExtensions, WaitableActionsCreator } from 'library';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import configureMockStore from 'redux-mock-store';
@@ -39,7 +39,7 @@ describe('CRUD Test Cases', function(){
     this.timeout(100);
 
     it('should be able to pass the mockStore test', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine);
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
       const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
       const middlewares = [createEpicMiddleware(epic), createReduxWaitForMiddleware()];
       const mockStore = configureMockStore(middlewares)
@@ -58,7 +58,7 @@ describe('CRUD Test Cases', function(){
     });
 
     it('should be able to pass the real redux with immutable reducers test', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine);
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
       // console.log('modelMap.actions :', modelMap.actions);
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
@@ -100,7 +100,7 @@ describe('CRUD Test Cases', function(){
     let modelMap = null;
 
     beforeEach(() => {
-      modelMap = new ModelMap('global', testData01.modelsDefine);
+      modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
       // console.log('modelMap.actions :', modelMap.actions);
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
@@ -124,13 +124,7 @@ describe('CRUD Test Cases', function(){
 
     describe('Collection', function(){
       it('should be able to post collection', () => {
-        return store.dispatch({
-          ...modelMap.actions.postUsers({id: 1}),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPostUsers,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondPostUsersError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.postUsers({id: 1}),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -140,13 +134,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to get collection', () => {
-        return store.dispatch({
-          ...modelMap.actions.getUsers(),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUsers,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUsersError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getUsers(),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -156,13 +144,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to patch collection', () => {
-        return store.dispatch({
-          ...modelMap.actions.patchUsers(),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPatchUsers,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondPatchUsersError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.patchUsers(),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -172,13 +154,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to delete collection', () => {
-        return store.dispatch({
-          ...modelMap.actions.deleteUsers(),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondDeleteUsers,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondDeleteUsersError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.deleteUsers(),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -189,13 +165,7 @@ describe('CRUD Test Cases', function(){
 
       // =================
       it('should be able to clear collection', () => {
-        return store.dispatch({
-          ...modelMap.actions.getUsers(),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUsers,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUsersError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getUsers(),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -211,13 +181,7 @@ describe('CRUD Test Cases', function(){
 
     describe('Member', function(){
       it('should be able to get member', () => {
-        return store.dispatch({
-          ...modelMap.actions.getUser(1),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUser,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUserError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getUser(1),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -227,13 +191,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to patch member', () => {
-        return store.dispatch({
-          ...modelMap.actions.patchUser(1, { name: 'rick' }),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPatchUser,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondPatchUserError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.patchUser(1, { name: 'rick' }),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -244,13 +202,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to delete member', () => {
-        return store.dispatch({
-          ...modelMap.actions.deleteUser(1),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondDeleteUser,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondDeleteUserError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.deleteUser(1),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -262,13 +214,7 @@ describe('CRUD Test Cases', function(){
       // =================
 
       it('should be able to clear member', () => {
-        return store.dispatch({
-          ...modelMap.actions.getUser(1),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUser,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUserError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getUser(1),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -282,21 +228,9 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to clear each member', () => {
-        return store.dispatch({
-          ...modelMap.actions.getUser(1),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUser,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUserError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getUser(1),)
         .then(payload => {
-          return store.dispatch({
-            ...modelMap.actions.getUser(2),
-            [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetUser,
-            [ERROR_ACTION]: action => action.type === modelMap.types.respondGetUserError,
-            [CALLBACK_ARGUMENT]: action => action,
-            [CALLBACK_ERROR_ARGUMENT]: action => action,
-          });
+          return store.dispatch(modelMap.waitableActions.getUser(2),);
         })
         .then(payload => {
           // console.log('payload :', payload);
@@ -315,13 +249,7 @@ describe('CRUD Test Cases', function(){
 
     describe('Deep Member', function(){
       it('should be able to get member', () => {
-        return store.dispatch({
-          ...modelMap.actions.getOwnedTask(1, { userId: 1 }),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTask,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTaskError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -331,13 +259,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to patch member', () => {
-        return store.dispatch({
-          ...modelMap.actions.patchOwnedTask(1, { name: 'develop reduxtful lib.' }, { userId: 1 }),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondPatchOwnedTask,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondPatchOwnedTaskError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.patchOwnedTask(1, { name: 'develop reduxtful lib.' }, { userId: 1 }, {}),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -348,13 +270,7 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to delete member', () => {
-        return store.dispatch({
-          ...modelMap.actions.deleteOwnedTask(1, { userId: 1 }),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondDeleteOwnedTask,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondDeleteOwnedTaskError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.deleteOwnedTask(1, { userId: 1 }),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -366,13 +282,7 @@ describe('CRUD Test Cases', function(){
       // =================
 
       it('should be able to clear member', () => {
-        return store.dispatch({
-          ...modelMap.actions.getOwnedTask(1, { userId: 1 }),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTask,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTaskError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }),)
         .then(payload => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
@@ -386,21 +296,9 @@ describe('CRUD Test Cases', function(){
       });
 
       it('should be able to clear member', () => {
-        return store.dispatch({
-          ...modelMap.actions.getOwnedTask(1, { userId: 1 }),
-          [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTask,
-          [ERROR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTaskError,
-          [CALLBACK_ARGUMENT]: action => action,
-          [CALLBACK_ERROR_ARGUMENT]: action => action,
-        })
+        return store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }),)
         .then(payload => {
-          return store.dispatch({
-            ...modelMap.actions.getOwnedTask(2, { userId: 1 }),
-            [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTask,
-            [ERROR_ACTION]: action => action.type === modelMap.types.respondGetOwnedTaskError,
-            [CALLBACK_ARGUMENT]: action => action,
-            [CALLBACK_ERROR_ARGUMENT]: action => action,
-          })
+          return store.dispatch(modelMap.waitableActions.getOwnedTask(2, { userId: 1 }),)
         })
         .then(payload => {
           // console.log('payload :', payload);

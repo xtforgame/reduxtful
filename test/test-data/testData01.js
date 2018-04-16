@@ -15,6 +15,7 @@ export default {
       names: { model:'api', member: 'api', collection: 'apis' },
       singleton: true,
       config: {
+        // actionNoRedundantBody: true,
         getId: data => 'api', // data.user_id,
       },
       extensionConfigs: {
@@ -28,6 +29,7 @@ export default {
       url: '/api/sessions',
       names: { model:'session', member: 'session', collection: 'sessions' },
       config: {
+        // actionNoRedundantBody: true,
         getId: data => 'me', // data.user_id,
       },
       extensionConfigs: {
@@ -44,6 +46,7 @@ export default {
       url: '/api/users',
       names: { model:'user', member: 'user', collection: 'users' },
       config: {
+        // actionNoRedundantBody: true,
         getId: data => data.id,
       },
       extensionConfigs: {
@@ -60,12 +63,10 @@ export default {
       url: '/api/users/{userId}/tasks',
       names: { model:'ownedTask', member: 'ownedTask', collection: 'ownedTasks' },
       config: {
+        // actionNoRedundantBody: true,
         getId: data => data.id,
       },
       extensionConfigs: {
-        actions: {
-          // noRedundantBody: true,
-        },
         epics: {
           getHeaders,
           responseMiddleware,

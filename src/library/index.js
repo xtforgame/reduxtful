@@ -7,6 +7,9 @@ import ReducerCreator from './extension-creators/ReducerCreator';
 import EpicCreator from './extension-creators/EpicCreator';
 import SelectorsCreator from './extension-creators/SelectorsCreator';
 
+// optional, `redux-wait-for-action` required
+import WaitableActionsCreator from './extension-creators/WaitableActionsCreator';
+
 export {
   ModelMap,
   defaultExtensions,
@@ -17,4 +20,6 @@ export {
   ReducerCreator,
   EpicCreator,
   SelectorsCreator,
+
+  WaitableActionsCreator,
 };

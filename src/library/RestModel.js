@@ -11,6 +11,11 @@ const normalizeModelDefine = modelDefine => {
     }
   }
 
+  normalized.config = {
+    actionNoRedundantBody: true,
+    ...normalized.config,
+  }
+
   normalized.extensionConfigs = normalized.extensionConfigs || {};
 
   return normalized;
