@@ -29,6 +29,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var toNull = function toNull() {
+  type: 'TO_NULL';
+};
+
 var createRespondActionCreatorForCollection = function createRespondActionCreatorForCollection(actions, startAction) {
   return function (response) {
     return actions.respond(response.data, startAction.entry, {
@@ -150,14 +154,16 @@ var EpicCreator = (_temp = _class = function () {
               params: query
             }, {
               success: getRespondActionCreator(actions, action, getId),
-              error: getRespondErrorActionCreator(actions, action),
-              cancel: actions.clearError
+              error: getRespondErrorActionCreator(actions, action)
             }, {
               responseMiddleware: responseMiddleware,
               errorMiddleware: errorMiddleware,
               axiosCancelTokenSource: source,
-              cancelStream$: action$.filter(function (action) {
-                return action.type === actionTypes.cancel;
+              cancelStream$: action$.filter(function (cancelAction) {
+                if (cancelAction.type !== actionTypes.cancel) {
+                  return false;
+                }
+                return urlInfo.include(cancelAction.entry, action.entry);
               })
             });
           });

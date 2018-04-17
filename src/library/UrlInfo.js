@@ -71,6 +71,36 @@ export default class UrlInfo
     this.varParts = varParts;
   }
 
+  include(entryA, entryB){
+    for (let i = 0; i < this.varParts.length; i++) {
+      const varName = this.varParts[i].varName;
+      const varA = entryA[varName];
+      const varB = entryB[varName];
+      if(varA == null){
+        return true;
+      }
+      if(varA !== varB){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  isEqual(entryA, entryB, terminalVars = []){
+    for (let i = 0; i < this.varParts.length; i++) {
+      const varName = this.varParts[i].varName;
+      const varA = entryA[varName];
+      const varB = entryB[varName];
+      if(varA == null && varB == null && ~terminalVars.indexOf(varName)){
+        return true;
+      }
+      if(varA !== varB){
+        return false;
+      }
+    }
+    return true;
+  }
+
   compile(entry = {}){
     return this.urlParts.map(part => {
       if(typeof part !== 'string'){

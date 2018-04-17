@@ -3,6 +3,8 @@ import ActionsCreator from './ActionsCreator';
 import AxiosObservable from '../utils/AxiosObservable';
 import UrlInfo from '../UrlInfo';
 
+const toNull = () => { type: 'TO_NULL' };
+
 const createRespondActionCreatorForCollection = (actions, startAction) => (response) => actions.respond(
   response.data,
   startAction.entry,
@@ -122,14 +124,16 @@ export default class EpicCreator {
             }, {
               success: getRespondActionCreator(actions, action, getId),
               error: getRespondErrorActionCreator(actions, action),
-              cancel: actions.clearError,
+              // cancel: actions.clearError,
             }, {
               responseMiddleware,
               errorMiddleware,
               axiosCancelTokenSource: source,
-              cancelStream$: action$.filter(action => {
-                // TODO checking more conditions for avoiding canceling all action with the same action type
-                return action.type === actionTypes.cancel;
+              cancelStream$: action$.filter(cancelAction => {
+                if(cancelAction.type !== actionTypes.cancel){
+                  return false;
+                }
+                return urlInfo.include(cancelAction.entry, action.entry);
               }),
             });
           });

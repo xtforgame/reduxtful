@@ -17,7 +17,7 @@ var ErrorFromMiddleware = function ErrorFromMiddleware(error) {
 };
 
 var toNull = function toNull() {
-  type: 'TO_NULL';
+  return { type: 'TO_NULL' };
 };
 
 exports.default = function (axios, Observable) {

@@ -76,7 +76,7 @@ var ActionsCreator = (_temp = _class = function () {
   }
   return true;
 }, _class.needBodyArg = function (methodConfig, actionType, actionNoRedundantBody) {
-  if (actionNoRedundantBody && actionType === 'start' && !methodConfig.needBody) {
+  if (actionNoRedundantBody && (actionType === 'start' || actionType === 'cancel') && !methodConfig.needBody) {
     return false;
   }
   return true;

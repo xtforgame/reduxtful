@@ -6,7 +6,7 @@ class ErrorFromMiddleware {
   }
 }
 
-const toNull = () => { type: 'TO_NULL' };
+const toNull = () => ({ type: 'TO_NULL' });
 
 export default (axios, Observable) => (axiosOptions, {
     success: successAction = toNull,

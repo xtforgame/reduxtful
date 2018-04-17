@@ -17,7 +17,7 @@ export default class ActionsCreator {
   }
   
   static needBodyArg = (methodConfig, actionType, actionNoRedundantBody) => {
-    if(actionNoRedundantBody && actionType === 'start' && !methodConfig.needBody){
+    if(actionNoRedundantBody && (actionType === 'start' || actionType === 'cancel') && !methodConfig.needBody){
       return false;
     }
     return true;

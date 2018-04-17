@@ -86,6 +86,40 @@ var UrlInfo = function () {
       this.varParts = varParts;
     }
   }, {
+    key: 'include',
+    value: function include(entryA, entryB) {
+      for (var i = 0; i < this.varParts.length; i++) {
+        var varName = this.varParts[i].varName;
+        var varA = entryA[varName];
+        var varB = entryB[varName];
+        if (varA == null) {
+          return true;
+        }
+        if (varA !== varB) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }, {
+    key: 'isEqual',
+    value: function isEqual(entryA, entryB) {
+      var terminalVars = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+      for (var i = 0; i < this.varParts.length; i++) {
+        var varName = this.varParts[i].varName;
+        var varA = entryA[varName];
+        var varB = entryB[varName];
+        if (varA == null && varB == null && ~terminalVars.indexOf(varName)) {
+          return true;
+        }
+        if (varA !== varB) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }, {
     key: 'compile',
     value: function compile() {
       var entry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};

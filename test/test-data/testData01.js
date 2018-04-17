@@ -81,6 +81,11 @@ export default {
   setupMock: (mock) => {
     return mock
     .onGet('/api/api-member-01').reply(200, { url: '/api/api-member-01' })
+    .onGet('/api/api-can-be-cancel').reply((config) =>
+      new Promise(resolve => setTimeout(() =>
+        resolve([200, { url: '/api/api-can-be-cancel' }]), 1000)
+      )
+    )
     .onPost('/api/users').reply(201, { url: '/api/users/1', id: 1 })
     .onGet('/api/users').reply(200, { url: '/api/users' })
     .onPatch('/api/users').reply(200, { url: '/api/users' })
@@ -96,6 +101,12 @@ export default {
     .onPatch('/api/users/2').reply(200, { url: '/api/users/2' })
     .onDelete('/api/users/2').reply(200, { url: '/api/users/2' })
 
+    .onGet('/api/users/can-be-cancel').reply((config) =>
+      new Promise(resolve => setTimeout(() =>
+        resolve([200, { url: '/api/users/can-be-cancel' }]), 1000)
+      )
+    )
+
     .onGet('/api/users/1/tasks/1').reply(200, { url: '/api/users/1/tasks/1' })
     .onPatch('/api/users/1/tasks/1', { name: 'develop reduxtful lib.' }).reply(200, { name: 'develop reduxtful lib.', url: '/api/users/1/tasks/1' })
     .onPatch('/api/users/1/tasks/1').reply(200, { url: '/api/users/1/tasks/1' })
@@ -104,6 +115,12 @@ export default {
     .onGet('/api/users/1/tasks/2').reply(200, { url: '/api/users/1/tasks/2' })
     .onPatch('/api/users/1/tasks/2', { name: 'develop back-end api.' }).reply(200, { name: 'develop back-end api.', url: '/api/users/1/tasks/2' })
     .onPatch('/api/users/1/tasks/2').reply(200, { url: '/api/users/1/tasks/2' })
-    .onDelete('/api/users/1/tasks/2').reply(200, { url: '/api/users/1/tasks/2' });
+    .onDelete('/api/users/1/tasks/2').reply(200, { url: '/api/users/1/tasks/2' })
+    
+    .onGet('/api/users/1/tasks/can-be-cancel').reply((config) =>
+      new Promise(resolve => setTimeout(() =>
+        resolve([200, { url: '/api/users/1/tasks/can-be-cancel' }]), 1000)
+      )
+    );
   },
 };

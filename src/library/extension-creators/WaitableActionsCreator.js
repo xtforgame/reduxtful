@@ -23,8 +23,8 @@ export default class WaitableActionsCreator {
         ...actionData,
         [WAIT_FOR_ACTION]: action => action.type === actions.respond.type
           && action.options.transferables.waitToken === waitToken,
-        [ERROR_ACTION]: action => action.type === actions.respondError.type
-          && action.options.transferables.waitToken === waitToken,
+        [ERROR_ACTION]: action => (action.type === actions.cancel.type) || (action.type === actions.respondError.type
+          && action.options.transferables.waitToken === waitToken),
         [CALLBACK_ARGUMENT]: action => action,
         [CALLBACK_ERROR_ARGUMENT]: action => action,
       };

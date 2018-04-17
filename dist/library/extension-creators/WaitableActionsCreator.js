@@ -120,7 +120,7 @@ var WaitableActionsCreator = (_temp = _class = function () {
     return _extends({}, actionData, (_extends2 = {}, _defineProperty(_extends2, WAIT_FOR_ACTION, function (action) {
       return action.type === actions.respond.type && action.options.transferables.waitToken === waitToken;
     }), _defineProperty(_extends2, ERROR_ACTION, function (action) {
-      return action.type === actions.respondError.type && action.options.transferables.waitToken === waitToken;
+      return action.type === actions.cancel.type || action.type === actions.respondError.type && action.options.transferables.waitToken === waitToken;
     }), _defineProperty(_extends2, CALLBACK_ARGUMENT, function (action) {
       return action;
     }), _defineProperty(_extends2, CALLBACK_ERROR_ARGUMENT, function (action) {
