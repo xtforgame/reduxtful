@@ -15,7 +15,7 @@ var _ActionTypesCreator = require('./ActionTypesCreator');
 
 var _ActionTypesCreator2 = _interopRequireDefault(_ActionTypesCreator);
 
-var _UrlInfo = require('../UrlInfo');
+var _UrlInfo = require('../core/UrlInfo');
 
 var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 

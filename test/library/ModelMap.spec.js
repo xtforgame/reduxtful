@@ -1,7 +1,7 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import ModelMap from 'library/ModelMap';
+import { ModelMap } from 'library';
 import configureMockStore from 'redux-mock-store';
 import { combineReducers, createStore, applyMiddleware, compose as reduxCompose } from 'redux';
 import { combineReducers as combineImmutableReducers } from 'redux-immutable';

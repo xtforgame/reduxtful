@@ -1,4 +1,4 @@
-import { toUnderscore, capitalizeFirstLetter } from './utils';
+import { toUnderscore, capitalizeFirstLetter } from './functions';
 
 let supportedActions = [
   { name: 'start' },

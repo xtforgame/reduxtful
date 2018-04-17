@@ -11,7 +11,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _class, _temp;
 
-var _utils = require('../utils');
+var _functions = require('../core/functions');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -66,7 +66,7 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
   };
 
   var modelName = names.model;
-  var capitalizeModelName = (0, _utils.capitalizeFirstLetter)(modelName);
+  var capitalizeModelName = (0, _functions.capitalizeFirstLetter)(modelName);
 
   return _ref = {}, _defineProperty(_ref, modelName + 'Selector', resourceSelector), _defineProperty(_ref, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), _defineProperty(_ref, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), _defineProperty(_ref, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), _defineProperty(_ref, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), _defineProperty(_ref, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), _ref;
 };

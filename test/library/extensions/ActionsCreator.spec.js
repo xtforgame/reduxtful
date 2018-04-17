@@ -1,8 +1,8 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import ModelMap from 'library/ModelMap';
-import { capitalizeFirstLetter } from 'library/utils';
+import { ModelMap } from 'library';
+import { capitalizeFirstLetter } from 'library/core/functions';
 import {
   testData01,
 } from '../../test-data';

@@ -1,14 +1,14 @@
-import ModelMap, { defaultExtensions } from './ModelMap';
-import UrlInfo from './UrlInfo';
-import createMethodConfigs from './createMethodConfigs';
-import ActionTypesCreator from './extension-creators/ActionTypesCreator';
-import ActionsCreator from './extension-creators/ActionsCreator';
-import ReducerCreator from './extension-creators/ReducerCreator';
-import EpicCreator from './extension-creators/EpicCreator';
-import SelectorsCreator from './extension-creators/SelectorsCreator';
+import ModelMap, { defaultExtensions } from './core/ModelMap';
+import UrlInfo from './core/UrlInfo';
+import createMethodConfigs from './core/createMethodConfigs';
+import ActionTypesCreator from './extensions/ActionTypesCreator';
+import ActionsCreator from './extensions/ActionsCreator';
+import ReducerCreator from './extensions/ReducerCreator';
+import EpicCreator from './extensions/EpicCreator';
+import SelectorsCreator from './extensions/SelectorsCreator';
 
 // optional, `redux-wait-for-action` required
-import WaitableActionsCreator from './extension-creators/WaitableActionsCreator';
+import WaitableActionsCreator from './extensions/WaitableActionsCreator';
 
 export {
   ModelMap,

@@ -1,4 +1,4 @@
-import { toUnderscore } from '../utils';
+import { toUnderscore } from '../core/functions';
 
 export default class ActionTypesCreator {
   static $name = 'types';

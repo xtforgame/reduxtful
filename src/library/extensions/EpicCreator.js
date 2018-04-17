@@ -1,7 +1,7 @@
 import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
-import AxiosObservable from '../utils/AxiosObservable';
-import UrlInfo from '../UrlInfo';
+import AxiosObservable from '../core/AxiosObservable';
+import UrlInfo from '../core/UrlInfo';
 
 const toNull = () => { type: 'TO_NULL' };
 

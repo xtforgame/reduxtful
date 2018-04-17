@@ -21,23 +21,23 @@ var _RestModel = require('./RestModel');
 
 var _RestModel2 = _interopRequireDefault(_RestModel);
 
-var _ActionTypesCreator = require('./extension-creators/ActionTypesCreator');
+var _ActionTypesCreator = require('../extensions/ActionTypesCreator');
 
 var _ActionTypesCreator2 = _interopRequireDefault(_ActionTypesCreator);
 
-var _ActionsCreator = require('./extension-creators/ActionsCreator');
+var _ActionsCreator = require('../extensions/ActionsCreator');
 
 var _ActionsCreator2 = _interopRequireDefault(_ActionsCreator);
 
-var _ReducerCreator = require('./extension-creators/ReducerCreator');
+var _ReducerCreator = require('../extensions/ReducerCreator');
 
 var _ReducerCreator2 = _interopRequireDefault(_ReducerCreator);
 
-var _EpicCreator = require('./extension-creators/EpicCreator');
+var _EpicCreator = require('../extensions/EpicCreator');
 
 var _EpicCreator2 = _interopRequireDefault(_EpicCreator);
 
-var _SelectorsCreator = require('./extension-creators/SelectorsCreator');
+var _SelectorsCreator = require('../extensions/SelectorsCreator');
 
 var _SelectorsCreator2 = _interopRequireDefault(_SelectorsCreator);
 

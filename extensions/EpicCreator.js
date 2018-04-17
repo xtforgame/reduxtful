@@ -17,11 +17,11 @@ var _ActionsCreator = require('./ActionsCreator');
 
 var _ActionsCreator2 = _interopRequireDefault(_ActionsCreator);
 
-var _AxiosObservable = require('../utils/AxiosObservable');
+var _AxiosObservable = require('../core/AxiosObservable');
 
 var _AxiosObservable2 = _interopRequireDefault(_AxiosObservable);
 
-var _UrlInfo = require('../UrlInfo');
+var _UrlInfo = require('../core/UrlInfo');
 
 var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 

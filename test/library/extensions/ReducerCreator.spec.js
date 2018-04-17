@@ -1,7 +1,7 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import ModelMap from 'library/ModelMap';
+import { ModelMap } from 'library';
 import {
   testData01,
 } from '../../test-data';

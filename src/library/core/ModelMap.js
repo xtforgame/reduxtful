@@ -1,11 +1,11 @@
 import createMethodConfigs from './createMethodConfigs';
 import UrlInfo from './UrlInfo';
 import RestModel from './RestModel';
-import ActionTypesCreator from './extension-creators/ActionTypesCreator';
-import ActionsCreator from './extension-creators/ActionsCreator';
-import ReducerCreator from './extension-creators/ReducerCreator';
-import EpicCreator from './extension-creators/EpicCreator';
-import SelectorsCreator from './extension-creators/SelectorsCreator';
+import ActionTypesCreator from '../extensions/ActionTypesCreator';
+import ActionsCreator from '../extensions/ActionsCreator';
+import ReducerCreator from '../extensions/ReducerCreator';
+import EpicCreator from '../extensions/EpicCreator';
+import SelectorsCreator from '../extensions/SelectorsCreator';
 
 export const defaultExtensions = [
   ActionTypesCreator,

@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import { ModelMap, defaultExtensions, WaitableActionsCreator } from 'library';
-import { capitalizeFirstLetter } from 'library/utils';
+import { capitalizeFirstLetter } from 'library/core/functions';
 import {
   testData01,
 } from '../../test-data';

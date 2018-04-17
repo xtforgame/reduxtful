@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _utils = require('../utils');
+var _functions = require('../core/functions');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -45,7 +45,7 @@ exports.default = function (axios, Observable) {
         _options$axiosCancelT = options.axiosCancelTokenSource,
         axiosCancelTokenSource = _options$axiosCancelT === undefined ? axios.CancelToken.source() : _options$axiosCancelT;
 
-    var observable = Observable.fromPromise((0, _utils.promiseWait)(debugDelay).then(function () {
+    var observable = Observable.fromPromise((0, _functions.promiseWait)(debugDelay).then(function () {
       return axios(_extends({}, axiosOptions, {
         cancelToken: axiosCancelTokenSource.token
       }));

@@ -1,5 +1,5 @@
 import ActionTypesCreator from './ActionTypesCreator';
-import UrlInfo from '../UrlInfo';
+import UrlInfo from '../core/UrlInfo';
 
 const mergePartialState = (state = {}, action, entryPath, mergeFunc) => {
   if(entryPath.length != 0){

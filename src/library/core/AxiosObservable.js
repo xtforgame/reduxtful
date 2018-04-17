@@ -1,4 +1,4 @@
-import { promiseWait } from '../utils';
+import { promiseWait } from '../core/functions';
 
 class ErrorFromMiddleware {
   constructor(error){
