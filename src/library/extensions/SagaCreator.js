@@ -1,6 +1,6 @@
 import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
-import AxiosObservable from '../core/AxiosObservable';
+import axiosPromise from '../core/axiosPromise';
 import UrlInfo from '../core/UrlInfo';
 
 const toNull = () => ({ type: 'TO_NULL' });
@@ -59,8 +59,8 @@ const createRespondErrorActionCreatorForMember = (actions, startAction) => (erro
   );
 }
 
-export default class EpicCreator {
-  static $name = 'epics';
+export default class SagaCreator {
+  static $name = 'sagas';
 
   create({ ns, names, url, getShared, methodConfigs }, { getId = (action => action.data.id) }, extensionConfig){
     let shared = {};
@@ -68,13 +68,11 @@ export default class EpicCreator {
 
     const {
       axios,
-      Observable,
+      effects: { takeEvery, call, put, race, take },
       getHeaders = () => ({}),
       responseMiddleware,
       errorMiddleware,
     } = extensionConfig;
-
-    const axiosObservable = AxiosObservable(axios, Observable);
 
     methodConfigs.forEach(methodConfig => {
       if(methodConfig.supportedActions.length <= 1){
@@ -90,11 +88,11 @@ export default class EpicCreator {
         names,
       };
 
-      if(!methodConfig.getEpicName || !methodConfig.getUrlTemplate){
+      if(!methodConfig.getSagaName || !methodConfig.getUrlTemplate){
         return { shared, exposed };
       }
 
-      const epicName = methodConfig.getEpicName(arg);
+      const sagaName = methodConfig.getSagaName(arg);
       const urlInfo = new UrlInfo(methodConfig.getUrlTemplate({url, names}));
 
       // special case for posting a collection
@@ -108,37 +106,45 @@ export default class EpicCreator {
       const getRespondErrorActionCreator = (methodConfig.isForCollection === true) ?
         createRespondErrorActionCreatorForCollection : createRespondErrorActionCreatorForMember;
 
-      shared[methodConfig.name] = (action$, store) => {
-        return action$.ofType(actionTypes.start)
-          .mergeMap(action => {
-            const url = urlInfo.compile(action.entry);
-            const query = action.options.query;
-            const source = axios.CancelToken.source();
+      shared[methodConfig.name] = function* requestSaga(){
+        yield takeEvery(actionTypes.start, function* foo(action) {
+          const url = urlInfo.compile(action.entry);
+          const query = action.options.query;
+          const source = axios.CancelToken.source();
 
-            return axiosObservable({
-              method: methodConfig.method,
-              url,
-              headers: getHeaders(),
-              data: action.data,
-              params: query,
-            }, {
-              success: getRespondActionCreator(actions, action, getId),
-              error: getRespondErrorActionCreator(actions, action),
-              // cancel: actions.clearError,
-            }, {
-              responseMiddleware,
-              errorMiddleware,
-              axiosCancelTokenSource: source,
-              cancelStream$: action$.filter(cancelAction => {
+          try {
+            const { response, cancelSagas } = yield race({
+              response: call(axiosPromise, axios, {
+                method: methodConfig.method,
+                url,
+                headers: getHeaders(),
+                data: action.data,
+                params: query,
+              }, {
+                responseMiddleware,
+                errorMiddleware,
+                axiosCancelTokenSource: source,
+              }),
+              cancelSagas: take(cancelAction => {
                 if(cancelAction.type !== actionTypes.cancel){
                   return false;
                 }
                 return urlInfo.include(cancelAction.entry, action.entry);
               }),
             });
-          });
-      };
-      exposed[epicName] = shared[methodConfig.name];
+
+            if(response){
+              yield put(getRespondActionCreator(actions, action, getId)(response));
+            }else{
+              source.cancel('Operation canceled by the user.');
+              yield put(toNull());
+            }
+          } catch (error) {
+            yield put(getRespondErrorActionCreator(actions, action)(error));
+          }
+        });
+      }
+      exposed[sagaName] = shared[methodConfig.name];
     });
     return { shared, exposed };
   }

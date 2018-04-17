@@ -5,20 +5,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _class, _temp;
 
 var _functions = require('../core/functions');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ActionTypesCreator = (_temp = _class = function () {
   function ActionTypesCreator() {
-    _classCallCheck(this, ActionTypesCreator);
+    (0, _classCallCheck3.default)(this, ActionTypesCreator);
   }
 
-  _createClass(ActionTypesCreator, [{
+  (0, _createClass3.default)(ActionTypesCreator, [{
     key: 'create',
     value: function create(_ref) {
       var ns = _ref.ns,
@@ -50,7 +56,6 @@ var ActionTypesCreator = (_temp = _class = function () {
       return { shared: shared, exposed: exposed };
     }
   }]);
-
   return ActionTypesCreator;
 }(), _class.$name = 'types', _temp);
 exports.default = ActionTypesCreator;

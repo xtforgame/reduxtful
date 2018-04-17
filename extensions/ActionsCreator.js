@@ -5,9 +5,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _class, _temp;
 
@@ -17,14 +25,12 @@ var _ActionTypesCreator2 = _interopRequireDefault(_ActionTypesCreator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var ActionsCreator = (_temp = _class = function () {
   function ActionsCreator() {
-    _classCallCheck(this, ActionsCreator);
+    (0, _classCallCheck3.default)(this, ActionsCreator);
   }
 
-  _createClass(ActionsCreator, [{
+  (0, _createClass3.default)(ActionsCreator, [{
     key: 'create',
     value: function create(_ref, _ref2) {
       var ns = _ref.ns,
@@ -64,7 +70,6 @@ var ActionsCreator = (_temp = _class = function () {
       return { shared: shared, exposed: exposed };
     }
   }]);
-
   return ActionsCreator;
 }(), _class.$name = 'actions', _class.needIdArg = function (methodConfig, actionType) {
   if (methodConfig.needId != null) {
@@ -88,21 +93,21 @@ var ActionsCreator = (_temp = _class = function () {
     return withBodyArg ? function (id, data) {
       var entry = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return { type: type, data: data, entry: _extends({}, entry, { id: id }), options: _extends({ transferables: {} }, options) };
+      return { type: type, data: data, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({ transferables: {} }, options) };
     } : function (id) {
       var entry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return { type: type, entry: _extends({}, entry, { id: id }), options: _extends({ transferables: {} }, options) };
+      return { type: type, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({ transferables: {} }, options) };
     };
   } else {
     return withBodyArg ? function (data) {
       var entry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return { type: type, data: data, entry: entry, options: _extends({ transferables: {} }, options) };
+      return { type: type, data: data, entry: entry, options: (0, _extends3.default)({ transferables: {} }, options) };
     } : function () {
       var entry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return { type: type, entry: entry, options: _extends({ transferables: {} }, options) };
+      return { type: type, entry: entry, options: (0, _extends3.default)({ transferables: {} }, options) };
     };
   }
 }, _temp);

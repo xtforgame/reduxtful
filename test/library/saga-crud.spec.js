@@ -1,7 +1,10 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import { ModelMap, defaultExtensions, WaitableActionsCreator } from 'library';
+import { ModelMap, defaultExtensions } from 'library';
+import SagaCreator from 'library/extensions/SagaCreator';
+import SelectorsCreator from 'library/extensions/SelectorsCreator';
+import WaitableActionsCreator from 'library/extensions/WaitableActionsCreator';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import configureMockStore from 'redux-mock-store';
@@ -15,17 +18,15 @@ import createReduxWaitForMiddleware,
   CALLBACK_ERROR_ARGUMENT,
 } from 'redux-wait-for-action';
 import { Map as ImmutableMap } from 'immutable';
-import {
-  createEpicMiddleware,
-  combineEpics,
-} from 'redux-observable';
+import createSagaMiddleware from 'redux-saga';
+import { call, all } from 'redux-saga/effects';
 import {
   testData01,
 } from '../test-data';
 
 const expect = chai.expect;
 
-describe('CRUD Test Cases', function(){
+describe('Saga CRUD Test Cases', function(){
   let mock = null;
   beforeEach(() => {
     mock = testData01.setupMock(new MockAdapter(axios));
@@ -39,11 +40,15 @@ describe('CRUD Test Cases', function(){
     this.timeout(3000);
 
     it('should be able to pass the mockStore test', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
-      const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
-      const middlewares = [createEpicMiddleware(epic), createReduxWaitForMiddleware()];
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SagaCreator, SelectorsCreator, WaitableActionsCreator]));
+      const rootSaga = function* () {
+        yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
+      }
+      const sagaMiddleware = createSagaMiddleware();
+      const middlewares = [sagaMiddleware, createReduxWaitForMiddleware()];
       const mockStore = configureMockStore(middlewares)
       const store = mockStore(ImmutableMap({ global: {} }));
+      sagaMiddleware.run(rootSaga);
 
       return store.dispatch({
         ...modelMap.actions.getApi('api-member-01'),
@@ -58,11 +63,13 @@ describe('CRUD Test Cases', function(){
     });
 
     it('should be able to pass the real redux with immutable reducers test', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SagaCreator, SelectorsCreator, WaitableActionsCreator]));
       // console.log('modelMap.actions :', modelMap.actions);
       expect(modelMap).to.be.an.instanceof(ModelMap);
-
-      const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
+      const rootSaga = function* () {
+        yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
+      }
+      const sagaMiddleware = createSagaMiddleware();
       const store =  createStore(
         combineImmutableReducers({
           global: combineReducers({
@@ -74,10 +81,11 @@ describe('CRUD Test Cases', function(){
         }),
         ImmutableMap({ global: {} }),
         reduxCompose(
-          applyMiddleware(createEpicMiddleware(epic),
-          createReduxWaitForMiddleware())
+          applyMiddleware(sagaMiddleware, createReduxWaitForMiddleware())
         )
       );
+      sagaMiddleware.run(rootSaga);
+
       return store.dispatch({
         ...modelMap.actions.getApi('api-member-01'),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
@@ -94,11 +102,14 @@ describe('CRUD Test Cases', function(){
     });
 
     it('should be able to cancel', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SagaCreator, SelectorsCreator, WaitableActionsCreator]));
       // console.log('modelMap.actions :', modelMap.actions);
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
-      const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
+      const rootSaga = function* () {
+        yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
+      }
+      const sagaMiddleware = createSagaMiddleware();
       const store =  createStore(
         combineImmutableReducers({
           global: combineReducers({
@@ -110,10 +121,10 @@ describe('CRUD Test Cases', function(){
         }),
         ImmutableMap({ global: {} }),
         reduxCompose(
-          applyMiddleware(createEpicMiddleware(epic),
-          createReduxWaitForMiddleware())
+          applyMiddleware(sagaMiddleware, createReduxWaitForMiddleware())
         )
       );
+      sagaMiddleware.run(rootSaga);
       const p = store.dispatch({
         ...modelMap.actions.getApi('api-can-be-cancel'),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
@@ -141,11 +152,14 @@ describe('CRUD Test Cases', function(){
     let modelMap = null;
 
     beforeEach(() => {
-      modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([WaitableActionsCreator]));
+      modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SagaCreator, SelectorsCreator, WaitableActionsCreator]));
       // console.log('modelMap.actions :', modelMap.actions);
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
-      const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
+      const rootSaga = function* () {
+        yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
+      }
+      const sagaMiddleware = createSagaMiddleware();
       store =  createStore(
         combineImmutableReducers({
           global: combineReducers({
@@ -157,10 +171,10 @@ describe('CRUD Test Cases', function(){
         }),
         ImmutableMap({ global: {} }),
         reduxCompose(
-          applyMiddleware(createEpicMiddleware(epic),
-          createReduxWaitForMiddleware())
+          applyMiddleware(sagaMiddleware, createReduxWaitForMiddleware())
         )
       );
+      sagaMiddleware.run(rootSaga);
     });
 
     describe('Collection', function(){

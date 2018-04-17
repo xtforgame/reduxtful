@@ -3,13 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var normalizeModelDefine = function normalizeModelDefine(modelDefine) {
-  var normalized = _extends({}, modelDefine);
+  var normalized = (0, _extends3.default)({}, modelDefine);
 
   if (typeof normalized.names === 'string') {
     normalized.names = {
@@ -19,7 +26,7 @@ var normalizeModelDefine = function normalizeModelDefine(modelDefine) {
     };
   }
 
-  normalized.config = _extends({
+  normalized.config = (0, _extends3.default)({
     actionNoRedundantBody: true
   }, normalized.config);
 
@@ -31,7 +38,7 @@ var normalizeModelDefine = function normalizeModelDefine(modelDefine) {
 var RestModel = function RestModel(ns, modelDefine, Creators, methodConfigs) {
   var _this = this;
 
-  _classCallCheck(this, RestModel);
+  (0, _classCallCheck3.default)(this, RestModel);
 
   this.getShared = function (extensionName) {
     return extensionName ? _this.extensions.shared[extensionName] : _this.extensions.shared;
@@ -45,7 +52,7 @@ var RestModel = function RestModel(ns, modelDefine, Creators, methodConfigs) {
   this.modelDefine = normalizeModelDefine(modelDefine);
   this.methodConfigs = methodConfigs;
 
-  var args = _extends({}, this.modelDefine, {
+  var args = (0, _extends3.default)({}, this.modelDefine, {
     ns: this.ns,
     methodConfigs: this.methodConfigs,
     getShared: this.getShared,
@@ -70,7 +77,7 @@ var RestModel = function RestModel(ns, modelDefine, Creators, methodConfigs) {
         exposed = _creator$create.exposed;
 
     _this.extensions.shared[Creator.$name] = shared;
-    _this.extensions.exposed[Creator.$name] = _extends({}, _this.extensions.exposed[Creator.$name], exposed);
+    _this.extensions.exposed[Creator.$name] = (0, _extends3.default)({}, _this.extensions.exposed[Creator.$name], exposed);
   });
 };
 

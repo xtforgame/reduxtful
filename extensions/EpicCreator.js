@@ -5,7 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _class, _temp;
 
@@ -27,10 +33,8 @@ var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var toNull = function toNull() {
-  type: 'TO_NULL';
+  return { type: 'TO_NULL' };
 };
 
 var createRespondActionCreatorForCollection = function createRespondActionCreatorForCollection(actions, startAction) {
@@ -80,10 +84,10 @@ var createRespondErrorActionCreatorForMember = function createRespondErrorAction
 
 var EpicCreator = (_temp = _class = function () {
   function EpicCreator() {
-    _classCallCheck(this, EpicCreator);
+    (0, _classCallCheck3.default)(this, EpicCreator);
   }
 
-  _createClass(EpicCreator, [{
+  (0, _createClass3.default)(EpicCreator, [{
     key: 'create',
     value: function create(_ref, _ref2, extensionConfig) {
       var ns = _ref.ns,
@@ -173,7 +177,6 @@ var EpicCreator = (_temp = _class = function () {
       return { shared: shared, exposed: exposed };
     }
   }]);
-
   return EpicCreator;
 }(), _class.$name = 'epics', _temp);
 exports.default = EpicCreator;

@@ -1,8 +1,9 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import { ModelMap } from 'library';
+import { ModelMap, defaultExtensions } from 'library';
 import { capitalizeFirstLetter } from 'library/core/functions';
+import EpicCreator from 'library/extensions/EpicCreator';
 import {
   testData01,
 } from '../../test-data';
@@ -12,7 +13,7 @@ const expect = chai.expect;
 describe('EpicCreator Test Cases', function(){
   describe('Basic', function(){
     it('should export all epics', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine);
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([EpicCreator]));
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.epics, 'Not existed: modelMap.epics').to.exist;

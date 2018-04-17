@@ -5,17 +5,27 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
 var _class, _temp;
 
 var _functions = require('../core/functions');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var createSelectors = function createSelectors(createSelector, names, baseSelector) {
   var _ref;
@@ -68,15 +78,15 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
   var modelName = names.model;
   var capitalizeModelName = (0, _functions.capitalizeFirstLetter)(modelName);
 
-  return _ref = {}, _defineProperty(_ref, modelName + 'Selector', resourceSelector), _defineProperty(_ref, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), _defineProperty(_ref, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), _defineProperty(_ref, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), _defineProperty(_ref, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), _defineProperty(_ref, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), _ref;
+  return _ref = {}, (0, _defineProperty3.default)(_ref, modelName + 'Selector', resourceSelector), (0, _defineProperty3.default)(_ref, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), (0, _defineProperty3.default)(_ref, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), _ref;
 };
 
 var SelectorsCreator = (_temp = _class = function () {
   function SelectorsCreator() {
-    _classCallCheck(this, SelectorsCreator);
+    (0, _classCallCheck3.default)(this, SelectorsCreator);
   }
 
-  _createClass(SelectorsCreator, [{
+  (0, _createClass3.default)(SelectorsCreator, [{
     key: 'create',
     value: function create(_ref2, config, extensionConfig) {
       var names = _ref2.names,
@@ -93,12 +103,11 @@ var SelectorsCreator = (_temp = _class = function () {
 
 
       shared = createSelectors(createSelector, names, extensionConfig.baseSelector);
-      exposed = _extends({}, shared);
+      exposed = (0, _extends3.default)({}, shared);
 
       return { shared: shared, exposed: exposed };
     }
   }]);
-
   return SelectorsCreator;
 }(), _class.$name = 'selectors', _temp);
 exports.default = SelectorsCreator;

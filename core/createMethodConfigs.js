@@ -108,6 +108,18 @@ var getEpicName = function getEpicName() {
   };
 };
 
+var getSagaName = function getSagaName() {
+  var isForCollection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  return function (_ref5) {
+    var methodName = _ref5.methodName,
+        names = _ref5.names,
+        actionTypeName = _ref5.actionTypeName;
+
+    var _getActionName = getActionName(isForCollection);
+    return _getActionName({ methodName: methodName, names: names, actionTypeName: 'start' }) + 'Saga';
+  };
+};
+
 function createMethodConfigs(ns, names) {
   return [{
     name: 'selectPath',
@@ -122,21 +134,6 @@ function createMethodConfigs(ns, names) {
     supportedActions: supportedActions,
     isForCollection: true,
     needBody: true,
-    getUrlTemplate: function getUrlTemplate(_ref5) {
-      var names = _ref5.names,
-          url = _ref5.url;
-      return url;
-    },
-    getActionContantName: getActionContantName,
-    getActionName: getActionName(true),
-    getReducerName: getReducerName,
-    getEpicName: getEpicName(true)
-  }, {
-    name: 'getCollection',
-    method: 'get',
-    supportedActions: supportedActions,
-    isForCollection: true,
-    needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref6) {
       var names = _ref6.names,
           url = _ref6.url;
@@ -145,13 +142,14 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(true),
     getReducerName: getReducerName,
-    getEpicName: getEpicName(true)
+    getEpicName: getEpicName(true),
+    getSagaName: getSagaName(true)
   }, {
-    name: 'patchCollection',
-    method: 'patch',
+    name: 'getCollection',
+    method: 'get',
     supportedActions: supportedActions,
     isForCollection: true,
-    needBody: true,
+    needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref7) {
       var names = _ref7.names,
           url = _ref7.url;
@@ -160,13 +158,14 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(true),
     getReducerName: getReducerName,
-    getEpicName: getEpicName(true)
+    getEpicName: getEpicName(true),
+    getSagaName: getSagaName(true)
   }, {
-    name: 'deleteCollection',
-    method: 'delete',
+    name: 'patchCollection',
+    method: 'patch',
     supportedActions: supportedActions,
     isForCollection: true,
-    needBody: false,
+    needBody: true,
     getUrlTemplate: function getUrlTemplate(_ref8) {
       var names = _ref8.names,
           url = _ref8.url;
@@ -175,10 +174,12 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(true),
     getReducerName: getReducerName,
-    getEpicName: getEpicName(true)
+    getEpicName: getEpicName(true),
+    getSagaName: getSagaName(true)
   }, {
-    name: 'clearCollectionCache',
-    supportedActions: [{ name: 'start' }],
+    name: 'deleteCollection',
+    method: 'delete',
+    supportedActions: supportedActions,
     isForCollection: true,
     needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref9) {
@@ -189,28 +190,29 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(true),
     getReducerName: getReducerName,
-    getEpicName: getEpicName(true)
+    getEpicName: getEpicName(true),
+    getSagaName: getSagaName(true)
+  }, {
+    name: 'clearCollectionCache',
+    supportedActions: [{ name: 'start' }],
+    isForCollection: true,
+    needBody: false,
+    getUrlTemplate: function getUrlTemplate(_ref10) {
+      var names = _ref10.names,
+          url = _ref10.url;
+      return url;
+    },
+    getActionContantName: getActionContantName,
+    getActionName: getActionName(true),
+    getReducerName: getReducerName,
+    getEpicName: getEpicName(true),
+    getSagaName: getSagaName(true)
   }, {
     name: 'post',
     method: 'post',
     supportedActions: supportedActions,
     isForCollection: false,
     needBody: true,
-    getUrlTemplate: function getUrlTemplate(_ref10) {
-      var names = _ref10.names,
-          url = _ref10.url;
-      return url + '/{id}';
-    },
-    getActionContantName: getActionContantName,
-    getActionName: getActionName(),
-    getReducerName: getReducerName,
-    getEpicName: getEpicName()
-  }, {
-    name: 'get',
-    method: 'get',
-    supportedActions: supportedActions,
-    isForCollection: false,
-    needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref11) {
       var names = _ref11.names,
           url = _ref11.url;
@@ -219,13 +221,14 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(),
     getReducerName: getReducerName,
-    getEpicName: getEpicName()
+    getEpicName: getEpicName(),
+    getSagaName: getSagaName()
   }, {
-    name: 'patch',
-    method: 'patch',
+    name: 'get',
+    method: 'get',
     supportedActions: supportedActions,
     isForCollection: false,
-    needBody: true,
+    needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref12) {
       var names = _ref12.names,
           url = _ref12.url;
@@ -234,13 +237,14 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(),
     getReducerName: getReducerName,
-    getEpicName: getEpicName()
+    getEpicName: getEpicName(),
+    getSagaName: getSagaName()
   }, {
-    name: 'delete',
-    method: 'delete',
+    name: 'patch',
+    method: 'patch',
     supportedActions: supportedActions,
     isForCollection: false,
-    needBody: false,
+    needBody: true,
     getUrlTemplate: function getUrlTemplate(_ref13) {
       var names = _ref13.names,
           url = _ref13.url;
@@ -249,7 +253,24 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(),
     getReducerName: getReducerName,
-    getEpicName: getEpicName()
+    getEpicName: getEpicName(),
+    getSagaName: getSagaName()
+  }, {
+    name: 'delete',
+    method: 'delete',
+    supportedActions: supportedActions,
+    isForCollection: false,
+    needBody: false,
+    getUrlTemplate: function getUrlTemplate(_ref14) {
+      var names = _ref14.names,
+          url = _ref14.url;
+      return url + '/{id}';
+    },
+    getActionContantName: getActionContantName,
+    getActionName: getActionName(),
+    getReducerName: getReducerName,
+    getEpicName: getEpicName(),
+    getSagaName: getSagaName()
   }, {
     name: 'clearCache',
     supportedActions: [{ name: 'start' }],
@@ -258,7 +279,8 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(),
     getReducerName: getReducerName,
-    getEpicName: getEpicName()
+    getEpicName: getEpicName(),
+    getSagaName: getSagaName()
   }, {
     name: 'clearEachCache',
     supportedActions: [{ name: 'start' }],
@@ -268,6 +290,7 @@ function createMethodConfigs(ns, names) {
     getActionContantName: getActionContantName,
     getActionName: getActionName(),
     getReducerName: getReducerName,
-    getEpicName: getEpicName()
+    getEpicName: getEpicName(),
+    getSagaName: getSagaName()
   }];
 }

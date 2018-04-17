@@ -84,6 +84,11 @@ let getEpicName = (isForCollection = false) => ({methodName, names, actionTypeNa
   return `${_getActionName({methodName, names, actionTypeName: 'start'})}Epic`;
 };
 
+let getSagaName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {
+  const _getActionName = getActionName(isForCollection);
+  return `${_getActionName({methodName, names, actionTypeName: 'start'})}Saga`;
+};
+
 export default function createMethodConfigs(ns, names) {
   return [
     {
@@ -105,6 +110,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
+      getSagaName: getSagaName(true),
     },
     {
       name: 'getCollection',
@@ -117,6 +123,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
+      getSagaName: getSagaName(true),
     },
     {
       name: 'patchCollection',
@@ -129,6 +136,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
+      getSagaName: getSagaName(true),
     },
     {
       name: 'deleteCollection',
@@ -141,6 +149,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
+      getSagaName: getSagaName(true),
     },
     {
       name: 'clearCollectionCache',
@@ -152,6 +161,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(true),
       getReducerName,
       getEpicName: getEpicName(true),
+      getSagaName: getSagaName(true),
     },
     {
       name: 'post',
@@ -164,6 +174,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
+      getSagaName: getSagaName(),
     },
     {
       name: 'get',
@@ -176,6 +187,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
+      getSagaName: getSagaName(),
     },
     {
       name: 'patch',
@@ -188,6 +200,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
+      getSagaName: getSagaName(),
     },
     {
       name: 'delete',
@@ -200,6 +213,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
+      getSagaName: getSagaName(),
     },
     {
       name: 'clearCache',
@@ -210,6 +224,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
+      getSagaName: getSagaName(),
     },
     {
       name: 'clearEachCache',
@@ -221,6 +236,7 @@ export default function createMethodConfigs(ns, names) {
       getActionName: getActionName(),
       getReducerName,
       getEpicName: getEpicName(),
+      getSagaName: getSagaName(),
     },
   ];
 }

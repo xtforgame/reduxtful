@@ -5,11 +5,31 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _extends6 = require('babel-runtime/helpers/extends');
+
+var _extends7 = _interopRequireDefault(_extends6);
+
+var _toArray2 = require('babel-runtime/helpers/toArray');
+
+var _toArray3 = _interopRequireDefault(_toArray2);
 
 var _class, _temp;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _ActionTypesCreator = require('./ActionTypesCreator');
 
@@ -21,14 +41,6 @@ var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
-
 var mergePartialState = function mergePartialState() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var action = arguments[1];
@@ -36,11 +48,11 @@ var mergePartialState = function mergePartialState() {
   var mergeFunc = arguments[3];
 
   if (entryPath.length != 0) {
-    var _entryPath = _toArray(entryPath),
+    var _entryPath = (0, _toArray3.default)(entryPath),
         id = _entryPath[0],
         rest = _entryPath.slice(1);
 
-    return _extends({}, state, _defineProperty({}, id, mergePartialState(state[id], action, rest, mergeFunc)));
+    return (0, _extends7.default)({}, state, (0, _defineProperty3.default)({}, id, mergePartialState(state[id], action, rest, mergeFunc)));
   } else {
     return mergeFunc(state, action);
   }
@@ -50,7 +62,7 @@ var deepMergeByPathArray = function deepMergeByPathArray(state, action, _ref) {
   var urlInfo = _ref.urlInfo;
   return function (mergeFunc) {
     var entryPath = urlInfo.entryToPath(action.entry);
-    return mergePartialState(state, action, ['hierarchy'].concat(_toConsumableArray(entryPath)), mergeFunc);
+    return mergePartialState(state, action, ['hierarchy'].concat((0, _toConsumableArray3.default)(entryPath)), mergeFunc);
   };
 };
 
@@ -61,14 +73,14 @@ var genSelectFunc = function genSelectFunc(method, _ref2) {
     var action = arguments[1];
 
     if (action.entry === undefined) {
-      return _extends({}, state, {
+      return (0, _extends7.default)({}, state, {
         selection: null
       });
     }
     var entryPath = urlInfo.entryToPath(action.entry);
-    return _extends({}, state, {
+    return (0, _extends7.default)({}, state, {
       selection: {
-        entry: _extends({}, action.entry),
+        entry: (0, _extends7.default)({}, action.entry),
         entryPath: entryPath,
         id: action.data.id
       }
@@ -82,7 +94,7 @@ var genStartFunc = function genStartFunc(method, options) {
     var action = arguments[1];
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState);
+      return (0, _extends7.default)({}, partialState);
     });
   };
 };
@@ -93,7 +105,7 @@ var genCollectionRespondFunc = function genCollectionRespondFunc(method, options
     var action = arguments[1];
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
+      return (0, _extends7.default)({}, partialState, {
         collection: action.data
       });
     });
@@ -106,7 +118,7 @@ var genCollectionRespondDeleteFunc = function genCollectionRespondDeleteFunc(met
     var action = arguments[1];
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
+      return (0, _extends7.default)({}, partialState, {
         collection: null
       });
     });
@@ -119,7 +131,7 @@ var genCollectionClearFunc = function genCollectionClearFunc(options) {
     var action = arguments[1];
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
+      return (0, _extends7.default)({}, partialState, {
         collection: null
       });
     });
@@ -133,8 +145,8 @@ var genRepondFunc = function genRepondFunc(method, options) {
 
     var id = action.entry.id;
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
-        byId: _extends({}, partialState.byId, _defineProperty({}, id, action.data))
+      return (0, _extends7.default)({}, partialState, {
+        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, action.data))
       });
     });
   };
@@ -147,8 +159,8 @@ var genRespondDeleteFunc = function genRespondDeleteFunc(method, options) {
 
     var id = action.entry.id;
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
-        byId: _extends({}, partialState.byId, _defineProperty({}, id, null))
+      return (0, _extends7.default)({}, partialState, {
+        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, null))
       });
     });
   };
@@ -161,8 +173,8 @@ var genClearFunc = function genClearFunc(options) {
 
     var id = action.entry.id;
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
-        byId: _extends({}, partialState.byId, _defineProperty({}, id, null))
+      return (0, _extends7.default)({}, partialState, {
+        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, null))
       });
     });
   };
@@ -174,7 +186,7 @@ var genClearEachFunc = function genClearEachFunc(options) {
     var action = arguments[1];
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState, {
+      return (0, _extends7.default)({}, partialState, {
         byId: {}
       });
     });
@@ -187,7 +199,7 @@ var genRepondErrorFunc = function genRepondErrorFunc(method, options) {
     var action = arguments[1];
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
-      return _extends({}, partialState);
+      return (0, _extends7.default)({}, partialState);
     });
   };
 };
@@ -283,10 +295,10 @@ function createReducerFromFuncMap(funcMap) {
 
 var ReducerCreator = (_temp = _class = function () {
   function ReducerCreator() {
-    _classCallCheck(this, ReducerCreator);
+    (0, _classCallCheck3.default)(this, ReducerCreator);
   }
 
-  _createClass(ReducerCreator, [{
+  (0, _createClass3.default)(ReducerCreator, [{
     key: 'create',
     value: function create(_ref3) {
       var ns = _ref3.ns,
@@ -322,14 +334,13 @@ var ReducerCreator = (_temp = _class = function () {
           local[actionTypes[key]] = reducerFunctionCreators[methodConfig.name][key];
         });
 
-        exposed[reducerExposedFuncMapName] = _extends({}, exposed[reducerExposedFuncMapName], local);
+        exposed[reducerExposedFuncMapName] = (0, _extends7.default)({}, exposed[reducerExposedFuncMapName], local);
         exposed[reducerExposedName] = createReducerFromFuncMap(exposed[reducerExposedFuncMapName]);
       });
 
       return { shared: shared, exposed: exposed };
     }
   }]);
-
   return ReducerCreator;
 }(), _class.$name = 'reducers', _temp);
 exports.default = ReducerCreator;

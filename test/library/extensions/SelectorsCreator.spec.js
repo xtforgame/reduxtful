@@ -1,8 +1,9 @@
 /*eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
-import { ModelMap } from 'library';
+import { ModelMap, defaultExtensions } from 'library';
 import { capitalizeFirstLetter } from 'library/core/functions';
+import SelectorsCreator from 'library/extensions/SelectorsCreator';
 import {
   testData01,
 } from '../../test-data';
@@ -12,7 +13,7 @@ const expect = chai.expect;
 describe('SelectorsCreator Test Cases', function(){
   describe('Basic', function(){
     it('should export all selectors', () => {
-      const modelMap = new ModelMap('global', testData01.modelsDefine);
+      const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SelectorsCreator]));
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.selectors, 'Not existed: modelMap.selectors').to.exist;

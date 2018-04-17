@@ -5,9 +5,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _extends3 = require('babel-runtime/helpers/extends');
+
+var _extends4 = _interopRequireDefault(_extends3);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _class, _temp;
 
@@ -21,16 +33,12 @@ var _ActionsCreator2 = _interopRequireDefault(_ActionsCreator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var WaitableActionsCreator = (_temp = _class = function () {
   function WaitableActionsCreator() {
-    _classCallCheck(this, WaitableActionsCreator);
+    (0, _classCallCheck3.default)(this, WaitableActionsCreator);
   }
 
-  _createClass(WaitableActionsCreator, [{
+  (0, _createClass3.default)(WaitableActionsCreator, [{
     key: 'getWaitSymbols',
     value: function getWaitSymbols() {
       var createReduxWaitForMiddleware = require('redux-wait-for-action');
@@ -100,7 +108,6 @@ var WaitableActionsCreator = (_temp = _class = function () {
       return { shared: shared, exposed: exposed };
     }
   }]);
-
   return WaitableActionsCreator;
 }(), _class.$name = 'waitableActions', _class.getActionCreator = function (type, actions, symbols) {
   var WAIT_FOR_ACTION = symbols.WAIT_FOR_ACTION,
@@ -114,16 +121,16 @@ var WaitableActionsCreator = (_temp = _class = function () {
 
     var actionData = actions.start.apply(actions, arguments);
     var waitToken = Symbol();
-    actionData.options.transferables = _extends({}, actionData.options.transferables, {
+    actionData.options.transferables = (0, _extends4.default)({}, actionData.options.transferables, {
       waitToken: waitToken
     });
-    return _extends({}, actionData, (_extends2 = {}, _defineProperty(_extends2, WAIT_FOR_ACTION, function (action) {
+    return (0, _extends4.default)({}, actionData, (_extends2 = {}, (0, _defineProperty3.default)(_extends2, WAIT_FOR_ACTION, function (action) {
       return action.type === actions.respond.type && action.options.transferables.waitToken === waitToken;
-    }), _defineProperty(_extends2, ERROR_ACTION, function (action) {
+    }), (0, _defineProperty3.default)(_extends2, ERROR_ACTION, function (action) {
       return action.type === actions.cancel.type || action.type === actions.respondError.type && action.options.transferables.waitToken === waitToken;
-    }), _defineProperty(_extends2, CALLBACK_ARGUMENT, function (action) {
+    }), (0, _defineProperty3.default)(_extends2, CALLBACK_ARGUMENT, function (action) {
       return action;
-    }), _defineProperty(_extends2, CALLBACK_ERROR_ARGUMENT, function (action) {
+    }), (0, _defineProperty3.default)(_extends2, CALLBACK_ERROR_ARGUMENT, function (action) {
       return action;
     }), _extends2));
   };

@@ -4,15 +4,11 @@ import RestModel from './RestModel';
 import ActionTypesCreator from '../extensions/ActionTypesCreator';
 import ActionsCreator from '../extensions/ActionsCreator';
 import ReducerCreator from '../extensions/ReducerCreator';
-import EpicCreator from '../extensions/EpicCreator';
-import SelectorsCreator from '../extensions/SelectorsCreator';
 
 export const defaultExtensions = [
   ActionTypesCreator,
   ActionsCreator,
   ReducerCreator,
-  EpicCreator,
-  SelectorsCreator,
 ];
 
 export default class ModelMap

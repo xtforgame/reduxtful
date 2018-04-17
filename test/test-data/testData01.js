@@ -1,6 +1,7 @@
 import { getHeaders } from '../test-utils/HeaderManager';
 import axios from 'axios';
 import { Observable } from 'rxjs';
+import { takeEvery, call, put, race, take } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
 
 const responseMiddleware = (response, info) => {
@@ -18,6 +19,13 @@ const epics = {
   responseMiddleware,
 }
 
+const sagas = {
+  axios,
+  effects: { takeEvery, call, put, race, take },
+  getHeaders,
+  responseMiddleware,
+}
+
 export default {
   modelsDefine: {
     api: {
@@ -30,6 +38,7 @@ export default {
       },
       extensionConfigs: {
         epics,
+        sagas,
       },
     },
     sessions: {
@@ -41,6 +50,7 @@ export default {
       },
       extensionConfigs: {
         epics,
+        sagas,
         selectors: {
           createSelector,
           baseSelector: state => state.get('global').sessions,
@@ -56,6 +66,7 @@ export default {
       },
       extensionConfigs: {
         epics,
+        sagas,
         selectors: {
           createSelector,
           baseSelector: state => state.get('global').users,
@@ -71,6 +82,7 @@ export default {
       },
       extensionConfigs: {
         epics,
+        sagas,
         selectors: {
           createSelector,
           baseSelector: state => state.get('global').ownedTasks,

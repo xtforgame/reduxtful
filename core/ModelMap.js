@@ -5,9 +5,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = exports.defaultExtensions = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _createMethodConfigs = require('./createMethodConfigs');
 
@@ -33,27 +41,16 @@ var _ReducerCreator = require('../extensions/ReducerCreator');
 
 var _ReducerCreator2 = _interopRequireDefault(_ReducerCreator);
 
-var _EpicCreator = require('../extensions/EpicCreator');
-
-var _EpicCreator2 = _interopRequireDefault(_EpicCreator);
-
-var _SelectorsCreator = require('../extensions/SelectorsCreator');
-
-var _SelectorsCreator2 = _interopRequireDefault(_SelectorsCreator);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var defaultExtensions = exports.defaultExtensions = [_ActionTypesCreator2.default, _ActionsCreator2.default, _ReducerCreator2.default, _EpicCreator2.default, _SelectorsCreator2.default];
+var defaultExtensions = exports.defaultExtensions = [_ActionTypesCreator2.default, _ActionsCreator2.default, _ReducerCreator2.default];
 
 var ModelMap = function () {
   function ModelMap(ns, modelsDefine) {
     var _this = this;
 
     var extensions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : defaultExtensions;
-
-    _classCallCheck(this, ModelMap);
+    (0, _classCallCheck3.default)(this, ModelMap);
 
     Object.keys(modelsDefine).forEach(function (key) {
       var modelDefine = modelsDefine[key];
@@ -77,12 +74,12 @@ var ModelMap = function () {
       var model = _this.models[key] = new _RestModel2.default(ns, modelDefine, _this.Creators, _this.methodConfigs);
       _this.Creators.forEach(function (Creator) {
         var extensionName = Creator.$name;
-        _this[extensionName] = _extends({}, _this[extensionName], model.getExposed(extensionName));
+        _this[extensionName] = (0, _extends3.default)({}, _this[extensionName], model.getExposed(extensionName));
       });
     });
   }
 
-  _createClass(ModelMap, [{
+  (0, _createClass3.default)(ModelMap, [{
     key: 'get',
     value: function get(modelName) {
       return this.models[modelName];
@@ -104,7 +101,6 @@ var ModelMap = function () {
       return result;
     }
   }]);
-
   return ModelMap;
 }();
 
