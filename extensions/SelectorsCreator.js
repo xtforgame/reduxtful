@@ -23,7 +23,7 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
 var _class, _temp;
 
-var _functions = require('../core/functions');
+var _commonFunctions = require('../core/common-functions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -76,7 +76,7 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
   };
 
   var modelName = names.model;
-  var capitalizeModelName = (0, _functions.capitalizeFirstLetter)(modelName);
+  var capitalizeModelName = (0, _commonFunctions.capitalizeFirstLetter)(modelName);
 
   return _ref = {}, (0, _defineProperty3.default)(_ref, modelName + 'Selector', resourceSelector), (0, _defineProperty3.default)(_ref, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), (0, _defineProperty3.default)(_ref, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), _ref;
 };

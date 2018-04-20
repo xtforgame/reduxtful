@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import { ModelMap } from 'library';
-import { capitalizeFirstLetter } from 'library/core/functions';
+import { capitalizeFirstLetter } from 'library/core/common-functions';
 import {
   testData01,
 } from '../../test-data';

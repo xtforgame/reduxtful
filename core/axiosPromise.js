@@ -12,7 +12,7 @@ var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _functions = require('../core/functions');
+var _commonFunctions = require('../core/common-functions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,7 +37,7 @@ exports.default = function (axios, axiosOptions) {
       _options$axiosCancelT = options.axiosCancelTokenSource,
       axiosCancelTokenSource = _options$axiosCancelT === undefined ? axios.CancelToken.source() : _options$axiosCancelT;
 
-  return (0, _functions.promiseWait)(debugDelay).then(function () {
+  return (0, _commonFunctions.promiseWait)(debugDelay).then(function () {
     return axios((0, _extends3.default)({}, axiosOptions, {
       cancelToken: axiosCancelTokenSource.token
     }));

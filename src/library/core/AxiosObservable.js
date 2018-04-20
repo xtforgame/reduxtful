@@ -1,12 +1,13 @@
 import axiosPromise from './axiosPromise';
+import {
+  toNull,
+} from './helper-functions';
 
 class ErrorFromMiddleware {
   constructor(error){
     this.error = error;
   }
 }
-
-const toNull = () => ({ type: 'TO_NULL' });
 
 export default (axios, Observable) => (axiosOptions, {
     success: successAction = toNull,

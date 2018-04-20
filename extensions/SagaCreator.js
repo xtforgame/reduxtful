@@ -35,56 +35,9 @@ var _UrlInfo = require('../core/UrlInfo');
 
 var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 
+var _helperFunctions = require('../core/helper-functions');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var toNull = function toNull() {
-  return { type: 'TO_NULL' };
-};
-
-var createRespondActionCreatorForCollection = function createRespondActionCreatorForCollection(actions, startAction) {
-  return function (response) {
-    return actions.respond(response.data, startAction.entry, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondActionCreatorForPostCollection = function createRespondActionCreatorForPostCollection(actions, startAction, getId) {
-  return function (response) {
-    return actions.respond(getId(response.data), response.data, startAction.entry, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondActionCreatorForMember = function createRespondActionCreatorForMember(actions, startAction, getId) {
-  return function (response) {
-    return actions.respond(startAction.entry.id, response.data, startAction.entry, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondErrorActionCreatorForCollection = function createRespondErrorActionCreatorForCollection(actions, startAction) {
-  return function (error) {
-    return actions.respondError({ error: error }, {}, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondErrorActionCreatorForMember = function createRespondErrorActionCreatorForMember(actions, startAction) {
-  return function (error) {
-    return actions.respondError(startAction.entry.id, { error: error }, {}, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
 
 var SagaCreator = (_temp = _class = function () {
   function SagaCreator() {
@@ -142,14 +95,9 @@ var SagaCreator = (_temp = _class = function () {
         var sagaName = methodConfig.getSagaName(arg);
         var urlInfo = new _UrlInfo2.default(methodConfig.getUrlTemplate({ url: url, names: names }));
 
-        var getRespondActionCreator = createRespondActionCreatorForCollection;
-        if (methodConfig.isForCollection !== true) {
-          getRespondActionCreator = createRespondActionCreatorForMember;
-        } else if (methodConfig.method === 'post') {
-          getRespondActionCreator = createRespondActionCreatorForPostCollection;
-        }
-
-        var getRespondErrorActionCreator = methodConfig.isForCollection === true ? createRespondErrorActionCreatorForCollection : createRespondErrorActionCreatorForMember;
+        var _getRespondActionCrea = (0, _helperFunctions.getRespondActionCreators)(methodConfig),
+            respondCreator = _getRespondActionCrea.respondCreator,
+            respondErrorCreator = _getRespondActionCrea.respondErrorCreator;
 
         shared[methodConfig.name] = _regenerator2.default.mark(function requestSaga() {
           return _regenerator2.default.wrap(function requestSaga$(_context2) {
@@ -200,7 +148,7 @@ var SagaCreator = (_temp = _class = function () {
                             }
 
                             _context.next = 12;
-                            return put(getRespondActionCreator(actions, action, getId)(response));
+                            return put(respondCreator(actions, action, getId)(response));
 
                           case 12:
                             _context.next = 17;
@@ -209,7 +157,7 @@ var SagaCreator = (_temp = _class = function () {
                           case 14:
                             source.cancel('Operation canceled by the user.');
                             _context.next = 17;
-                            return put(toNull());
+                            return put((0, _helperFunctions.toNull)());
 
                           case 17:
                             _context.next = 23;
@@ -219,7 +167,7 @@ var SagaCreator = (_temp = _class = function () {
                             _context.prev = 19;
                             _context.t0 = _context['catch'](3);
                             _context.next = 23;
-                            return put(getRespondErrorActionCreator(actions, action)(_context.t0));
+                            return put(respondErrorCreator(actions, action)(_context.t0));
 
                           case 23:
                           case 'end':

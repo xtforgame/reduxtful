@@ -31,56 +31,9 @@ var _UrlInfo = require('../core/UrlInfo');
 
 var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 
+var _helperFunctions = require('../core/helper-functions');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var toNull = function toNull() {
-  return { type: 'TO_NULL' };
-};
-
-var createRespondActionCreatorForCollection = function createRespondActionCreatorForCollection(actions, startAction) {
-  return function (response) {
-    return actions.respond(response.data, startAction.entry, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondActionCreatorForPostCollection = function createRespondActionCreatorForPostCollection(actions, startAction, getId) {
-  return function (response) {
-    return actions.respond(getId(response.data), response.data, startAction.entry, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondActionCreatorForMember = function createRespondActionCreatorForMember(actions, startAction, getId) {
-  return function (response) {
-    return actions.respond(startAction.entry.id, response.data, startAction.entry, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondErrorActionCreatorForCollection = function createRespondErrorActionCreatorForCollection(actions, startAction) {
-  return function (error) {
-    return actions.respondError({ error: error }, {}, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
-
-var createRespondErrorActionCreatorForMember = function createRespondErrorActionCreatorForMember(actions, startAction) {
-  return function (error) {
-    return actions.respondError(startAction.entry.id, { error: error }, {}, {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
-    });
-  };
-};
 
 var EpicCreator = (_temp = _class = function () {
   function EpicCreator() {
@@ -135,14 +88,9 @@ var EpicCreator = (_temp = _class = function () {
         var epicName = methodConfig.getEpicName(arg);
         var urlInfo = new _UrlInfo2.default(methodConfig.getUrlTemplate({ url: url, names: names }));
 
-        var getRespondActionCreator = createRespondActionCreatorForCollection;
-        if (methodConfig.isForCollection !== true) {
-          getRespondActionCreator = createRespondActionCreatorForMember;
-        } else if (methodConfig.method === 'post') {
-          getRespondActionCreator = createRespondActionCreatorForPostCollection;
-        }
-
-        var getRespondErrorActionCreator = methodConfig.isForCollection === true ? createRespondErrorActionCreatorForCollection : createRespondErrorActionCreatorForMember;
+        var _getRespondActionCrea = (0, _helperFunctions.getRespondActionCreators)(methodConfig),
+            respondCreator = _getRespondActionCrea.respondCreator,
+            respondErrorCreator = _getRespondActionCrea.respondErrorCreator;
 
         shared[methodConfig.name] = function (action$, store) {
           return action$.ofType(actionTypes.start).mergeMap(function (action) {
@@ -157,8 +105,8 @@ var EpicCreator = (_temp = _class = function () {
               data: action.data,
               params: query
             }, {
-              success: getRespondActionCreator(actions, action, getId),
-              error: getRespondErrorActionCreator(actions, action)
+              success: respondCreator(actions, action, getId),
+              error: respondErrorCreator(actions, action)
             }, {
               responseMiddleware: responseMiddleware,
               errorMiddleware: errorMiddleware,

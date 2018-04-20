@@ -2,62 +2,10 @@ import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
 import axiosPromise from '../core/axiosPromise';
 import UrlInfo from '../core/UrlInfo';
-
-const toNull = () => ({ type: 'TO_NULL' });
-
-const createRespondActionCreatorForCollection = (actions, startAction) => (response) => actions.respond(
-  response.data,
-  startAction.entry,
-  {
-    timestamp: new Date().getTime(),
-    transferables: startAction.options.transferables,
-  },
-);
-
-const createRespondActionCreatorForPostCollection = (actions, startAction, getId) => (response) => actions.respond(
-  getId(response.data),
-  response.data,
-  startAction.entry,
-  {
-    timestamp: new Date().getTime(),
-    transferables: startAction.options.transferables,
-  },
-);
-
-const createRespondActionCreatorForMember = (actions, startAction, getId) => (response) => actions.respond(
-  startAction.entry.id,
-  response.data,
-  startAction.entry,
-  {
-    timestamp: new Date().getTime(),
-    transferables: startAction.options.transferables,
-  },
-);
-
-const createRespondErrorActionCreatorForCollection = (actions, startAction) => (error) => {
-  // console.log('error :', error);
-  return actions.respondError(
-    { error },
-    {},
-    {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables,
-    }
-  );
-}
-
-const createRespondErrorActionCreatorForMember = (actions, startAction) => (error) => {
-  // console.log('error :', error);
-  return actions.respondError(
-    startAction.entry.id,
-    { error },
-    {},
-    {
-      timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables,
-    }
-  );
-}
+import {
+  toNull,
+  getRespondActionCreators,
+} from '../core/helper-functions';
 
 export default class SagaCreator {
   static $name = 'sagas';
@@ -95,16 +43,10 @@ export default class SagaCreator {
       const sagaName = methodConfig.getSagaName(arg);
       const urlInfo = new UrlInfo(methodConfig.getUrlTemplate({url, names}));
 
-      // special case for posting a collection
-      let getRespondActionCreator = createRespondActionCreatorForCollection;
-      if(methodConfig.isForCollection !== true){
-        getRespondActionCreator = createRespondActionCreatorForMember;
-      }else if(methodConfig.method === 'post'){
-        getRespondActionCreator = createRespondActionCreatorForPostCollection;
-      }
-
-      const getRespondErrorActionCreator = (methodConfig.isForCollection === true) ?
-        createRespondErrorActionCreatorForCollection : createRespondErrorActionCreatorForMember;
+      const {
+        respondCreator,
+        respondErrorCreator,
+      } = getRespondActionCreators(methodConfig);
 
       shared[methodConfig.name] = function* requestSaga(){
         yield takeEvery(actionTypes.start, function* foo(action) {
@@ -134,13 +76,13 @@ export default class SagaCreator {
             });
 
             if(response){
-              yield put(getRespondActionCreator(actions, action, getId)(response));
+              yield put(respondCreator(actions, action, getId)(response));
             }else{
               source.cancel('Operation canceled by the user.');
               yield put(toNull());
             }
           } catch (error) {
-            yield put(getRespondErrorActionCreator(actions, action)(error));
+            yield put(respondErrorCreator(actions, action)(error));
           }
         });
       }

@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import { ModelMap, defaultExtensions } from 'library';
-import { capitalizeFirstLetter } from 'library/core/functions';
+import { capitalizeFirstLetter } from 'library/core/common-functions';
 import SelectorsCreator from 'library/extensions/SelectorsCreator';
 import {
   testData01,

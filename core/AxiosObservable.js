@@ -12,6 +12,8 @@ var _axiosPromise = require('./axiosPromise');
 
 var _axiosPromise2 = _interopRequireDefault(_axiosPromise);
 
+var _helperFunctions = require('./helper-functions');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ErrorFromMiddleware = function ErrorFromMiddleware(error) {
@@ -20,19 +22,15 @@ var ErrorFromMiddleware = function ErrorFromMiddleware(error) {
   this.error = error;
 };
 
-var toNull = function toNull() {
-  return { type: 'TO_NULL' };
-};
-
 exports.default = function (axios, Observable) {
   return function (axiosOptions) {
     var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
         _ref$success = _ref.success,
-        successAction = _ref$success === undefined ? toNull : _ref$success,
+        successAction = _ref$success === undefined ? _helperFunctions.toNull : _ref$success,
         _ref$error = _ref.error,
-        errorAction = _ref$error === undefined ? toNull : _ref$error,
+        errorAction = _ref$error === undefined ? _helperFunctions.toNull : _ref$error,
         _ref$cancel = _ref.cancel,
-        cancelAction = _ref$cancel === undefined ? toNull : _ref$cancel;
+        cancelAction = _ref$cancel === undefined ? _helperFunctions.toNull : _ref$cancel;
 
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var cancelStream$ = options.cancelStream$,

@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter } from '../core/functions';
+import { capitalizeFirstLetter } from '../core/common-functions';
 
 const createSelectors = (createSelector, names, baseSelector) => {
   const resourceSelector = baseSelector;

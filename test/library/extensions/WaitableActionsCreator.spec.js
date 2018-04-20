@@ -4,7 +4,7 @@ import chai from 'chai';
 import { ModelMap, defaultExtensions } from 'library';
 import EpicCreator from 'library/extensions/EpicCreator';
 import WaitableActionsCreator from 'library/extensions/WaitableActionsCreator';
-import { capitalizeFirstLetter } from 'library/core/functions';
+import { capitalizeFirstLetter } from 'library/core/common-functions';
 import {
   testData01,
 } from '../../test-data';

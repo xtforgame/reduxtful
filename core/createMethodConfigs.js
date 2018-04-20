@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = createMethodConfigs;
 
-var _functions = require('./functions');
+var _commonFunctions = require('./common-functions');
 
 var supportedActions = [{ name: 'start' }, { name: 'respond' }, { name: 'respondError' }, { name: 'cancel' }];
 
@@ -18,11 +18,11 @@ var getActionContantName = function getActionContantName(_ref) {
       names = _ref.names,
       actionTypeName = _ref.actionTypeName;
 
-  var upperCasedMethod = (0, _functions.toUnderscore)(methodName).toUpperCase();
-  var upperCasedModelName = (0, _functions.toUnderscore)(names.model).toUpperCase();
-  var upperCasedCollecionName = (0, _functions.toUnderscore)(getResourceCollectionName(names)).toUpperCase();
-  var upperCasedMemberName = (0, _functions.toUnderscore)(names.member).toUpperCase();
-  var upperCasedActionTypeName = (0, _functions.toUnderscore)(actionTypeName).toUpperCase();
+  var upperCasedMethod = (0, _commonFunctions.toUnderscore)(methodName).toUpperCase();
+  var upperCasedModelName = (0, _commonFunctions.toUnderscore)(names.model).toUpperCase();
+  var upperCasedCollecionName = (0, _commonFunctions.toUnderscore)(getResourceCollectionName(names)).toUpperCase();
+  var upperCasedMemberName = (0, _commonFunctions.toUnderscore)(names.member).toUpperCase();
+  var upperCasedActionTypeName = (0, _commonFunctions.toUnderscore)(actionTypeName).toUpperCase();
 
   switch (methodName) {
     case 'selectPath':
@@ -57,13 +57,13 @@ var getActionName = function getActionName() {
 
     switch (methodName) {
       case 'selectPath':
-        return 'select' + (0, _functions.capitalizeFirstLetter)(names.model) + 'Path';
+        return 'select' + (0, _commonFunctions.capitalizeFirstLetter)(names.model) + 'Path';
       case 'clearCollectionCache':
-        return 'clear' + (0, _functions.capitalizeFirstLetter)(getResourceCollectionName(names)) + 'Cache';
+        return 'clear' + (0, _commonFunctions.capitalizeFirstLetter)(getResourceCollectionName(names)) + 'Cache';
       case 'clearCache':
-        return 'clear' + (0, _functions.capitalizeFirstLetter)(names.member) + 'Cache';
+        return 'clear' + (0, _commonFunctions.capitalizeFirstLetter)(names.member) + 'Cache';
       case 'clearEachCache':
-        return 'clearEach' + (0, _functions.capitalizeFirstLetter)(names.member) + 'Cache';
+        return 'clearEach' + (0, _commonFunctions.capitalizeFirstLetter)(names.member) + 'Cache';
       default:
         break;
     }
@@ -78,15 +78,15 @@ var getActionName = function getActionName() {
         _actionTypeName = '';
         break;
       case 'respond':
-        return '' + _actionTypeName + (0, _functions.capitalizeFirstLetter)(_methodName) + (0, _functions.capitalizeFirstLetter)(resourceName);
+        return '' + _actionTypeName + (0, _commonFunctions.capitalizeFirstLetter)(_methodName) + (0, _commonFunctions.capitalizeFirstLetter)(resourceName);
       case 'respondError':
-        return 'respond' + (0, _functions.capitalizeFirstLetter)(_methodName) + (0, _functions.capitalizeFirstLetter)(resourceName) + 'Error';
+        return 'respond' + (0, _commonFunctions.capitalizeFirstLetter)(_methodName) + (0, _commonFunctions.capitalizeFirstLetter)(resourceName) + 'Error';
       case 'cancel':
-        return '' + _actionTypeName + (0, _functions.capitalizeFirstLetter)(_methodName) + (0, _functions.capitalizeFirstLetter)(resourceName);
+        return '' + _actionTypeName + (0, _commonFunctions.capitalizeFirstLetter)(_methodName) + (0, _commonFunctions.capitalizeFirstLetter)(resourceName);
       default:
         break;
     }
-    return '' + _methodName + (0, _functions.capitalizeFirstLetter)(resourceName) + (0, _functions.capitalizeFirstLetter)(_actionTypeName);
+    return '' + _methodName + (0, _commonFunctions.capitalizeFirstLetter)(resourceName) + (0, _commonFunctions.capitalizeFirstLetter)(_actionTypeName);
   };
 };
 
