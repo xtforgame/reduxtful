@@ -84,6 +84,9 @@ var ActionsCreator = (_temp = _class = function () {
   if (actionNoRedundantBody && (actionType === 'start' || actionType === 'cancel') && !methodConfig.needBody) {
     return false;
   }
+  if (methodConfig.name === 'selectPath') {
+    return false;
+  }
   return true;
 }, _class.getActionCreator = function (type, methodConfig, actionType, actionNoRedundantBody) {
   var withIdArg = ActionsCreator.needIdArg(methodConfig, actionType);

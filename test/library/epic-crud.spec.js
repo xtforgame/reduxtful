@@ -227,6 +227,16 @@ describe('Epic CRUD Test Cases', function(){
           expect(global).to.nested.include({'user.hierarchy.collection': null});
         });
       });
+
+      it('should be able to select collection', () => {
+        store.dispatch(modelMap.actions.selectUserPath());
+        global = store.getState().get('global');
+        expect(global).to.have.nested.property('user.selection.entry');
+        expect(global).to.nested.include({'user.selection.entry.id': undefined});
+        expect(global).to.have.nested.property('user.selection.entryPath');
+        expect(global).to.nested.include({'user.selection.id': undefined});
+        return true;
+      });
     });
 
     describe('Member', function(){
@@ -310,6 +320,16 @@ describe('Epic CRUD Test Cases', function(){
           expect(global).to.not.have.nested.property('user.hierarchy.byId[2]');
         });
       });
+
+      it('should be able to select member', () => {
+        store.dispatch(modelMap.actions.selectUserPath(1));
+        global = store.getState().get('global');
+        expect(global).to.have.nested.property('user.selection.entry');
+        expect(global).to.nested.include({'user.selection.entry.id': 1});
+        expect(global).to.have.nested.property('user.selection.entryPath');
+        expect(global).to.nested.include({'user.selection.id': 1});
+        return true;
+      });
     });
 
     describe('Deep Member', function(){
@@ -392,6 +412,18 @@ describe('Epic CRUD Test Cases', function(){
           expect(global).to.not.have.nested.property('ownedTask.hierarchy[1].byId[1]');
           expect(global).to.not.have.nested.property('ownedTask.hierarchy[1].byId[2]');
         });
+      });
+
+      it('should be able to select deep member', () => {
+        store.dispatch(modelMap.actions.selectOwnedTaskPath(1, { userId: 2 }));
+        global = store.getState().get('global');
+        expect(global).to.have.nested.property('ownedTask.selection.entry');
+        expect(global).to.nested.include({'ownedTask.selection.entry.id': 1});
+        expect(global).to.nested.include({'ownedTask.selection.entry.userId': 2});
+        expect(global).to.have.nested.property('ownedTask.selection.entryPath');
+        expect(global).to.nested.include({'ownedTask.selection.entryPath[0]': 2});
+        expect(global).to.nested.include({'ownedTask.selection.id': 1});
+        return true;
       });
     });
   });

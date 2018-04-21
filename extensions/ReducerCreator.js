@@ -82,7 +82,7 @@ var genSelectFunc = function genSelectFunc(method, _ref2) {
       selection: {
         entry: (0, _extends7.default)({}, action.entry),
         entryPath: entryPath,
-        id: action.data.id
+        id: action.entry.id
       }
     });
   };

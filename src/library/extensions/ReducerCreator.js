@@ -35,7 +35,7 @@ const genSelectFunc = (method, { urlInfo }) => (state = {}, action) => {
         ...action.entry,
       },
       entryPath,
-      id: action.data.id,
+      id: action.entry.id,
     },
   };
 };

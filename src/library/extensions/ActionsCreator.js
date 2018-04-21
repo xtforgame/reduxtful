@@ -20,6 +20,9 @@ export default class ActionsCreator {
     if(actionNoRedundantBody && (actionType === 'start' || actionType === 'cancel') && !methodConfig.needBody){
       return false;
     }
+    if(methodConfig.name === 'selectPath'){
+      return false;
+    }
     return true;
   }
   
