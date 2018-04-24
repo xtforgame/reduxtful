@@ -178,6 +178,34 @@ describe('Epic CRUD Test Cases', function(){
         });
       });
 
+      it('should be able to merge collection by a custom function', () => {
+        return store.dispatch(modelMap.waitableActions.getUsers({}, {query: { offset: 0, limit: 1 }}))
+        .then(payload => {
+          // console.log('payload :', payload);
+          // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
+          const global = store.getState().get('global');
+          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          expect(global).to.nested.include({'user.hierarchy.collection.users[0].name': 'rick'});
+          expect(global).to.nested.include({'user.hierarchy.collection.users[0].url': '/api/users/1'});
+          expect(global).to.nested.include({'user.hierarchy.collection.next.offset': 1});
+          expect(global).to.nested.include({'user.hierarchy.collection.next.limit': 1});
+          return store.dispatch(modelMap.waitableActions.getUsers({}, {query: global.user.hierarchy.collection.next}));
+        })
+        .then(payload => {
+          // console.log('payload :', payload);
+          // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
+          const global = store.getState().get('global');
+          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          expect(global).to.nested.include({'user.hierarchy.collection.users[0].name': 'rick'});
+          expect(global).to.nested.include({'user.hierarchy.collection.users[0].url': '/api/users/1'});
+
+          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          expect(global).to.nested.include({'user.hierarchy.collection.users[1].name': 'foo'});
+          expect(global).to.nested.include({'user.hierarchy.collection.users[1].url': '/api/users/2'});
+          expect(global).to.nested.include({'user.hierarchy.collection.next': null});
+        });
+      });
+
       it('should be able to patch collection', () => {
         return store.dispatch(modelMap.waitableActions.patchUsers())
         .then(payload => {
@@ -230,7 +258,7 @@ describe('Epic CRUD Test Cases', function(){
 
       it('should be able to select collection', () => {
         store.dispatch(modelMap.actions.selectUserPath());
-        global = store.getState().get('global');
+        const global = store.getState().get('global');
         expect(global).to.have.nested.property('user.selection.entry');
         expect(global).to.nested.include({'user.selection.entry.id': undefined});
         expect(global).to.have.nested.property('user.selection.entryPath');
@@ -323,7 +351,7 @@ describe('Epic CRUD Test Cases', function(){
 
       it('should be able to select member', () => {
         store.dispatch(modelMap.actions.selectUserPath(1));
-        global = store.getState().get('global');
+        const global = store.getState().get('global');
         expect(global).to.have.nested.property('user.selection.entry');
         expect(global).to.nested.include({'user.selection.entry.id': 1});
         expect(global).to.have.nested.property('user.selection.entryPath');
@@ -416,7 +444,7 @@ describe('Epic CRUD Test Cases', function(){
 
       it('should be able to select deep member', () => {
         store.dispatch(modelMap.actions.selectOwnedTaskPath(1, { userId: 2 }));
-        global = store.getState().get('global');
+        const global = store.getState().get('global');
         expect(global).to.have.nested.property('ownedTask.selection.entry');
         expect(global).to.nested.include({'ownedTask.selection.entry.id': 1});
         expect(global).to.nested.include({'ownedTask.selection.entry.userId': 2});

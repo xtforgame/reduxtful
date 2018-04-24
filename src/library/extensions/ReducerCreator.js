@@ -43,40 +43,21 @@ const genSelectFunc = (method, { urlInfo }) => (state = {}, action) => {
 const genStartFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    // isPending: {
-    //   ...partialState.isPending,
-    //   [method]: true,
-    // },
   }));
 };
 
 const genCollectionRespondFunc = (method, options) => (state = {}, action) => {
+  const { mergeCollection = (_, __, action) => action.data } = options;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    // isPending: {
-    //   ...partialState.isPending,
-    //   [method]: false,
-    // },
-    collection: action.data,
-    // error: {
-    //   ...partialState.error,
-    //   [method]: null,
-    // },
+    collection: mergeCollection(method, partialState.collection, action, options),
   }));
 };
 
 const genCollectionRespondDeleteFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    // isPending: {
-    //   ...partialState.isPending,
-    //   [method]: false,
-    // },
     collection: null,
-    // error: {
-    //   ...partialState.error,
-    //   [method]: null,
-    // },
   }));
 };
 
@@ -89,20 +70,13 @@ const genCollectionClearFunc = (options) => (state = {}, action) => {
 
 const genRepondFunc = (method, options) => (state = {}, action) => {
   const id = action.entry.id;
+  const { mergeMember = (_, __, action) => action.data } = options;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    // isPending: {
-    //   ...partialState.isPending,
-    //   [method]: false,
-    // },
     byId: {
       ...partialState.byId,
-      [id]: action.data,
+      [id]: mergeMember(method, partialState.byId && partialState.byId[id], action, options),
     },
-    // error: {
-    //   ...partialState.error,
-    //   [method]: null,
-    // },
   }));
 };
 
@@ -110,18 +84,10 @@ const genRespondDeleteFunc = (method, options) => (state = {}, action) => {
   const id = action.entry.id;
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    // isPending: {
-    //   ...partialState.isPending,
-    //   [method]: false,
-    // },
     byId: {
       ...partialState.byId,
       [id]: null,
     },
-    // error: {
-    //   ...partialState.error,
-    //   [method]: null,
-    // },
   }));
 };
 
@@ -146,14 +112,6 @@ const genClearEachFunc = (options) => (state = {}, action) => {
 const genRepondErrorFunc = (method, options) => (state = {}, action) => {
   return deepMergeByPathArray(state, action, options)(partialState => ({
     ...partialState,
-    // isPending: {
-    //   ...partialState.isPending,
-    //   [method]: false,
-    // },
-    // error: {
-    //   ...partialState.error,
-    //   [method]: action.data && action.data.error,
-    // },
   }));
 };
 
@@ -245,7 +203,7 @@ function createReducerFromFuncMap(funcMap){
 export default class ReducerCreator {
   static $name = 'reducers';
 
-  create({ ns, names, url, getShared, methodConfigs }){
+  create({ ns, names, url, getShared, methodConfigs }, options, reducerOptions){
     let shared = {};
     let exposed = {};
 
@@ -265,6 +223,8 @@ export default class ReducerCreator {
       const reducerExposedName = methodConfig.getReducerName(arg);
       const reducerExposedFuncMapName = `${reducerExposedName}FuncMap`;
       const reducerFunctionCreators = genReducerFunctionCreators({
+        ...options,
+        ...reducerOptions,
         urlInfo,
       });
 

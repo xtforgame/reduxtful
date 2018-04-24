@@ -103,10 +103,14 @@ var genCollectionRespondFunc = function genCollectionRespondFunc(method, options
   return function () {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
+    var _options$mergeCollect = options.mergeCollection,
+        mergeCollection = _options$mergeCollect === undefined ? function (_, __, action) {
+      return action.data;
+    } : _options$mergeCollect;
 
     return deepMergeByPathArray(state, action, options)(function (partialState) {
       return (0, _extends7.default)({}, partialState, {
-        collection: action.data
+        collection: mergeCollection(method, partialState.collection, action, options)
       });
     });
   };
@@ -144,9 +148,14 @@ var genRepondFunc = function genRepondFunc(method, options) {
     var action = arguments[1];
 
     var id = action.entry.id;
+    var _options$mergeMember = options.mergeMember,
+        mergeMember = _options$mergeMember === undefined ? function (_, __, action) {
+      return action.data;
+    } : _options$mergeMember;
+
     return deepMergeByPathArray(state, action, options)(function (partialState) {
       return (0, _extends7.default)({}, partialState, {
-        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, action.data))
+        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, mergeMember(method, partialState.byId && partialState.byId[id], action, options)))
       });
     });
   };
@@ -300,7 +309,7 @@ var ReducerCreator = (_temp = _class = function () {
 
   (0, _createClass3.default)(ReducerCreator, [{
     key: 'create',
-    value: function create(_ref3) {
+    value: function create(_ref3, options, reducerOptions) {
       var ns = _ref3.ns,
           names = _ref3.names,
           url = _ref3.url,
@@ -325,9 +334,9 @@ var ReducerCreator = (_temp = _class = function () {
 
         var reducerExposedName = methodConfig.getReducerName(arg);
         var reducerExposedFuncMapName = reducerExposedName + 'FuncMap';
-        var reducerFunctionCreators = genReducerFunctionCreators({
+        var reducerFunctionCreators = genReducerFunctionCreators((0, _extends7.default)({}, options, reducerOptions, {
           urlInfo: urlInfo
-        });
+        }));
 
         var local = shared[methodConfig.name][reducerExposedFuncMapName] = {};
         Object.keys(actionTypes).forEach(function (key) {

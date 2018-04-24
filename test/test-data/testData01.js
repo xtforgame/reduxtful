@@ -65,6 +65,29 @@ export default {
         getId: data => data.id,
       },
       extensionConfigs: {
+        reducers: {
+          mergeMember: (method, currentData, action, options) => {
+            return action.data;
+          },
+          mergeCollection: (method, currentData, action, options) => {
+            if(!currentData){
+              return action.data;
+            }
+            const query = action.options.query;
+            const users = currentData.users ? [...currentData.users] : [];
+            for (let index = 0; index < query.offset; index++) {
+              if(users[index] === undefined){
+                // make sure that users[index] is set to undefined
+                users[index] = undefined;
+              }
+            }
+            users.splice(query.offset, query.limit, ...action.data.users);
+            return {
+              ...action.data,
+              users,
+            };
+          },
+        },
         epics,
         sagas,
         selectors: {
@@ -99,6 +122,8 @@ export default {
       )
     )
     .onPost('/api/users').reply(201, { url: '/api/users/1', id: 1 })
+    .onGet('/api/users', { params: { offset: 0, limit: 1 } }).reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1' }], next: { offset: 1, limit: 1 } })
+    .onGet('/api/users', { params: { offset: 1, limit: 1 } }).reply(200, { url: '/api/users', users: [{ name: 'foo', url: '/api/users/2' }], next: null })
     .onGet('/api/users').reply(200, { url: '/api/users' })
     .onPatch('/api/users').reply(200, { url: '/api/users' })
     .onDelete('/api/users').reply(200, { url: '/api/users' })

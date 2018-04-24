@@ -6,6 +6,8 @@ export const createRespondActionCreatorForCollection = (actions, startAction) =>
   {
     timestamp: new Date().getTime(),
     transferables: startAction.options.transferables,
+    query: startAction.options.query,
+    startAction,
   },
 );
 
@@ -16,6 +18,8 @@ export const createRespondActionCreatorForPostCollection = (actions, startAction
   {
     timestamp: new Date().getTime(),
     transferables: startAction.options.transferables,
+    query: startAction.options.query,
+    startAction,
   },
 );
 
@@ -26,6 +30,8 @@ export const createRespondActionCreatorForMember = (actions, startAction, getId)
   {
     timestamp: new Date().getTime(),
     transferables: startAction.options.transferables,
+    query: startAction.options.query,
+    startAction,
   },
 );
 

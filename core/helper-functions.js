@@ -11,7 +11,9 @@ var createRespondActionCreatorForCollection = exports.createRespondActionCreator
   return function (response) {
     return actions.respond(response.data, startAction.entry, {
       timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
+      transferables: startAction.options.transferables,
+      query: startAction.options.query,
+      startAction: startAction
     });
   };
 };
@@ -20,7 +22,9 @@ var createRespondActionCreatorForPostCollection = exports.createRespondActionCre
   return function (response) {
     return actions.respond(getId(response.data), response.data, startAction.entry, {
       timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
+      transferables: startAction.options.transferables,
+      query: startAction.options.query,
+      startAction: startAction
     });
   };
 };
@@ -29,7 +33,9 @@ var createRespondActionCreatorForMember = exports.createRespondActionCreatorForM
   return function (response) {
     return actions.respond(startAction.entry.id, response.data, startAction.entry, {
       timestamp: new Date().getTime(),
-      transferables: startAction.options.transferables
+      transferables: startAction.options.transferables,
+      query: startAction.options.query,
+      startAction: startAction
     });
   };
 };
