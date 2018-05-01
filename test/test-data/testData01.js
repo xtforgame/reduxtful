@@ -66,6 +66,15 @@ export default {
       },
       extensionConfigs: {
         reducers: {
+          globalMiddlewares: [(state, action, options, next) => {
+            return next();
+          }],
+          collectionMiddlewares: [(state, action, options, next) => {
+            return next();
+          }],
+          memberMiddlewares: [(state, action, options, next) => {
+            return next();
+          }],
           mergeMember: (method, currentData, action, options) => {
             return action.data;
           },
