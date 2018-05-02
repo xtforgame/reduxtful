@@ -57,7 +57,7 @@ var ActionsCreator = (_temp = _class = function () {
 
           var exposedName = methodConfig.getActionName(arg);
           var sharedName = methodConfig.name;
-          var action = shared[sharedName][key] = ActionsCreator.getActionCreator(type, methodConfig, key, actionNoRedundantBody);
+          var action = shared[sharedName][key] = ActionsCreator.getActionCreator(type, actionTypesForMethod, methodConfig, key, actionNoRedundantBody);
           action.type = type;
           action.actionSet = shared[sharedName];
           action.sharedName = sharedName;
@@ -88,7 +88,7 @@ var ActionsCreator = (_temp = _class = function () {
     return false;
   }
   return true;
-}, _class.getActionCreator = function (type, methodConfig, actionType, actionNoRedundantBody) {
+}, _class.getActionCreator = function (type, actionTypes, methodConfig, actionType, actionNoRedundantBody) {
   var withIdArg = ActionsCreator.needIdArg(methodConfig, actionType);
   var withBodyArg = ActionsCreator.needBodyArg(methodConfig, actionType, actionNoRedundantBody);
 
@@ -96,21 +96,41 @@ var ActionsCreator = (_temp = _class = function () {
     return withBodyArg ? function (id, data) {
       var entry = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return { type: type, data: data, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({ transferables: {} }, options) };
+      return { type: type, data: data, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({
+          transferables: {},
+          actionTypes: actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name
+        }, options) };
     } : function (id) {
       var entry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return { type: type, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({ transferables: {} }, options) };
+      return { type: type, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({
+          transferables: {},
+          actionTypes: actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name
+        }, options) };
     };
   } else {
     return withBodyArg ? function (data) {
       var entry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return { type: type, data: data, entry: entry, options: (0, _extends3.default)({ transferables: {} }, options) };
+      return { type: type, data: data, entry: entry, options: (0, _extends3.default)({
+          transferables: {},
+          actionTypes: actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name
+        }, options) };
     } : function () {
       var entry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return { type: type, entry: entry, options: (0, _extends3.default)({ transferables: {} }, options) };
+      return { type: type, entry: entry, options: (0, _extends3.default)({
+          transferables: {},
+          actionTypes: actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name
+        }, options) };
     };
   }
 }, _temp);

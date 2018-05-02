@@ -60,9 +60,15 @@ var mergePartialState = function mergePartialState() {
 
     return (0, _extends7.default)({}, state, (0, _defineProperty3.default)({}, id, mergePartialState(state[id], action, options, isForCollection, rest, mergeFunc)));
   } else {
-    var middlewares = (isForCollection ? options.collectionMiddlewares : options.memberMiddlewares) || [];
-    var _middlewares = [].concat((0, _toConsumableArray3.default)(middlewares), [mergeFunc]);
-    var next = (0, _getMiddlewaresHandler2.default)(_middlewares, [state, action, options]);
+    var _options$middlewares = options.middlewares;
+    _options$middlewares = _options$middlewares === undefined ? {} : _options$middlewares;
+    var _options$middlewares$ = _options$middlewares.collection,
+        collectionMiddlewares = _options$middlewares$ === undefined ? [] : _options$middlewares$,
+        _options$middlewares$2 = _options$middlewares.member,
+        memberMiddlewares = _options$middlewares$2 === undefined ? [] : _options$middlewares$2;
+
+    var middlewares = [].concat((0, _toConsumableArray3.default)(isForCollection ? collectionMiddlewares : memberMiddlewares), [mergeFunc]);
+    var next = (0, _getMiddlewaresHandler2.default)(middlewares, [state, action, options]);
     return next();
   }
 };
@@ -305,9 +311,13 @@ function createReducerFromFuncMap(funcMap, options) {
       return state;
     };
 
-    var middlewares = options.globalMiddlewares || [];
-    var _middlewares = [].concat((0, _toConsumableArray3.default)(middlewares), [func]);
-    var next = (0, _getMiddlewaresHandler2.default)(_middlewares, [state, action, options]);
+    var _options$middlewares2 = options.middlewares;
+    _options$middlewares2 = _options$middlewares2 === undefined ? {} : _options$middlewares2;
+    var _options$middlewares3 = _options$middlewares2.global,
+        globalMiddlewares = _options$middlewares3 === undefined ? [] : _options$middlewares3;
+
+    var middlewares = [].concat((0, _toConsumableArray3.default)(globalMiddlewares), [func]);
+    var next = (0, _getMiddlewaresHandler2.default)(middlewares, [state, action, options]);
     return next();
   };
 }

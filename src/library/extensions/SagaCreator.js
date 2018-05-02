@@ -16,10 +16,9 @@ export default class SagaCreator {
 
     const {
       axios,
-      effects: { takeEvery, call, put, race, take },
+      effects: { takeEvery, call, put, race, take, select },
       getHeaders = () => ({}),
-      responseMiddleware,
-      errorMiddleware,
+      middlewares = {},
     } = extensionConfig;
 
     methodConfigs.forEach(methodConfig => {
@@ -53,6 +52,7 @@ export default class SagaCreator {
           const url = urlInfo.compile(action.entry);
           const query = action.options.query;
           const source = axios.CancelToken.source();
+          const state = yield select(s => s);
 
           try {
             const { response, cancelSagas } = yield race({
@@ -63,8 +63,11 @@ export default class SagaCreator {
                 data: action.data,
                 params: query,
               }, {
-                responseMiddleware,
-                errorMiddleware,
+                startAction: action,
+                state,
+                actionTypes,
+                actions,
+                middlewares,
                 axiosCancelTokenSource: source,
               }),
               cancelSagas: take(cancelAction => {
@@ -75,11 +78,11 @@ export default class SagaCreator {
               }),
             });
 
-            if(response){
-              yield put(respondCreator(actions, action, getId)(response));
-            }else{
+            if(cancelSagas){
               source.cancel('Operation canceled by the user.');
               yield put(toNull());
+            }else{
+              yield put(respondCreator(actions, action, getId)(response));
             }
           } catch (error) {
             yield put(respondErrorCreator(actions, action)(error));

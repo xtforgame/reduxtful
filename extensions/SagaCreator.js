@@ -67,12 +67,13 @@ var SagaCreator = (_temp = _class = function () {
           put = _extensionConfig$effe.put,
           race = _extensionConfig$effe.race,
           take = _extensionConfig$effe.take,
+          select = _extensionConfig$effe.select,
           _extensionConfig$getH = extensionConfig.getHeaders,
           getHeaders = _extensionConfig$getH === undefined ? function () {
         return {};
       } : _extensionConfig$getH,
-          responseMiddleware = extensionConfig.responseMiddleware,
-          errorMiddleware = extensionConfig.errorMiddleware;
+          _extensionConfig$midd = extensionConfig.middlewares,
+          middlewares = _extensionConfig$midd === undefined ? {} : _extensionConfig$midd;
 
 
       methodConfigs.forEach(function (methodConfig) {
@@ -106,7 +107,7 @@ var SagaCreator = (_temp = _class = function () {
                 case 0:
                   _context2.next = 2;
                   return takeEvery(actionTypes.start, _regenerator2.default.mark(function foo(action) {
-                    var url, query, source, _ref3, response, cancelSagas;
+                    var url, query, source, state, _ref3, response, cancelSagas;
 
                     return _regenerator2.default.wrap(function foo$(_context) {
                       while (1) {
@@ -115,8 +116,15 @@ var SagaCreator = (_temp = _class = function () {
                             url = urlInfo.compile(action.entry);
                             query = action.options.query;
                             source = axios.CancelToken.source();
-                            _context.prev = 3;
-                            _context.next = 6;
+                            _context.next = 5;
+                            return select(function (s) {
+                              return s;
+                            });
+
+                          case 5:
+                            state = _context.sent;
+                            _context.prev = 6;
+                            _context.next = 9;
                             return race({
                               response: call(_axiosPromise2.default, axios, {
                                 method: methodConfig.method,
@@ -125,8 +133,11 @@ var SagaCreator = (_temp = _class = function () {
                                 data: action.data,
                                 params: query
                               }, {
-                                responseMiddleware: responseMiddleware,
-                                errorMiddleware: errorMiddleware,
+                                startAction: action,
+                                state: state,
+                                actionTypes: actionTypes,
+                                actions: actions,
+                                middlewares: middlewares,
                                 axiosCancelTokenSource: source
                               }),
                               cancelSagas: take(function (cancelAction) {
@@ -137,44 +148,44 @@ var SagaCreator = (_temp = _class = function () {
                               })
                             });
 
-                          case 6:
+                          case 9:
                             _ref3 = _context.sent;
                             response = _ref3.response;
                             cancelSagas = _ref3.cancelSagas;
 
-                            if (!response) {
-                              _context.next = 14;
+                            if (!cancelSagas) {
+                              _context.next = 18;
                               break;
                             }
 
-                            _context.next = 12;
-                            return put(respondCreator(actions, action, getId)(response));
-
-                          case 12:
-                            _context.next = 17;
-                            break;
-
-                          case 14:
                             source.cancel('Operation canceled by the user.');
-                            _context.next = 17;
+                            _context.next = 16;
                             return put((0, _helperFunctions.toNull)());
 
-                          case 17:
-                            _context.next = 23;
+                          case 16:
+                            _context.next = 20;
                             break;
 
-                          case 19:
-                            _context.prev = 19;
-                            _context.t0 = _context['catch'](3);
-                            _context.next = 23;
+                          case 18:
+                            _context.next = 20;
+                            return put(respondCreator(actions, action, getId)(response));
+
+                          case 20:
+                            _context.next = 26;
+                            break;
+
+                          case 22:
+                            _context.prev = 22;
+                            _context.t0 = _context['catch'](6);
+                            _context.next = 26;
                             return put(respondErrorCreator(actions, action)(_context.t0));
 
-                          case 23:
+                          case 26:
                           case 'end':
                             return _context.stop();
                         }
                       }
-                    }, foo, this, [[3, 19]]);
+                    }, foo, this, [[6, 22]]);
                   }));
 
                 case 2:

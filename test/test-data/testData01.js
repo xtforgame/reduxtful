@@ -1,8 +1,14 @@
 import { getHeaders } from '../test-utils/HeaderManager';
 import axios from 'axios';
 import { Observable } from 'rxjs';
-import { takeEvery, call, put, race, take } from 'redux-saga/effects';
+import { takeEvery, call, put, race, take, select } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
+
+const requestMiddleware = (request, info, next) => {
+  // console.log('request :', request);
+  return next()
+  .then(response => response);
+};
 
 const responseMiddleware = (response, info) => {
   if(response.status === 200 && response.data.error){
@@ -16,14 +22,20 @@ const epics = {
   axios,
   Observable,
   getHeaders,
-  responseMiddleware,
+  middlewares: {
+    request: [requestMiddleware],
+    response: [responseMiddleware],
+  },
 }
 
 const sagas = {
   axios,
-  effects: { takeEvery, call, put, race, take },
+  effects: { takeEvery, call, put, race, take, select },
   getHeaders,
-  responseMiddleware,
+  middlewares: {
+    request: [requestMiddleware],
+    response: [responseMiddleware],
+  },
 }
 
 export default {
@@ -66,15 +78,17 @@ export default {
       },
       extensionConfigs: {
         reducers: {
-          globalMiddlewares: [(state, action, options, next) => {
-            return next();
-          }],
-          collectionMiddlewares: [(state, action, options, next) => {
-            return next();
-          }],
-          memberMiddlewares: [(state, action, options, next) => {
-            return next();
-          }],
+          middlewares: {
+            global: [(state, action, options, next) => {
+              return next();
+            }],
+            collection: [(state, action, options, next) => {
+              return next();
+            }],
+            member: [(state, action, options, next) => {
+              return next();
+            }],
+          },
           mergeMember: (method, currentData, action, options) => {
             return action.data;
           },

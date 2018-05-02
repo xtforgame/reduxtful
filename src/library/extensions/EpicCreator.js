@@ -18,8 +18,7 @@ export default class EpicCreator {
       axios,
       Observable,
       getHeaders = () => ({}),
-      responseMiddleware,
-      errorMiddleware,
+      middlewares = {},
     } = extensionConfig;
 
     const axiosObservable = AxiosObservable(axios, Observable);
@@ -68,8 +67,11 @@ export default class EpicCreator {
               error: respondErrorCreator(actions, action),
               // cancel: actions.clearError,
             }, {
-              responseMiddleware,
-              errorMiddleware,
+              startAction: action,
+              state: store.getState(),
+              actionTypes,
+              actions,
+              middlewares,
               axiosCancelTokenSource: source,
               cancelStream$: action$.filter(cancelAction => {
                 if(cancelAction.type !== actionTypes.cancel){

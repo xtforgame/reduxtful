@@ -26,21 +26,45 @@ export default class ActionsCreator {
     return true;
   }
   
-  static getActionCreator = (type, methodConfig, actionType, actionNoRedundantBody) => {
+  static getActionCreator = (type, actionTypes, methodConfig, actionType, actionNoRedundantBody) => {
     const withIdArg = ActionsCreator.needIdArg(methodConfig, actionType);
     const withBodyArg = ActionsCreator.needBodyArg(methodConfig, actionType, actionNoRedundantBody);
   
     if(withIdArg){
       return withBodyArg ? ((id, data, entry = {}, options = {}) =>
-        ({ type, data, entry: { ...entry, id }, options: { transferables: {}, ...options } })
+        ({ type, data, entry: { ...entry, id }, options: {
+          transferables: {},
+          actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name,
+          ...options,
+        } })
       ): ((id, entry = {}, options = {}) =>
-        ({ type, entry: { ...entry, id }, options: { transferables: {}, ...options } })
+        ({ type, entry: { ...entry, id }, options: {
+          transferables: {},
+          actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name,
+          ...options,
+        } })
       );
     }else{
       return withBodyArg ? ((data, entry = {}, options = {}) =>
-        ({ type, data, entry, options: { transferables: {}, ...options } })
+        ({ type, data, entry, options: {
+          transferables: {},
+          actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name,
+          ...options,
+        } })
       ): ((entry = {}, options = {}) =>
-        ({ type, entry, options: { transferables: {}, ...options } })
+        ({ type, entry, options: {
+          transferables: {},
+          actionTypes,
+          isForCollection: methodConfig.isForCollection,
+          method: methodConfig.name,
+          ...options,
+        } })
       );
     }
   }
@@ -64,7 +88,7 @@ export default class ActionsCreator {
 
         const exposedName = methodConfig.getActionName(arg);
         const sharedName = methodConfig.name;
-        const action = shared[sharedName][key] = ActionsCreator.getActionCreator(type, methodConfig, key, actionNoRedundantBody);
+        const action = shared[sharedName][key] = ActionsCreator.getActionCreator(type, actionTypesForMethod, methodConfig, key, actionNoRedundantBody);
         action.type = type;
         action.actionSet = shared[sharedName];
         action.sharedName = sharedName;

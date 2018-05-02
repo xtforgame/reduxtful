@@ -62,8 +62,8 @@ var EpicCreator = (_temp = _class = function () {
           getHeaders = _extensionConfig$getH === undefined ? function () {
         return {};
       } : _extensionConfig$getH,
-          responseMiddleware = extensionConfig.responseMiddleware,
-          errorMiddleware = extensionConfig.errorMiddleware;
+          _extensionConfig$midd = extensionConfig.middlewares,
+          middlewares = _extensionConfig$midd === undefined ? {} : _extensionConfig$midd;
 
 
       var axiosObservable = (0, _AxiosObservable2.default)(axios, Observable);
@@ -108,8 +108,11 @@ var EpicCreator = (_temp = _class = function () {
               success: respondCreator(actions, action, getId),
               error: respondErrorCreator(actions, action)
             }, {
-              responseMiddleware: responseMiddleware,
-              errorMiddleware: errorMiddleware,
+              startAction: action,
+              state: store.getState(),
+              actionTypes: actionTypes,
+              actions: actions,
+              middlewares: middlewares,
               axiosCancelTokenSource: source,
               cancelStream$: action$.filter(function (cancelAction) {
                 if (cancelAction.type !== actionTypes.cancel) {

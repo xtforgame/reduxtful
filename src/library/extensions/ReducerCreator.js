@@ -10,12 +10,17 @@ const mergePartialState = (state = {}, action, options, isForCollection, entryPa
       [id]: mergePartialState(state[id], action, options, isForCollection, rest, mergeFunc),
     }
   }else{
-    const middlewares = (isForCollection ? options.collectionMiddlewares : options.memberMiddlewares) || [];
-    const _middlewares = [
-      ...middlewares,
+    const {
+      middlewares: {
+        collection: collectionMiddlewares = [],
+        member: memberMiddlewares = [],
+      } = {},
+    } = options;
+    const middlewares = [
+      ...(isForCollection ? collectionMiddlewares : memberMiddlewares),
       mergeFunc,
     ];
-    const next = getMiddlewaresHandler(_middlewares, [state, action, options]);
+    const next = getMiddlewaresHandler(middlewares, [state, action, options]);
     return next();
   }
 }
@@ -198,12 +203,16 @@ function createReducerFromFuncMap(funcMap, options){
   return (state = {}, action) => {
     let func = funcMap[action.type] || (state => state);
 
-    const middlewares = options.globalMiddlewares || [];
-    const _middlewares = [
-      ...middlewares,
+    const {
+      middlewares: {
+        global: globalMiddlewares = [],
+      } = {},
+    } = options;
+    const middlewares = [
+      ...globalMiddlewares,
       func,
     ];
-    const next = getMiddlewaresHandler(_middlewares, [state, action, options]);
+    const next = getMiddlewaresHandler(middlewares, [state, action, options]);
     return next();
   };
 }
