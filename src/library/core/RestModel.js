@@ -26,7 +26,8 @@ export default class RestModel
   constructor(ns, modelDefine, Creators, methodConfigs){
     this.ns = ns;
     this.modelDefine = normalizeModelDefine(modelDefine);
-    this.methodConfigs = methodConfigs;
+    this.singleton = !!this.modelDefine.singleton;
+    this.methodConfigs = methodConfigs.filter(methodConfig => !this.singleton || methodConfig.isForCollection !== false);
 
     const args = {
       ...this.modelDefine,
@@ -47,7 +48,7 @@ export default class RestModel
       this.extensions.shared[Creator.$name] = {};
       this.extensions.exposed[Creator.$name] = {};
 
-      const creator = new Creator();
+      const creator = new Creator(this);
       const { shared, exposed } = creator.create(args, this.modelDefine.config || {}, this.modelDefine.extensionConfigs[Creator.$name] || {});
       this.extensions.shared[Creator.$name] = shared;
       this.extensions.exposed[Creator.$name] = {

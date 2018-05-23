@@ -18,16 +18,19 @@ describe('ActionsCreator Test Cases', function(){
       expect(modelMap.actions, 'Not existed: modelMap.actions').to.exist;
 
       const actions = modelMap.actions;
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => ({ names: m.names, singleton: m.singleton }))
       .map(({
-        collection: collectionName,
-        member: memberName,
-        model: modelName,
+        names: {
+          collection: collectionName,
+          member: memberName,
+          model: modelName,
+        },
+        singleton,
       }) => {
         const capitalizeModelName = capitalizeFirstLetter(modelName);
         expect(actions[`select${capitalizeModelName}Path`], `Not existed: select${capitalizeModelName}Path`).to.be.an.instanceof(Function);
 
-        [collectionName, memberName]
+        (singleton ? [collectionName] : [collectionName, memberName])
         .map(resourceName => {
           const capitalizeResourceName = capitalizeFirstLetter(resourceName);
           ['post', 'get', 'patch', 'delete']

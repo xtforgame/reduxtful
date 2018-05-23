@@ -19,13 +19,16 @@ describe('EpicCreator Test Cases', function(){
       expect(modelMap.epics, 'Not existed: modelMap.epics').to.exist;
 
       const epics = modelMap.epics;
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => ({ names: m.names, singleton: m.singleton }))
       .map(({
-        collection: collectionName,
-        member: memberName,
-        model: modelName,
+        names: {
+          collection: collectionName,
+          member: memberName,
+          model: modelName,
+        },
+        singleton,
       }) => {
-        [collectionName, memberName]
+        (singleton ? [collectionName] : [collectionName, memberName])
         .map(resourceName => {
           const capitalizeResourceName = capitalizeFirstLetter(resourceName);
 

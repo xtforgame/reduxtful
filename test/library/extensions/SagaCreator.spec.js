@@ -19,13 +19,16 @@ describe('SagaCreator Test Cases', function(){
       expect(modelMap.sagas, 'Not existed: modelMap.sagas').to.exist;
 
       const sagas = modelMap.sagas;
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => ({ names: m.names, singleton: m.singleton }))
       .map(({
-        collection: collectionName,
-        member: memberName,
-        model: modelName,
+        names: {
+          collection: collectionName,
+          member: memberName,
+          model: modelName,
+        },
+        singleton,
       }) => {
-        [collectionName, memberName]
+        (singleton ? [collectionName] : [collectionName, memberName])
         .map(resourceName => {
           const capitalizeResourceName = capitalizeFirstLetter(resourceName);
 

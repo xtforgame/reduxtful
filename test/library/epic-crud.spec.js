@@ -49,7 +49,7 @@ describe('Epic CRUD Test Cases', function(){
       const store = mockStore(ImmutableMap({ global: {} }));
 
       return store.dispatch({
-        ...modelMap.actions.getApi('api-member-01'),
+        ...modelMap.actions.getApi(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
         [CALLBACK_ARGUMENT]: action => action,
@@ -79,7 +79,7 @@ describe('Epic CRUD Test Cases', function(){
         reduxCompose(applyMiddleware(createEpicMiddleware(epic), createReduxWaitForMiddleware()))
       );
       return store.dispatch({
-        ...modelMap.actions.getApi('api-member-01'),
+        ...modelMap.actions.getApi(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError,
         [CALLBACK_ARGUMENT]: action => action,
@@ -89,7 +89,7 @@ describe('Epic CRUD Test Cases', function(){
         // console.log('payload :', payload);
         // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
         const global = store.getState().get('global');
-        expect(global).to.nested.include({'api.hierarchy.byId.api-member-01.url': '/api/api-member-01'});
+        expect(global).to.nested.include({'api.hierarchy.collection.url': '/api'});
       });
     });
 
@@ -112,7 +112,7 @@ describe('Epic CRUD Test Cases', function(){
         reduxCompose(applyMiddleware(createEpicMiddleware(epic), createReduxWaitForMiddleware()))
       );
       const p = store.dispatch({
-        ...modelMap.actions.getApi('api-can-be-cancel'),
+        ...modelMap.actions.getApi({}, { query: { delay: 1000 } }),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
         [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError || action.type === modelMap.types.cancelGetApi,
         [CALLBACK_ARGUMENT]: action => action,
@@ -127,7 +127,10 @@ describe('Epic CRUD Test Cases', function(){
         }
         expect(action).to.nested.include({type: modelMap.types.cancelGetApi});
       });
-      store.dispatch(modelMap.actions.cancelGetApi('api-can-be-cancel'));
+      setTimeout(() => {
+        store.dispatch(modelMap.actions.cancelGetApi());
+      }, 30);
+      
       return p;
     });
   });

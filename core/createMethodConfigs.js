@@ -21,7 +21,7 @@ var getActionContantName = function getActionContantName(_ref) {
   var upperCasedMethod = (0, _commonFunctions.toUnderscore)(methodName).toUpperCase();
   var upperCasedModelName = (0, _commonFunctions.toUnderscore)(names.model).toUpperCase();
   var upperCasedCollecionName = (0, _commonFunctions.toUnderscore)(getResourceCollectionName(names)).toUpperCase();
-  var upperCasedMemberName = (0, _commonFunctions.toUnderscore)(names.member).toUpperCase();
+  var upperCasedMemberName = names.member && (0, _commonFunctions.toUnderscore)(names.member).toUpperCase();
   var upperCasedActionTypeName = (0, _commonFunctions.toUnderscore)(actionTypeName).toUpperCase();
 
   switch (methodName) {
@@ -36,16 +36,16 @@ var getActionContantName = function getActionContantName(_ref) {
 
   switch (actionTypeName) {
     case 'respond':
-      return upperCasedMemberName + '_RESPOND_' + upperCasedMethod;
+      return upperCasedModelName + '_RESPOND_' + upperCasedMethod;
     case 'respondError':
-      return upperCasedMemberName + '_RESPOND_' + upperCasedMethod + '_ERROR';
+      return upperCasedModelName + '_RESPOND_' + upperCasedMethod + '_ERROR';
     case 'cancel':
-      return upperCasedMemberName + '_CANCEL_' + upperCasedMethod;
+      return upperCasedModelName + '_CANCEL_' + upperCasedMethod;
     default:
       break;
   }
 
-  return upperCasedMemberName + '_' + upperCasedMethod + '_' + upperCasedActionTypeName;
+  return upperCasedModelName + '_' + upperCasedMethod + '_' + upperCasedActionTypeName;
 };
 
 var getActionName = function getActionName() {

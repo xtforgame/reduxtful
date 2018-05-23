@@ -20,15 +20,18 @@ describe('WaitableActionsCreator Test Cases', function(){
       expect(modelMap.waitableActions, 'Not existed: modelMap.waitableActions').to.exist;
 
       const waitableActions = modelMap.waitableActions;
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => ({ names: m.names, singleton: m.singleton }))
       .map(({
-        collection: collectionName,
-        member: memberName,
-        model: modelName,
+        names: {
+          collection: collectionName,
+          member: memberName,
+          model: modelName,
+        },
+        singleton,
       }) => {
         const capitalizeModelName = capitalizeFirstLetter(modelName);
 
-        [collectionName, memberName]
+        (singleton ? [collectionName] : [collectionName, memberName])
         .map(resourceName => {
           const capitalizeResourceName = capitalizeFirstLetter(resourceName);
           ['post', 'get', 'patch', 'delete']

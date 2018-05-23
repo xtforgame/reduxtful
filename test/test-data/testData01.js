@@ -42,7 +42,7 @@ export default {
   modelsDefine: {
     api: {
       url: '/api',
-      names: { model:'api', member: 'api', collection: 'apis' },
+      names: { model:'api', collection: 'api' },
       singleton: true,
       config: {
         // actionNoRedundantBody: true,
@@ -138,12 +138,12 @@ export default {
   },
   setupMock: (mock) => {
     return mock
-    .onGet('/api/api-member-01').reply(200, { url: '/api/api-member-01' })
-    .onGet('/api/api-can-be-cancel').reply((config) =>
+    .onGet('/api', { params: { delay: 1000 } }).reply((config) =>
       new Promise(resolve => setTimeout(() =>
-        resolve([200, { url: '/api/api-can-be-cancel' }]), 1000)
+        resolve([200, { url: '/api' }]), 1000)
       )
     )
+    .onGet('/api').reply(200, { url: '/api' })
     .onPost('/api/users').reply(201, { url: '/api/users/1', id: 1 })
     .onGet('/api/users', { params: { offset: 0, limit: 1 } }).reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1' }], next: { offset: 1, limit: 1 } })
     .onGet('/api/users', { params: { offset: 1, limit: 1 } }).reply(200, { url: '/api/users', users: [{ name: 'foo', url: '/api/users/2' }], next: null })

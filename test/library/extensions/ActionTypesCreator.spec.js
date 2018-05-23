@@ -19,18 +19,21 @@ describe('ActionTypesCreator Test Cases', function(){
 
       const types = modelMap.types;
 
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => m.names)
+      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => ({ names: m.names, singleton: m.singleton }))
       .map(({
-        collection: collectionName,
-        member: memberName,
-        model: modelName,
+        names: {
+          collection: collectionName,
+          member: memberName,
+          model: modelName,
+        },
+        singleton,
       }) => {
         const capitalizeModelName = capitalizeFirstLetter(modelName);
         const upperCasedModelName = toUnderscore(modelName).toUpperCase();
         expect(types[`select${capitalizeModelName}Path`], `Not equal: select${capitalizeModelName}Path`)
           .to.equal(`@@app/global/${upperCasedModelName}_SELECT_PATH`);
 
-        [[collectionName, '_COLLECTION'], [memberName, '']].map(([resourceName, suffix]) => {
+        (singleton ? [[collectionName, '_COLLECTION']] : [[collectionName, '_COLLECTION'], [memberName, '']]).map(([resourceName, suffix]) => {
           const capitalizeResourceName = capitalizeFirstLetter(resourceName);
 
           ['post', 'get', 'patch', 'delete']

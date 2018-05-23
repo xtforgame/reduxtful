@@ -13,7 +13,7 @@ let getActionContantName = ({methodName, names, actionTypeName}) => {
   const upperCasedMethod = toUnderscore(methodName).toUpperCase();
   const upperCasedModelName = toUnderscore(names.model).toUpperCase();
   const upperCasedCollecionName = toUnderscore(getResourceCollectionName(names)).toUpperCase();
-  const upperCasedMemberName = toUnderscore(names.member).toUpperCase();
+  const upperCasedMemberName = names.member && toUnderscore(names.member).toUpperCase();
   const upperCasedActionTypeName = toUnderscore(actionTypeName).toUpperCase();
 
   switch(methodName){
@@ -28,16 +28,16 @@ let getActionContantName = ({methodName, names, actionTypeName}) => {
 
   switch(actionTypeName){
   case 'respond':
-    return `${upperCasedMemberName}_RESPOND_${upperCasedMethod}`;
+    return `${upperCasedModelName}_RESPOND_${upperCasedMethod}`;
   case 'respondError':
-    return `${upperCasedMemberName}_RESPOND_${upperCasedMethod}_ERROR`;
+    return `${upperCasedModelName}_RESPOND_${upperCasedMethod}_ERROR`;
   case 'cancel':
-    return `${upperCasedMemberName}_CANCEL_${upperCasedMethod}`;
+    return `${upperCasedModelName}_CANCEL_${upperCasedMethod}`;
   default:
     break;
   }
 
-  return `${upperCasedMemberName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
+  return `${upperCasedModelName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
 };
 
 let getActionName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {

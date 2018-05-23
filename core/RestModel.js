@@ -50,7 +50,10 @@ var RestModel = function RestModel(ns, modelDefine, Creators, methodConfigs) {
 
   this.ns = ns;
   this.modelDefine = normalizeModelDefine(modelDefine);
-  this.methodConfigs = methodConfigs;
+  this.singleton = !!this.modelDefine.singleton;
+  this.methodConfigs = methodConfigs.filter(function (methodConfig) {
+    return !_this.singleton || methodConfig.isForCollection !== false;
+  });
 
   var args = (0, _extends3.default)({}, this.modelDefine, {
     ns: this.ns,
@@ -70,7 +73,7 @@ var RestModel = function RestModel(ns, modelDefine, Creators, methodConfigs) {
     _this.extensions.shared[Creator.$name] = {};
     _this.extensions.exposed[Creator.$name] = {};
 
-    var creator = new Creator();
+    var creator = new Creator(_this);
 
     var _creator$create = creator.create(args, _this.modelDefine.config || {}, _this.modelDefine.extensionConfigs[Creator.$name] || {}),
         shared = _creator$create.shared,
