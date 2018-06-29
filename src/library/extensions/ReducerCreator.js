@@ -12,11 +12,13 @@ const mergePartialState = (state = {}, action, options, isForCollection, entryPa
   }else{
     const {
       middlewares: {
+        node: nodeMiddlewares = [],
         collection: collectionMiddlewares = [],
         member: memberMiddlewares = [],
       } = {},
     } = options;
     const middlewares = [
+      ...nodeMiddlewares,
       ...(isForCollection ? collectionMiddlewares : memberMiddlewares),
       mergeFunc,
     ];
@@ -59,11 +61,16 @@ const genStartFunc = (method, options, isForCollection) => (state = {}, action) 
 };
 
 const genCollectionRespondFunc = (method, options, isForCollection) => (state = {}, action) => {
-  const { mergeCollection = (_, __, action) => action.data } = options;
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  let {
+    mergeNode,
+    mergeCollection = (_, __, action) => action.data,
+  } = options;
+  const defaultMergeFunc = partialState => ({
     ...partialState,
     collection: mergeCollection(method, partialState.collection, action, options),
-  }));
+  });
+  mergeNode = mergeNode || ((method, partialState, defaultMergeFunc) => defaultMergeFunc(partialState))
+  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };
 
 const genCollectionRespondDeleteFunc = (method, options, isForCollection) => (state = {}, action) => {
@@ -82,14 +89,19 @@ const genCollectionClearFunc = (options, isForCollection) => (state = {}, action
 
 const genRepondFunc = (method, options, isForCollection) => (state = {}, action) => {
   const id = action.entry.id;
-  const { mergeMember = (_, __, action) => action.data } = options;
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  let {
+    mergeNode,
+    mergeMember = (_, __, action) => action.data,
+  } = options;
+  const defaultMergeFunc = partialState => ({
     ...partialState,
     byId: {
       ...partialState.byId,
       [id]: mergeMember(method, partialState.byId && partialState.byId[id], action, options),
     },
-  }));
+  });
+  mergeNode = mergeNode || ((method, partialState, defaultMergeFunc) => defaultMergeFunc(partialState))
+  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };
 
 const genRespondDeleteFunc = (method, options, isForCollection) => (state = {}, action) => {

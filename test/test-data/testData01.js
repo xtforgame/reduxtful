@@ -82,12 +82,39 @@ export default {
             global: [(state, action, options, next) => {
               return next();
             }],
+            node: [(state, action, options, next) => {
+              return next();
+            }],
             collection: [(state, action, options, next) => {
               return next();
             }],
             member: [(state, action, options, next) => {
               return next();
             }],
+          },
+          mergeNode: (method, currentData, defaultMergeFunc, state, action, options, isForCollection) => {
+            return defaultMergeFunc(currentData);
+            // if(isForCollection){
+            //   let {
+            //     mergeCollection = (_, __, action) => action.data,
+            //   } = options;
+            //   return ({
+            //     ...currentData,
+            //     collection: mergeCollection(method, currentData.collection, action, options),
+            //   });
+            // }else{
+            //   const id = action.entry.id;
+            //   let {
+            //     mergeMember = (_, __, action) => action.data,
+            //   } = options;
+            //   return ({
+            //     ...currentData,
+            //     byId: {
+            //       ...currentData.byId,
+            //       [id]: mergeMember(method, currentData.byId && currentData.byId[id], action, options),
+            //     },
+            //   });
+            // }
           },
           mergeMember: (method, currentData, action, options) => {
             return action.data;

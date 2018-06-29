@@ -62,12 +62,14 @@ var mergePartialState = function mergePartialState() {
   } else {
     var _options$middlewares = options.middlewares;
     _options$middlewares = _options$middlewares === undefined ? {} : _options$middlewares;
-    var _options$middlewares$ = _options$middlewares.collection,
-        collectionMiddlewares = _options$middlewares$ === undefined ? [] : _options$middlewares$,
-        _options$middlewares$2 = _options$middlewares.member,
-        memberMiddlewares = _options$middlewares$2 === undefined ? [] : _options$middlewares$2;
+    var _options$middlewares$ = _options$middlewares.node,
+        nodeMiddlewares = _options$middlewares$ === undefined ? [] : _options$middlewares$,
+        _options$middlewares$2 = _options$middlewares.collection,
+        collectionMiddlewares = _options$middlewares$2 === undefined ? [] : _options$middlewares$2,
+        _options$middlewares$3 = _options$middlewares.member,
+        memberMiddlewares = _options$middlewares$3 === undefined ? [] : _options$middlewares$3;
 
-    var middlewares = [].concat((0, _toConsumableArray3.default)(isForCollection ? collectionMiddlewares : memberMiddlewares), [mergeFunc]);
+    var middlewares = [].concat((0, _toConsumableArray3.default)(nodeMiddlewares), (0, _toConsumableArray3.default)(isForCollection ? collectionMiddlewares : memberMiddlewares), [mergeFunc]);
     var next = (0, _getMiddlewaresHandler2.default)(middlewares, [state, action, options]);
     return next();
   }
@@ -118,15 +120,22 @@ var genCollectionRespondFunc = function genCollectionRespondFunc(method, options
   return function () {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
-    var _options$mergeCollect = options.mergeCollection,
+    var mergeNode = options.mergeNode,
+        _options$mergeCollect = options.mergeCollection,
         mergeCollection = _options$mergeCollect === undefined ? function (_, __, action) {
       return action.data;
     } : _options$mergeCollect;
 
-    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
+    var defaultMergeFunc = function defaultMergeFunc(partialState) {
       return (0, _extends7.default)({}, partialState, {
         collection: mergeCollection(method, partialState.collection, action, options)
       });
+    };
+    mergeNode = mergeNode || function (method, partialState, defaultMergeFunc) {
+      return defaultMergeFunc(partialState);
+    };
+    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
+      return mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection);
     });
   };
 };
@@ -163,15 +172,22 @@ var genRepondFunc = function genRepondFunc(method, options, isForCollection) {
     var action = arguments[1];
 
     var id = action.entry.id;
-    var _options$mergeMember = options.mergeMember,
+    var mergeNode = options.mergeNode,
+        _options$mergeMember = options.mergeMember,
         mergeMember = _options$mergeMember === undefined ? function (_, __, action) {
       return action.data;
     } : _options$mergeMember;
 
-    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
+    var defaultMergeFunc = function defaultMergeFunc(partialState) {
       return (0, _extends7.default)({}, partialState, {
         byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, mergeMember(method, partialState.byId && partialState.byId[id], action, options)))
       });
+    };
+    mergeNode = mergeNode || function (method, partialState, defaultMergeFunc) {
+      return defaultMergeFunc(partialState);
+    };
+    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
+      return mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection);
     });
   };
 };
