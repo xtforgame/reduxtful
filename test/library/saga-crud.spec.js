@@ -197,6 +197,9 @@ describe('Saga CRUD Test Cases', function(){
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
           expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          // for the updateMembersByCollection feature
+          expect(global).to.nested.include({'user.hierarchy.byId[0].name': 'rick'});
+          expect(global).to.nested.include({'user.hierarchy.byId[1].name': 'foo'});
         });
       });
 

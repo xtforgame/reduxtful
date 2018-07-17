@@ -1,6 +1,7 @@
 import { capitalizeFirstLetter } from '../core/common-functions';
+import UrlInfo from '../core/UrlInfo';
 
-const createSelectors = (createSelector, names, baseSelector) => {
+const createSelectors = (createSelector, names, baseSelector, hierarchyLevel) => {
   const resourceSelector = baseSelector;
 
   const makeResourceHierarchySelector = () => createSelector(
@@ -36,6 +37,16 @@ const createSelectors = (createSelector, names, baseSelector) => {
     }
   )
 
+  const makeSelectedResourceByIdSelector = () => createSelector(
+    makeSelectedResourceNodeSelector(),
+    (node) => {
+      if(node && node.byId){
+        return node.byId;
+      }
+      return null;
+    }
+  )
+
   const makeSelectedResourceSelector = () => createSelector(
     makeSelectedResourceNodeSelector(),
     makeResourceSelectionSelector(),
@@ -50,20 +61,56 @@ const createSelectors = (createSelector, names, baseSelector) => {
   const modelName = names.model;
   const capitalizeModelName = capitalizeFirstLetter(modelName);
 
+  let extra = {};
+  if(hierarchyLevel === 0){
+    // for the resource with single-level-hierarchy
+    const makeDefaultResourceNodeSelector = () => createSelector(
+      makeResourceHierarchySelector(),
+      hierarchy => hierarchy,
+    )
+  
+    const makeDefaultResourceCollectionSelector = () => createSelector(
+      makeDefaultResourceNodeSelector(),
+      (node) => {
+        if(node && node.collection){
+          return node.collection;
+        }
+        return null;
+      }
+    )
+  
+    const makeDefaultResourceByIdSelector = () => createSelector(
+      makeDefaultResourceNodeSelector(),
+      (node) => {
+        if(node && node.byId){
+          return node.byId;
+        }
+        return null;
+      }
+    )
+    extra = {
+      [`makeDefault${capitalizeModelName}NodeSelector`]: makeDefaultResourceNodeSelector,
+      [`makeDefault${capitalizeModelName}CollectionSelector`]: makeDefaultResourceCollectionSelector,
+      [`makeDefault${capitalizeModelName}ByIdSelector`]: makeDefaultResourceByIdSelector,
+    };
+  }
+
   return {
     [`${modelName}Selector`]: resourceSelector,
     [`make${capitalizeModelName}HierarchySelector`]: makeResourceHierarchySelector,
     [`make${capitalizeModelName}SelectionSelector`]: makeResourceSelectionSelector,
     [`makeSelected${capitalizeModelName}NodeSelector`]: makeSelectedResourceNodeSelector,
     [`makeSelected${capitalizeModelName}CollectionSelector`]: makeSelectedResourceCollectionSelector,
+    [`makeSelected${capitalizeModelName}ByIdSelector`]: makeSelectedResourceByIdSelector,
     [`makeSelected${capitalizeModelName}Selector`]: makeSelectedResourceSelector,
+    ...extra,
   };
 }
 
 export default class SelectorsCreator {
   static $name = 'selectors';
 
-  create({ names, methodConfigs }, config, extensionConfig){
+  create({ url, names, methodConfigs }, config, extensionConfig){
     let shared = {};
     let exposed = {};
 
@@ -76,7 +123,9 @@ export default class SelectorsCreator {
       createSelector,
     } = extensionConfig;
 
-    shared = createSelectors(createSelector, names, extensionConfig.baseSelector);
+    const hierarchyLevel = UrlInfo.parse(url).varParts.length
+
+    shared = createSelectors(createSelector, names, extensionConfig.baseSelector, hierarchyLevel);
     exposed = { ...shared };
 
     return { shared, exposed };

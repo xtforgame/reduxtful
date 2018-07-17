@@ -5,10 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -16,6 +12,10 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _extends3 = require('babel-runtime/helpers/extends');
+
+var _extends4 = _interopRequireDefault(_extends3);
 
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
@@ -25,10 +25,14 @@ var _class, _temp;
 
 var _commonFunctions = require('../core/common-functions');
 
+var _UrlInfo = require('../core/UrlInfo');
+
+var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createSelectors = function createSelectors(createSelector, names, baseSelector) {
-  var _ref;
+var createSelectors = function createSelectors(createSelector, names, baseSelector, hierarchyLevel) {
+  var _extends2;
 
   var resourceSelector = baseSelector;
 
@@ -66,6 +70,15 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
     });
   };
 
+  var makeSelectedResourceByIdSelector = function makeSelectedResourceByIdSelector() {
+    return createSelector(makeSelectedResourceNodeSelector(), function (node) {
+      if (node && node.byId) {
+        return node.byId;
+      }
+      return null;
+    });
+  };
+
   var makeSelectedResourceSelector = function makeSelectedResourceSelector() {
     return createSelector(makeSelectedResourceNodeSelector(), makeResourceSelectionSelector(), function (node, selection) {
       if (node && node.byId && selection.id != null) {
@@ -78,7 +91,37 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
   var modelName = names.model;
   var capitalizeModelName = (0, _commonFunctions.capitalizeFirstLetter)(modelName);
 
-  return _ref = {}, (0, _defineProperty3.default)(_ref, modelName + 'Selector', resourceSelector), (0, _defineProperty3.default)(_ref, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), (0, _defineProperty3.default)(_ref, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), (0, _defineProperty3.default)(_ref, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), _ref;
+  var extra = {};
+  if (hierarchyLevel === 0) {
+    var _extra;
+
+    var makeDefaultResourceNodeSelector = function makeDefaultResourceNodeSelector() {
+      return createSelector(makeResourceHierarchySelector(), function (hierarchy) {
+        return hierarchy;
+      });
+    };
+
+    var makeDefaultResourceCollectionSelector = function makeDefaultResourceCollectionSelector() {
+      return createSelector(makeDefaultResourceNodeSelector(), function (node) {
+        if (node && node.collection) {
+          return node.collection;
+        }
+        return null;
+      });
+    };
+
+    var makeDefaultResourceByIdSelector = function makeDefaultResourceByIdSelector() {
+      return createSelector(makeDefaultResourceNodeSelector(), function (node) {
+        if (node && node.byId) {
+          return node.byId;
+        }
+        return null;
+      });
+    };
+    extra = (_extra = {}, (0, _defineProperty3.default)(_extra, 'makeDefault' + capitalizeModelName + 'NodeSelector', makeDefaultResourceNodeSelector), (0, _defineProperty3.default)(_extra, 'makeDefault' + capitalizeModelName + 'CollectionSelector', makeDefaultResourceCollectionSelector), (0, _defineProperty3.default)(_extra, 'makeDefault' + capitalizeModelName + 'ByIdSelector', makeDefaultResourceByIdSelector), _extra);
+  }
+
+  return (0, _extends4.default)((_extends2 = {}, (0, _defineProperty3.default)(_extends2, modelName + 'Selector', resourceSelector), (0, _defineProperty3.default)(_extends2, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), (0, _defineProperty3.default)(_extends2, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'ByIdSelector', makeSelectedResourceByIdSelector), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), _extends2), extra);
 };
 
 var SelectorsCreator = (_temp = _class = function () {
@@ -88,9 +131,10 @@ var SelectorsCreator = (_temp = _class = function () {
 
   (0, _createClass3.default)(SelectorsCreator, [{
     key: 'create',
-    value: function create(_ref2, config, extensionConfig) {
-      var names = _ref2.names,
-          methodConfigs = _ref2.methodConfigs;
+    value: function create(_ref, config, extensionConfig) {
+      var url = _ref.url,
+          names = _ref.names,
+          methodConfigs = _ref.methodConfigs;
 
       var shared = {};
       var exposed = {};
@@ -102,8 +146,10 @@ var SelectorsCreator = (_temp = _class = function () {
       var createSelector = extensionConfig.createSelector;
 
 
-      shared = createSelectors(createSelector, names, extensionConfig.baseSelector);
-      exposed = (0, _extends3.default)({}, shared);
+      var hierarchyLevel = _UrlInfo2.default.parse(url).varParts.length;
+
+      shared = createSelectors(createSelector, names, extensionConfig.baseSelector, hierarchyLevel);
+      exposed = (0, _extends4.default)({}, shared);
 
       return { shared: shared, exposed: exposed };
     }

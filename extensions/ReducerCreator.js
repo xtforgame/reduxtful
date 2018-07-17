@@ -124,13 +124,22 @@ var genCollectionRespondFunc = function genCollectionRespondFunc(method, options
         _options$mergeCollect = options.mergeCollection,
         mergeCollection = _options$mergeCollect === undefined ? function (_, __, action) {
       return action.data;
-    } : _options$mergeCollect;
+    } : _options$mergeCollect,
+        updateMembersByCollection = options.updateMembersByCollection;
 
     var defaultMergeFunc = function defaultMergeFunc(partialState) {
       return (0, _extends7.default)({}, partialState, {
         collection: mergeCollection(method, partialState.collection, action, options)
       });
     };
+    if (updateMembersByCollection) {
+      defaultMergeFunc = function defaultMergeFunc(partialState) {
+        return (0, _extends7.default)({}, partialState, {
+          collection: mergeCollection(method, partialState.collection, action, options),
+          byId: (0, _extends7.default)({}, partialState.byId, updateMembersByCollection(action.data))
+        });
+      };
+    }
     mergeNode = mergeNode || function (method, partialState, defaultMergeFunc) {
       return defaultMergeFunc(partialState);
     };

@@ -64,11 +64,22 @@ const genCollectionRespondFunc = (method, options, isForCollection) => (state = 
   let {
     mergeNode,
     mergeCollection = (_, __, action) => action.data,
+    updateMembersByCollection,
   } = options;
-  const defaultMergeFunc = partialState => ({
+  let defaultMergeFunc = partialState => ({
     ...partialState,
     collection: mergeCollection(method, partialState.collection, action, options),
   });
+  if(updateMembersByCollection){
+    defaultMergeFunc = partialState => ({
+      ...partialState,
+      collection: mergeCollection(method, partialState.collection, action, options),
+      byId: {
+        ...partialState.byId,
+        ...updateMembersByCollection(action.data),
+      },
+    });
+  }
   mergeNode = mergeNode || ((method, partialState, defaultMergeFunc) => defaultMergeFunc(partialState))
   return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };

@@ -177,7 +177,11 @@ describe('Epic CRUD Test Cases', function(){
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
+          console.log('global.user.hierarchy.byId :', global.user.hierarchy.byId);
           expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          // for the updateMembersByCollection feature
+          expect(global).to.nested.include({'user.hierarchy.byId[0].name': 'rick'});
+          expect(global).to.nested.include({'user.hierarchy.byId[1].name': 'foo'});
         });
       });
 
