@@ -20,8 +20,8 @@
     "lint-fix": "eslint --fix --ext .jsx,.js ./src",
     "build": "cross-env NODE_ENV=production gulp library:build",
     "start": "cross-env NODE_ENV=development gulp library:watch:dev",
-    "test": "eslint ./test/library && cross-env NODE_ENV=test mocha --compilers js:babel-core/register './test/library/**/*.spec.js'",
-    "test-watch": "eslint ./test/library && cross-env NODE_ENV=test mocha --watch ./test --watch-extensions js,jsx --compilers js:babel-core/register './test/library/**/*.spec.js'"
+    "test": "eslint ./test/library && cross-env NODE_ENV=test mocha --require babel-core/register './test/library/**/*.spec.js'",
+    "test-watch": "eslint ./test/library && cross-env NODE_ENV=test mocha --watch ./test --watch-extensions js,jsx --require babel-core/register './test/library/**/*.spec.js'"
   },
   "license": "MIT",
   "engines": {
@@ -31,7 +31,7 @@
   "devDependencies": {
     "axios": "^0.17.1",
     "axios-mock-adapter": "^1.15.0",
-    "az-gulp-env-lite": "git+https://github.com/xtforgame/az-gulp-env-lite#v1.0.0-alpha.1",
+    "az-gulp-env-lite": "git+https://github.com/xtforgame/az-gulp-env-lite#v1.0.0-alpha.2",
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
     "babel-plugin-module-resolver": "^3.1.1",
@@ -49,7 +49,7 @@
     "eslint-plugin-react": "^6.9.0",
     "gulp": "^4.0.0",
     "immutable": "^3.8.1",
-    "mocha": "^3.0.2",
+    "mocha": "^5.2.0",
     "redux": "3.7.2",
     "redux-immutable": "^4.0.0",
     "redux-mock-store": "^1.5.1",
