@@ -1,4 +1,4 @@
-/*eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
 import { ModelMap, defaultExtensions } from 'library';
@@ -9,19 +9,21 @@ import {
   testData01,
 } from '../../test-data';
 
-const expect = chai.expect;
+const { expect } = chai;
 
-describe('WaitableActionsCreator Test Cases', function(){
-  describe('Basic', function(){
+describe('WaitableActionsCreator Test Cases', () => {
+  describe('Basic', () => {
     it('should export all waitableActions', () => {
       const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([EpicCreator, WaitableActionsCreator]));
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.waitableActions, 'Not existed: modelMap.waitableActions').to.exist;
 
-      const waitableActions = modelMap.waitableActions;
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key]).map(m => ({ names: m.names, singleton: m.singleton }))
-      .map(({
+      const { waitableActions } = modelMap;
+      Object.keys(testData01.modelsDefine)
+      .map(key => testData01.modelsDefine[key])
+      .map(m => ({ names: m.names, singleton: m.singleton }))
+      .forEach(({
         names: {
           collection: collectionName,
           member: memberName,
@@ -32,10 +34,10 @@ describe('WaitableActionsCreator Test Cases', function(){
         const capitalizeModelName = capitalizeFirstLetter(modelName);
 
         (singleton ? [collectionName] : [collectionName, memberName])
-        .map(resourceName => {
+        .forEach((resourceName) => {
           const capitalizeResourceName = capitalizeFirstLetter(resourceName);
           ['post', 'get', 'patch', 'delete']
-          .map(methodName => {
+          .forEach((methodName) => {
             const capitalizeMethodName = capitalizeFirstLetter(methodName);
             expect(waitableActions[`${methodName}${capitalizeResourceName}`], `Not existed: ${methodName}${capitalizeResourceName}`).to.be.an.instanceof(Function);
           });
@@ -44,5 +46,3 @@ describe('WaitableActionsCreator Test Cases', function(){
     });
   });
 });
-
-

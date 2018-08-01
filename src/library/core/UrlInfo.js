@@ -1,32 +1,31 @@
-export default class UrlInfo
-{
-  static test(url, reservedVars = ['id']){
+export default class UrlInfo {
+  static test(url, reservedVars = ['id']) {
     UrlInfo.parse(url, (varPart) => {
-      reservedVars.map(reservedVar => {
-        if(varPart.varName === reservedVar){
+      reservedVars.forEach((reservedVar) => {
+        if (varPart.varName === reservedVar) {
           throw new Error(`Invalid url pattern: ${url}, '${reservedVar}' is the reserved variable name.`);
         }
       });
     });
   }
 
-  static parse(url, onVarParsed = varPart => {}){
+  static parse(url, onVarParsed = (varPart) => {}) {
     const paramsRegex = /[^{}]+(?=\})/g;
     // url = 'test/abcd{ string1 }test{ string2 }test';
     let regexResult = null;
     const urlParts = [];
     const varParts = [];
     let nextPos = 0;
-    while ((regexResult = paramsRegex.exec(url)) !== null) {
-      let startPos = regexResult.index - 1;
-      let totalLength = regexResult[0].length + 2;
-      let finishPos = startPos + totalLength;
-      if(nextPos !== startPos){
+    while ((regexResult = paramsRegex.exec(url)) !== null) { // eslint-disable-line no-cond-assign
+      const startPos = regexResult.index - 1;
+      const totalLength = regexResult[0].length + 2;
+      const finishPos = startPos + totalLength;
+      if (nextPos !== startPos) {
         urlParts.push(
           url.substr(nextPos, startPos - nextPos)
         );
       }
-      let varPart = {
+      const varPart = {
         startPos,
         totalLength,
         finishPos,
@@ -40,7 +39,7 @@ export default class UrlInfo
       nextPos = finishPos;
       // console.log('paramsRegex.lastIndex :', this.paramsRegex.lastIndex);
     }
-    if(nextPos < url.length){
+    if (nextPos < url.length) {
       urlParts.push(
         url.substr(nextPos, url.length - nextPos)
       );
@@ -53,13 +52,13 @@ export default class UrlInfo
     };
   }
 
-  constructor(url){
+  constructor(url) {
     this.url = url;
     this.paramsRegex = /[^{}]+(?=\})/g;
     this.parseUrl();
   }
 
-  parseUrl(){
+  parseUrl() {
     const {
       paramsRegex,
       urlParts,
@@ -71,41 +70,41 @@ export default class UrlInfo
     this.varParts = varParts;
   }
 
-  include(entryA, entryB){
+  include(entryA, entryB) {
     for (let i = 0; i < this.varParts.length; i++) {
-      const varName = this.varParts[i].varName;
+      const { varName } = this.varParts[i];
       const varA = entryA[varName];
       const varB = entryB[varName];
-      if(varA == null){
+      if (varA == null) {
         return true;
       }
-      if(varA !== varB){
+      if (varA !== varB) {
         return false;
       }
     }
     return true;
   }
 
-  isEqual(entryA, entryB, terminalVars = []){
+  isEqual(entryA, entryB, terminalVars = []) {
     for (let i = 0; i < this.varParts.length; i++) {
-      const varName = this.varParts[i].varName;
+      const { varName } = this.varParts[i];
       const varA = entryA[varName];
       const varB = entryB[varName];
-      if(varA == null && varB == null && ~terminalVars.indexOf(varName)){
+      if (varA == null && varB == null && ~terminalVars.indexOf(varName)) {
         return true;
       }
-      if(varA !== varB){
+      if (varA !== varB) {
         return false;
       }
     }
     return true;
   }
 
-  compile(entry = {}){
-    return this.urlParts.map(part => {
-      if(typeof part !== 'string'){
-        let strPart = entry[part.varName]
-        if(strPart == null){
+  compile(entry = {}) {
+    return this.urlParts.map((part) => {
+      if (typeof part !== 'string') {
+        const strPart = entry[part.varName];
+        if (strPart == null) {
           throw new Error(`Url param not found :${part.varName}`);
         }
         return strPart;
@@ -115,7 +114,7 @@ export default class UrlInfo
     .join('');
   }
 
-  entryToPath(entry = {}){
+  entryToPath(entry = {}) {
     return this.varParts.map(part => entry[part.varName]);
   }
 }

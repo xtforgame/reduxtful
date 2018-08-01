@@ -1,29 +1,29 @@
-const normalizeModelDefine = modelDefine => {
-  let normalized = {
+/* eslint-disable max-len */
+const normalizeModelDefine = (modelDefine) => {
+  const normalized = {
     ...modelDefine,
   };
 
-  if(typeof normalized.names === 'string'){
+  if (typeof normalized.names === 'string') {
     normalized.names = {
       model: normalized.names,
       member: normalized.names,
       collection: `${normalized.names}s`,
-    }
+    };
   }
 
   normalized.config = {
     actionNoRedundantBody: true,
     ...normalized.config,
-  }
+  };
 
   normalized.extensionConfigs = normalized.extensionConfigs || {};
 
   return normalized;
 };
 
-export default class RestModel
-{
-  constructor(ns, modelDefine, Creators, methodConfigs){
+export default class RestModel {
+  constructor(ns, modelDefine, Creators, methodConfigs) {
     this.ns = ns;
     this.modelDefine = normalizeModelDefine(modelDefine);
     this.singleton = !!this.modelDefine.singleton;
@@ -44,7 +44,7 @@ export default class RestModel
       exposed: {},
     };
 
-    this.Creators.forEach(Creator => {
+    this.Creators.forEach((Creator) => {
       this.extensions.shared[Creator.$name] = {};
       this.extensions.exposed[Creator.$name] = {};
 
@@ -59,11 +59,7 @@ export default class RestModel
     });
   }
 
-  getShared = (extensionName) => {
-    return extensionName ? this.extensions.shared[extensionName] : this.extensions.shared;
-  };
+  getShared = extensionName => (extensionName ? this.extensions.shared[extensionName] : this.extensions.shared);
 
-  getExposed = (extensionName) => {
-    return extensionName ? this.extensions.exposed[extensionName] : this.extensions.exposed;
-  };
+  getExposed = extensionName => (extensionName ? this.extensions.exposed[extensionName] : this.extensions.exposed);
 }

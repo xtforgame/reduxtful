@@ -1,0 +1,39 @@
+{
+  "rules": {
+    // vanilla
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "max-len": ["warn", { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
+    "camelcase": "off", // => maybe enable later
+    "no-use-before-define": ["error", "nofunc"], // do not check class and function
+    "no-unused-vars": ["error", { "args": "none" }],
+    "class-methods-use-this": "off",
+    "no-return-assign": ["error", "except-parens"],
+    "radix": ["error", "as-needed"],
+    "prefer-const": ["error", {"destructuring": "all"}],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "ignore"
+    }],
+    "no-bitwise": ["error", { "allow": ["~"] }],
+    "no-else-return": "off",
+    "indent": ["error", 2, { "MemberExpression": "off" }],
+    "no-plusplus": "off",
+    "no-continue": "off",
+
+    // import plugin
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "mocha": true,
+    "jest": true
+  },
+  "extends": "airbnb-base"
+}

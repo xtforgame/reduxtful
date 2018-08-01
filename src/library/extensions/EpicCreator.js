@@ -3,16 +3,17 @@ import ActionsCreator from './ActionsCreator';
 import AxiosObservable from '../core/AxiosObservable';
 import UrlInfo from '../core/UrlInfo';
 import {
-  toNull,
   getRespondActionCreators,
 } from '../core/helper-functions';
 
 export default class EpicCreator {
   static $name = 'epics';
 
-  create({ ns, names, url, getShared, methodConfigs }, { getId = (action => action.data.id) }, extensionConfig){
-    let shared = {};
-    let exposed = {};
+  create({
+    ns, names, url, getShared, methodConfigs,
+  }, { getId = (action => action.data.id) }, extensionConfig) {
+    const shared = {};
+    const exposed = {};
 
     const {
       axios,
@@ -23,42 +24,41 @@ export default class EpicCreator {
 
     const axiosObservable = AxiosObservable(axios, Observable);
 
-    methodConfigs.forEach(methodConfig => {
-      if(methodConfig.supportedActions.length <= 1){
-        return ;
+    methodConfigs.forEach((methodConfig) => {
+      if (methodConfig.supportedActions.length <= 1) {
+        return;
       }
-      let actionTypes = getShared(ActionTypesCreator.$name)[methodConfig.name];
-      let actions = getShared(ActionsCreator.$name)[methodConfig.name];
+      const actionTypes = getShared(ActionTypesCreator.$name)[methodConfig.name];
+      const actions = getShared(ActionsCreator.$name)[methodConfig.name];
       // console.log('actionTypes :', actionTypes);
       // console.log('actions :', actions);
 
-      let arg = {
+      const arg = {
         methodName: methodConfig.name,
         names,
       };
 
-      if(!methodConfig.getEpicName || !methodConfig.getUrlTemplate){
-        return { shared, exposed };
+      if (!methodConfig.getEpicName || !methodConfig.getUrlTemplate) {
+        return;
       }
 
       const epicName = methodConfig.getEpicName(arg);
-      const urlInfo = new UrlInfo(methodConfig.getUrlTemplate({url, names}));
+      const urlInfo = new UrlInfo(methodConfig.getUrlTemplate({ url, names }));
 
       const {
         respondCreator,
         respondErrorCreator,
       } = getRespondActionCreators(methodConfig);
 
-      shared[methodConfig.name] = (action$, store) => {
-        return action$.ofType(actionTypes.start)
-          .mergeMap(action => {
-            const url = urlInfo.compile(action.entry);
-            const query = action.options.query;
+      shared[methodConfig.name] = (action$, store) => action$.ofType(actionTypes.start)
+          .mergeMap((action) => {
+            const compiledUrl = urlInfo.compile(action.entry);
+            const { query } = action.options;
             const source = axios.CancelToken.source();
 
             return axiosObservable({
               method: methodConfig.method,
-              url,
+              url: compiledUrl,
               headers: getHeaders(),
               data: action.data,
               params: query,
@@ -73,15 +73,14 @@ export default class EpicCreator {
               actions,
               middlewares,
               axiosCancelTokenSource: source,
-              cancelStream$: action$.filter(cancelAction => {
-                if(cancelAction.type !== actionTypes.cancel){
+              cancelStream$: action$.filter((cancelAction) => {
+                if (cancelAction.type !== actionTypes.cancel) {
                   return false;
                 }
                 return urlInfo.include(cancelAction.entry, action.entry);
               }),
             });
           });
-      };
       exposed[epicName] = shared[methodConfig.name];
     });
     return { shared, exposed };

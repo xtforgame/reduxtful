@@ -13,7 +13,7 @@
     "strict": [2, "never"],
 
     // allow console
-    "no-console": 0,
+    "no-console": "off",
 
     // Code style
     "indent": [2, 2],

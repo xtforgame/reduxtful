@@ -1,22 +1,22 @@
-export function defaultToPromiseFunc(_, value){
+export function defaultToPromiseFunc(_, value) {
   return Promise.resolve(value);
 }
 
-export function toSeqPromise(inArray, toPrmiseFunc = defaultToPromiseFunc){
-  return inArray.reduce(function(prev, curr, index, array) {
-    return prev.then(() => toPrmiseFunc(prev, curr, index, array));
-  }, Promise.resolve());
+export function toSeqPromise(inArray, toPrmiseFunc = defaultToPromiseFunc) {
+  return inArray.reduce((prev, curr, index, array) => prev.then(
+    () => toPrmiseFunc(prev, curr, index, array)
+  ), Promise.resolve());
 }
 
-export function promiseWait(waitMillisec){
+export function promiseWait(waitMillisec) {
   return new Promise((resolve, reject) => {
     setTimeout(resolve, waitMillisec);
   });
 }
 
-let toCamel = str => str.replace(/_([a-z])/g, function (g) { return g[1].toUpperCase();});
-let toUnderscore = str => str.replace(/([A-Z])/g, function(g){return "_"+g.toLowerCase();});
-let capitalizeFirstLetter = (str) => (str.charAt(0).toUpperCase() + str.slice(1));
+const toCamel = str => str.replace(/_([a-z])/g, g => g[1].toUpperCase());
+const toUnderscore = str => str.replace(/([A-Z])/g, g => `_${g.toLowerCase()}`);
+const capitalizeFirstLetter = str => (str.charAt(0).toUpperCase() + str.slice(1));
 
 export {
   toCamel,

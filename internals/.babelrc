@@ -1,5 +1,9 @@
 {
-  "presets": ["es2015"],
+  "presets": [["env", {
+    "targets": { 
+      "node": "10"
+    }
+  }]],
   "plugins": [
     "transform-decorators-legacy",
     "transform-class-properties",

@@ -1,15 +1,15 @@
-let headers = {};
+const headers = {};
 
 export default class HeaderManager {
-  static get(){
+  static get() {
     return headers;
   }
 
-  static set(key, value){
+  static set(key, value) {
     headers[key] = value;
   }
 
-  static delete(key){
+  static delete(key) {
     delete headers[key];
   }
 }

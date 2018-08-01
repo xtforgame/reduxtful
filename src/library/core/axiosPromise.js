@@ -1,13 +1,13 @@
-import { promiseWait } from '../core/common-functions';
-import getMiddlewaresHandler from '../core/getMiddlewaresHandler';
+import { promiseWait } from './common-functions';
+import getMiddlewaresHandler from './getMiddlewaresHandler';
 
 class ErrorFromMiddleware {
-  constructor(error){
+  constructor(error) {
     this.error = error;
   }
 }
 
-export default (axios, request, options = {}) => {
+export default (axios, request, op = {}) => {
   const {
     middlewares: {
       request: requestMiddlewares = [],
@@ -16,41 +16,41 @@ export default (axios, request, options = {}) => {
     },
     debugDelay = 0,
     axiosCancelTokenSource = axios.CancelToken.source(),
-  } = options;
+  } = op;
 
   return promiseWait(debugDelay)
   .then(() => {
     const next = getMiddlewaresHandler([
       ...requestMiddlewares,
-      (request, { options }) => axios({
-        ...request,
-        cancelToken: options.axiosCancelTokenSource.token,
+      (req, { options }) => axios({
+        ...req,
+        cancelToken: axiosCancelTokenSource.token,
       }),
     ],
-    [request, { options }]);
+    [request, { options: op }]);
     return next();
   })
-  .then(response => {
+  .then((response) => {
     const next = getMiddlewaresHandler([
       ...responseMiddlewares,
-      (response) => Promise.resolve(response),
+      res => Promise.resolve(res),
     ],
-    [response, { request, options }]);
+    [response, { request, options: op }]);
     return Promise.resolve()
     .then(next)
-    .then(response => response || Promise.reject(new ErrorFromMiddleware(`Malformed Response: ${response}, please check you response middlewares`)))
+    .then(res => res || Promise.reject(new ErrorFromMiddleware(`Malformed Response: ${res}, please check you response middlewares`)))
     .catch(error => Promise.reject(new ErrorFromMiddleware(error)));
   })
   .catch((error) => {
-    if(error instanceof ErrorFromMiddleware){
+    if (error instanceof ErrorFromMiddleware) {
       return Promise.reject(error.error);
     }
     const next = getMiddlewaresHandler([
       ...errorMiddlewares,
-      (error) => Promise.reject(error),
+      err => Promise.reject(err),
     ],
-    [error, { request, options }]);
+    [error, { request, options: op }]);
     return Promise.resolve()
     .then(next);
-  })
+  });
 };

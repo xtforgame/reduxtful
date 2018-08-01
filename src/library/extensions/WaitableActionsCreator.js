@@ -14,7 +14,7 @@ export default class WaitableActionsCreator {
 
     return (...args) => {
       const actionData = actions.start(...args);
-      const waitToken = Symbol();
+      const waitToken = Symbol('WaitToken');
       actionData.options.transferables = {
         ...actionData.options.transferables,
         waitToken,
@@ -31,44 +31,40 @@ export default class WaitableActionsCreator {
     };
   }
 
-  getWaitSymbols(){
-    const createReduxWaitForMiddleware = require('redux-wait-for-action');
-    const {
-      WAIT_FOR_ACTION,
-      ERROR_ACTION,
-      CALLBACK_ARGUMENT,
-      CALLBACK_ERROR_ARGUMENT,
-    } = createReduxWaitForMiddleware;
-    return {
-      WAIT_FOR_ACTION,
-      ERROR_ACTION,
-      CALLBACK_ARGUMENT,
-      CALLBACK_ERROR_ARGUMENT,
+  create({
+    ns, names, getShared, methodConfigs,
+  }, options, waitableActionsOptions) {
+    const mergedOptions = {
+      ...options,
+      ...waitableActionsOptions,
     };
-  }
 
-  create({ ns, names, getShared, methodConfigs }, { actionNoRedundantBody }){
-    let shared = {};
-    let exposed = {};
+    const shared = {};
+    const exposed = {};
 
-    const symbols = this.getWaitSymbols();
+    const { symbols } = mergedOptions;
+
+    if (!symbols) {
+      return { shared, exposed };
+    }
+
     const sharedActionTypes = getShared(ActionTypesCreator.$name);
     const sharedActions = getShared(ActionsCreator.$name);
 
-    methodConfigs.forEach(methodConfig => {
+    methodConfigs.forEach((methodConfig) => {
       shared[methodConfig.name] = {};
-      if(!methodConfig.supportedActions.filter(a => a.name === 'respond').length
+      if (!methodConfig.supportedActions.filter(a => a.name === 'respond').length
         || !methodConfig.supportedActions.filter(a => a.name === 'respondError').length
-      ){
-        return ;
+      ) {
+        return;
       }
 
-      let actionTypes = sharedActionTypes[methodConfig.name];
-      let actions = sharedActions[methodConfig.name];
+      const actionTypes = sharedActionTypes[methodConfig.name];
+      const actions = sharedActions[methodConfig.name];
 
-      Object.keys(actionTypes).filter(key => key === 'start').forEach(key => {
+      Object.keys(actionTypes).filter(key => key === 'start').forEach((key) => {
         const type = actionTypes[key];
-        let arg = {
+        const arg = {
           methodName: methodConfig.name,
           names,
           actionTypeName: key,
@@ -76,7 +72,8 @@ export default class WaitableActionsCreator {
 
         const exposedName = methodConfig.getActionName(arg);
         const sharedName = methodConfig.name;
-        const action = shared[sharedName][key] = WaitableActionsCreator.getActionCreator(type, actions, symbols);
+        shared[sharedName][key] = WaitableActionsCreator.getActionCreator(type, actions, symbols);
+        const action = shared[sharedName][key];
         action.type = type;
         action.actionSet = shared[sharedName];
         action.sharedName = sharedName;

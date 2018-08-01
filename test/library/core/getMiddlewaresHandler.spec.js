@@ -1,12 +1,12 @@
-/*eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
 import getMiddlewaresHandler from 'library/core/getMiddlewaresHandler';
 
-const expect = chai.expect;
+const { expect } = chai;
 
-describe('getMiddlewaresHandler Test Cases', function(){
-  describe('Basic', function(){
+describe('getMiddlewaresHandler Test Cases', () => {
+  describe('Basic', () => {
     it('getMiddlewaresHandler should be a function', () => {
       expect(getMiddlewaresHandler).to.be.an.instanceof(Function);
       return true;
@@ -56,5 +56,3 @@ describe('getMiddlewaresHandler Test Cases', function(){
     });
   });
 });
-
-

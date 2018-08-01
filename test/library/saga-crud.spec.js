@@ -1,4 +1,4 @@
-/*eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef, prefer-promise-reject-errors, consistent-return */
 
 import chai from 'chai';
 import { ModelMap, defaultExtensions } from 'library';
@@ -8,7 +8,9 @@ import WaitableActionsCreator from 'library/extensions/WaitableActionsCreator';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import configureMockStore from 'redux-mock-store';
-import { combineReducers, createStore, applyMiddleware, compose as reduxCompose } from 'redux';
+import {
+  combineReducers, createStore, applyMiddleware, compose as reduxCompose,
+} from 'redux';
 import { combineReducers as combineImmutableReducers } from 'redux-immutable';
 import createReduxWaitForMiddleware,
 {
@@ -24,9 +26,9 @@ import {
   testData01,
 } from '../test-data';
 
-const expect = chai.expect;
+const { expect } = chai;
 
-describe('Saga CRUD Test Cases', function(){
+describe('Saga CRUD Test Cases', () => {
   let mock = null;
   beforeEach(() => {
     mock = testData01.setupMock(new MockAdapter(axios));
@@ -36,17 +38,17 @@ describe('Saga CRUD Test Cases', function(){
     mock.restore();
   });
 
-  describe('Basic', function(){
+  describe('Basic', function () {
     this.timeout(3000);
 
     it('should be able to pass the mockStore test', () => {
       const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SagaCreator, SelectorsCreator, WaitableActionsCreator]));
       const rootSaga = function* () {
         yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
-      }
+      };
       const sagaMiddleware = createSagaMiddleware();
       const middlewares = [sagaMiddleware, createReduxWaitForMiddleware()];
-      const mockStore = configureMockStore(middlewares)
+      const mockStore = configureMockStore(middlewares);
       const store = mockStore(ImmutableMap({ global: {} }));
       sagaMiddleware.run(rootSaga);
 
@@ -57,7 +59,7 @@ describe('Saga CRUD Test Cases', function(){
         [CALLBACK_ARGUMENT]: action => action,
         [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
-      .then(payload => {
+      .then((payload) => {
         // console.log('payload :', payload);
       });
     });
@@ -68,9 +70,9 @@ describe('Saga CRUD Test Cases', function(){
       expect(modelMap).to.be.an.instanceof(ModelMap);
       const rootSaga = function* () {
         yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
-      }
+      };
       const sagaMiddleware = createSagaMiddleware();
-      const store =  createStore(
+      const store = createStore(
         combineImmutableReducers({
           global: combineReducers({
             api: modelMap.reducers.apiReducer,
@@ -93,11 +95,11 @@ describe('Saga CRUD Test Cases', function(){
         [CALLBACK_ARGUMENT]: action => action,
         [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
-      .then(payload => {
+      .then((payload) => {
         // console.log('payload :', payload);
         // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
         const global = store.getState().get('global');
-        expect(global).to.nested.include({'api.hierarchy.collection.url': '/api'});
+        expect(global).to.nested.include({ 'api.hierarchy.collection.url': '/api' });
       });
     });
 
@@ -108,9 +110,9 @@ describe('Saga CRUD Test Cases', function(){
 
       const rootSaga = function* () {
         yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
-      }
+      };
       const sagaMiddleware = createSagaMiddleware();
-      const store =  createStore(
+      const store = createStore(
         combineImmutableReducers({
           global: combineReducers({
             api: modelMap.reducers.apiReducer,
@@ -128,18 +130,16 @@ describe('Saga CRUD Test Cases', function(){
       const p = store.dispatch({
         ...modelMap.actions.getApi({}, { query: { delay: 1000 } }),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
-        [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError || action.type === modelMap.types.cancelGetApi,
+        [ERROR_ACTION]: action => action.type === modelMap.types.respondGetApiError || action.type === modelMap.types.cancelGetApi, // eslint-disable-line max-len
         [CALLBACK_ARGUMENT]: action => action,
         [CALLBACK_ERROR_ARGUMENT]: action => action,
       })
-      .then(() => {
-        return Promise.reject('not be canceled');
-      })
-      .catch(action => {
-        if(action === 'not be canceled'){
+      .then(() => Promise.reject('not be canceled'))
+      .catch((action) => {
+        if (action === 'not be canceled') {
           return Promise.reject('not be canceled');
         }
-        expect(action).to.nested.include({type: modelMap.types.cancelGetApi});
+        expect(action).to.nested.include({ type: modelMap.types.cancelGetApi });
       });
       setTimeout(() => {
         store.dispatch(modelMap.actions.cancelGetApi());
@@ -148,7 +148,7 @@ describe('Saga CRUD Test Cases', function(){
     });
   });
 
-  describe('Methods', function(){
+  describe('Methods', function () {
     this.timeout(100);
     let store = null;
     let modelMap = null;
@@ -160,9 +160,9 @@ describe('Saga CRUD Test Cases', function(){
 
       const rootSaga = function* () {
         yield all(Object.keys(modelMap.sagas).map(k => modelMap.sagas[k]).map(saga => call(saga)));
-      }
+      };
       const sagaMiddleware = createSagaMiddleware();
-      store =  createStore(
+      store = createStore(
         combineImmutableReducers({
           global: combineReducers({
             api: modelMap.reducers.apiReducer,
@@ -179,161 +179,142 @@ describe('Saga CRUD Test Cases', function(){
       sagaMiddleware.run(rootSaga);
     });
 
-    describe('Collection', function(){
-      it('should be able to post collection', () => {
-        return store.dispatch(modelMap.waitableActions.postUsers({id: 1}))
-        .then(payload => {
+    describe('Collection', () => {
+      it('should be able to post collection', () => store.dispatch(modelMap.waitableActions.postUsers({ id: 1 }))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1].url': '/api/users/1'});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].url': '/api/users/1' });
+        }));
 
-      it('should be able to get collection', () => {
-        return store.dispatch(modelMap.waitableActions.getUsers())
-        .then(payload => {
+      it('should be able to get collection', () => store.dispatch(modelMap.waitableActions.getUsers())
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          expect(global).to.nested.include({ 'user.hierarchy.collection.url': '/api/users' });
           // for the updateMembersByCollection feature
-          expect(global).to.nested.include({'user.hierarchy.byId[0].name': 'rick'});
-          expect(global).to.nested.include({'user.hierarchy.byId[1].name': 'foo'});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[0].name': 'rick' });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].name': 'foo' });
+        }));
 
-      it('should be able to merge collection by a custom function', () => {
-        return store.dispatch(modelMap.waitableActions.getUsers({}, {query: { offset: 0, limit: 1 }}))
-        .then(payload => {
+      it('should be able to merge collection by a custom function',
+        () => store.dispatch(modelMap.waitableActions.getUsers({}, { query: { offset: 0, limit: 1 } }))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
-          expect(global).to.nested.include({'user.hierarchy.collection.users[0].name': 'rick'});
-          expect(global).to.nested.include({'user.hierarchy.collection.users[0].url': '/api/users/1'});
-          expect(global).to.nested.include({'user.hierarchy.collection.next.offset': 1});
-          expect(global).to.nested.include({'user.hierarchy.collection.next.limit': 1});
-          return store.dispatch(modelMap.waitableActions.getUsers({}, {query: global.user.hierarchy.collection.next}));
+          expect(global).to.nested.include({ 'user.hierarchy.collection.url': '/api/users' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.users[0].name': 'rick' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.users[0].url': '/api/users/1' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.next.offset': 1 });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.next.limit': 1 });
+          return store.dispatch(
+            modelMap.waitableActions.getUsers({}, { query: global.user.hierarchy.collection.next })
+          );
         })
-        .then(payload => {
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
-          expect(global).to.nested.include({'user.hierarchy.collection.users[0].name': 'rick'});
-          expect(global).to.nested.include({'user.hierarchy.collection.users[0].url': '/api/users/1'});
+          expect(global).to.nested.include({ 'user.hierarchy.collection.url': '/api/users' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.users[0].name': 'rick' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.users[0].url': '/api/users/1' });
 
-          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
-          expect(global).to.nested.include({'user.hierarchy.collection.users[1].name': 'foo'});
-          expect(global).to.nested.include({'user.hierarchy.collection.users[1].url': '/api/users/2'});
-          expect(global).to.nested.include({'user.hierarchy.collection.next': null});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.url': '/api/users' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.users[1].name': 'foo' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.users[1].url': '/api/users/2' });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.next': null });
+        }));
 
-      it('should be able to patch collection', () => {
-        return store.dispatch(modelMap.waitableActions.patchUsers())
-        .then(payload => {
+      it('should be able to patch collection', () => store.dispatch(modelMap.waitableActions.patchUsers())
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.collection.url': '/api/users' });
+        }));
 
-      it('should be able to delete collection', () => {
-        return store.dispatch(modelMap.waitableActions.deleteUsers())
-        .then(payload => {
+      it('should be able to delete collection', () => store.dispatch(modelMap.waitableActions.deleteUsers())
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection': null});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.collection': null });
+        }));
 
       it('should be able to cancel', () => {
         const p = store.dispatch(modelMap.waitableActions.getUsers())
-        .then(() => {
-          return Promise.reject('not be canceled');
-        })
-        .catch(action => {
-          if(action === 'not be canceled'){
+        .then(() => Promise.reject('not be canceled'))
+        .catch((action) => {
+          if (action === 'not be canceled') {
             return Promise.reject('not be canceled');
           }
-          expect(action).to.nested.include({type: modelMap.types.cancelGetUsers});
+          expect(action).to.nested.include({ type: modelMap.types.cancelGetUsers });
         });
         store.dispatch(modelMap.actions.cancelGetUsers());
         return p;
       });
 
       // =================
-      it('should be able to clear collection', () => {
-        return store.dispatch(modelMap.waitableActions.getUsers())
-        .then(payload => {
+      it('should be able to clear collection', () => store.dispatch(modelMap.waitableActions.getUsers())
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           let global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection.url': '/api/users'});
+          expect(global).to.nested.include({ 'user.hierarchy.collection.url': '/api/users' });
 
           store.dispatch(modelMap.actions.clearUsersCache());
           global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.collection': null});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.collection': null });
+        }));
 
       it('should be able to select collection', () => {
         store.dispatch(modelMap.actions.selectUserPath());
         const global = store.getState().get('global');
         expect(global).to.have.nested.property('user.selection.entry');
-        expect(global).to.nested.include({'user.selection.entry.id': undefined});
+        expect(global).to.nested.include({ 'user.selection.entry.id': undefined });
         expect(global).to.have.nested.property('user.selection.entryPath');
-        expect(global).to.nested.include({'user.selection.id': undefined});
+        expect(global).to.nested.include({ 'user.selection.id': undefined });
         return true;
       });
     });
 
-    describe('Member', function(){
-      it('should be able to get member', () => {
-        return store.dispatch(modelMap.waitableActions.getUser(1))
-        .then(payload => {
+    describe('Member', () => {
+      it('should be able to get member', () => store.dispatch(modelMap.waitableActions.getUser(1))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1].url': '/api/users/1'});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].url': '/api/users/1' });
+        }));
 
-      it('should be able to patch member', () => {
-        return store.dispatch(modelMap.waitableActions.patchUser(1, { name: 'rick' }))
-        .then(payload => {
+      it('should be able to patch member', () => store.dispatch(modelMap.waitableActions.patchUser(1, { name: 'rick' }))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1].url': '/api/users/1'});
-          expect(global).to.nested.include({'user.hierarchy.byId[1].name': 'rick'});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].url': '/api/users/1' });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].name': 'rick' });
+        }));
 
-      it('should be able to delete member', () => {
-        return store.dispatch(modelMap.waitableActions.deleteUser(1))
-        .then(payload => {
+      it('should be able to delete member', () => store.dispatch(modelMap.waitableActions.deleteUser(1))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1]': null});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1]': null });
+        }));
 
       it('should be able to cancel', () => {
         const p = store.dispatch(modelMap.waitableActions.getUser('can-be-cancel'))
-        .then(() => {
-          return Promise.reject('not be canceled');
-        })
-        .catch(action => {
-          if(action === 'not be canceled'){
+        .then(() => Promise.reject('not be canceled'))
+        .catch((action) => {
+          if (action === 'not be canceled') {
             return Promise.reject('not be canceled');
           }
-          expect(action).to.nested.include({type: modelMap.types.cancelGetUser});
+          expect(action).to.nested.include({ type: modelMap.types.cancelGetUser });
         });
         store.dispatch(modelMap.actions.cancelGetUser('can-be-cancel'));
         return p;
@@ -341,92 +322,78 @@ describe('Saga CRUD Test Cases', function(){
 
       // =================
 
-      it('should be able to clear member', () => {
-        return store.dispatch(modelMap.waitableActions.getUser(1))
-        .then(payload => {
+      it('should be able to clear member', () => store.dispatch(modelMap.waitableActions.getUser(1))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           let global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1].url': '/api/users/1'});
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].url': '/api/users/1' });
 
           store.dispatch(modelMap.actions.clearUserCache(1));
           global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1]': null});
-        });
-      });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1]': null });
+        }));
 
-      it('should be able to clear each member', () => {
-        return store.dispatch(modelMap.waitableActions.getUser(1))
-        .then(payload => {
-          return store.dispatch(modelMap.waitableActions.getUser(2));
-        })
-        .then(payload => {
+      it('should be able to clear each member', () => store.dispatch(modelMap.waitableActions.getUser(1))
+        .then(payload => store.dispatch(modelMap.waitableActions.getUser(2)))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           let global = store.getState().get('global');
-          expect(global).to.nested.include({'user.hierarchy.byId[1].url': '/api/users/1'});
-          expect(global).to.nested.include({'user.hierarchy.byId[2].url': '/api/users/2'});
+          expect(global).to.nested.include({ 'user.hierarchy.byId[1].url': '/api/users/1' });
+          expect(global).to.nested.include({ 'user.hierarchy.byId[2].url': '/api/users/2' });
 
           store.dispatch(modelMap.actions.clearEachUserCache());
           global = store.getState().get('global');
           expect(global).to.not.have.nested.property('user.hierarchy.byId[1]');
           expect(global).to.not.have.nested.property('user.hierarchy.byId[2]');
-        });
-      });
+        }));
 
       it('should be able to select member', () => {
         store.dispatch(modelMap.actions.selectUserPath(1));
         const global = store.getState().get('global');
         expect(global).to.have.nested.property('user.selection.entry');
-        expect(global).to.nested.include({'user.selection.entry.id': 1});
+        expect(global).to.nested.include({ 'user.selection.entry.id': 1 });
         expect(global).to.have.nested.property('user.selection.entryPath');
-        expect(global).to.nested.include({'user.selection.id': 1});
+        expect(global).to.nested.include({ 'user.selection.id': 1 });
         return true;
       });
     });
 
-    describe('Deep Member', function(){
-      it('should be able to get member', () => {
-        return store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
-        .then(payload => {
+    describe('Deep Member', () => {
+      it('should be able to get member', () => store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1'});
-        });
-      });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1' });
+        }));
 
-      it('should be able to patch member', () => {
-        return store.dispatch(modelMap.waitableActions.patchOwnedTask(1, { name: 'develop reduxtful lib.' }, { userId: 1 }, {}))
-        .then(payload => {
+      it('should be able to patch member', () => store.dispatch(modelMap.waitableActions.patchOwnedTask(1, { name: 'develop reduxtful lib.' }, { userId: 1 }, {}))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1'});
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1].name': 'develop reduxtful lib.'});
-        });
-      });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1' });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].name': 'develop reduxtful lib.' });
+        }));
 
-      it('should be able to delete member', () => {
-        return store.dispatch(modelMap.waitableActions.deleteOwnedTask(1, { userId: 1 }))
-        .then(payload => {
+      it('should be able to delete member', () => store.dispatch(modelMap.waitableActions.deleteOwnedTask(1, { userId: 1 }))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1]': null});
-        });
-      });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1]': null });
+        }));
 
       it('should be able to cancel', () => {
         const p = store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
-        .then(() => {
-          return Promise.reject('not be canceled');
-        })
-        .catch(action => {
-          if(action === 'not be canceled'){
+        .then(() => Promise.reject('not be canceled'))
+        .catch((action) => {
+          if (action === 'not be canceled') {
             return Promise.reject('not be canceled');
           }
-          expect(action).to.nested.include({type: modelMap.types.cancelGetOwnedTask});
+          expect(action).to.nested.include({ type: modelMap.types.cancelGetOwnedTask });
         });
         store.dispatch(modelMap.actions.cancelGetOwnedTask(1, { userId: 1 }));
         return p;
@@ -434,48 +401,42 @@ describe('Saga CRUD Test Cases', function(){
 
       // =================
 
-      it('should be able to clear member', () => {
-        return store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
-        .then(payload => {
+      it('should be able to clear member', () => store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           let global = store.getState().get('global');
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1'});
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1' });
 
           store.dispatch(modelMap.actions.clearOwnedTaskCache(1, { userId: 1 }));
           global = store.getState().get('global');
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1]': null});
-        });
-      });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1]': null });
+        }));
 
-      it('should be able to clear each member', () => {
-        return store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
-        .then(payload => {
-          return store.dispatch(modelMap.waitableActions.getOwnedTask(2, { userId: 1 }))
-        })
-        .then(payload => {
+      it('should be able to clear each member', () => store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))
+        .then(payload => store.dispatch(modelMap.waitableActions.getOwnedTask(2, { userId: 1 })))
+        .then((payload) => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           let global = store.getState().get('global');
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1'});
-          expect(global).to.nested.include({'ownedTask.hierarchy[1].byId[2].url': '/api/users/1/tasks/2'});
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1' });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[2].url': '/api/users/1/tasks/2' });
 
           store.dispatch(modelMap.actions.clearEachOwnedTaskCache({ userId: 1 }));
           global = store.getState().get('global');
           expect(global).to.not.have.nested.property('ownedTask.hierarchy[1].byId[1]');
           expect(global).to.not.have.nested.property('ownedTask.hierarchy[1].byId[2]');
-        });
-      });
+        }));
 
       it('should be able to select deep member', () => {
         store.dispatch(modelMap.actions.selectOwnedTaskPath(1, { userId: 2 }));
         const global = store.getState().get('global');
         expect(global).to.have.nested.property('ownedTask.selection.entry');
-        expect(global).to.nested.include({'ownedTask.selection.entry.id': 1});
-        expect(global).to.nested.include({'ownedTask.selection.entry.userId': 2});
+        expect(global).to.nested.include({ 'ownedTask.selection.entry.id': 1 });
+        expect(global).to.nested.include({ 'ownedTask.selection.entry.userId': 2 });
         expect(global).to.have.nested.property('ownedTask.selection.entryPath');
-        expect(global).to.nested.include({'ownedTask.selection.entryPath[0]': 2});
-        expect(global).to.nested.include({'ownedTask.selection.id': 1});
+        expect(global).to.nested.include({ 'ownedTask.selection.entryPath[0]': 2 });
+        expect(global).to.nested.include({ 'ownedTask.selection.id': 1 });
         return true;
       });
     });

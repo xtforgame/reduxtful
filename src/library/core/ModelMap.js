@@ -11,13 +11,12 @@ export const defaultExtensions = [
   ReducerCreator,
 ];
 
-export default class ModelMap
-{
-  constructor(ns, modelsDefine, extensions = defaultExtensions){
-    Object.keys(modelsDefine).forEach(key => {
+export default class ModelMap {
+  constructor(ns, modelsDefine, extensions = defaultExtensions) {
+    Object.keys(modelsDefine).forEach((key) => {
       const modelDefine = modelsDefine[key];
-      const url = modelDefine.url;
-      if(!url){
+      const { url } = modelDefine;
+      if (!url) {
         throw new Error(`No url provided: ${key}`);
       }
       UrlInfo.test(url, ['id']);
@@ -26,15 +25,16 @@ export default class ModelMap
     this.models = {};
     this.Creators = extensions;
 
-    this.Creators.map(Creator => {
+    this.Creators.forEach((Creator) => {
       this[Creator.$name] = {};
     });
 
     this.methodConfigs = createMethodConfigs(this.ns, this.names);
-    Object.keys(modelsDefine).forEach(key => {
+    Object.keys(modelsDefine).forEach((key) => {
       const modelDefine = modelsDefine[key];
-      const model = this.models[key] = new RestModel(ns, modelDefine, this.Creators, this.methodConfigs);
-      this.Creators.forEach(Creator => {
+      this.models[key] = new RestModel(ns, modelDefine, this.Creators, this.methodConfigs);
+      const model = this.models[key];
+      this.Creators.forEach((Creator) => {
         const extensionName = Creator.$name;
         this[extensionName] = {
           ...this[extensionName],
@@ -44,13 +44,13 @@ export default class ModelMap
     });
   }
 
-  get(modelName){
+  get(modelName) {
     return this.models[modelName];
   }
 
-  subMap(...modelNames){
-    let result = {};
-    modelNames.forEach(modelName => {
+  subMap(...modelNames) {
+    const result = {};
+    modelNames.forEach((modelName) => {
       result[modelName] = this.get(modelName);
     });
     return result;

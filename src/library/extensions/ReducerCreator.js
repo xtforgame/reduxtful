@@ -1,15 +1,16 @@
+/* eslint-disable max-len */
 import ActionTypesCreator from './ActionTypesCreator';
 import UrlInfo from '../core/UrlInfo';
 import getMiddlewaresHandler from '../core/getMiddlewaresHandler';
 
 const mergePartialState = (state = {}, action, options, isForCollection, entryPath, mergeFunc) => {
-  if(entryPath.length != 0){
-    let [id, ...rest] = entryPath;
+  if (entryPath.length) {
+    const [id, ...rest] = entryPath;
     return {
       ...state,
       [id]: mergePartialState(state[id], action, options, isForCollection, rest, mergeFunc),
-    }
-  }else{
+    };
+  } else {
     const {
       middlewares: {
         node: nodeMiddlewares = [],
@@ -25,17 +26,17 @@ const mergePartialState = (state = {}, action, options, isForCollection, entryPa
     const next = getMiddlewaresHandler(middlewares, [state, action, options]);
     return next();
   }
-}
+};
 
-const deepMergeByPathArray = (state, action, options, isForCollection = false) => mergeFunc => {
+const deepMergeByPathArray = (state, action, options, isForCollection = false) => (mergeFunc) => {
   const entryPath = options.urlInfo.entryToPath(action.entry);
   return mergePartialState(state, action, options, isForCollection, ['hierarchy', ...entryPath], mergeFunc);
-}
+};
 
 // ===============================
 
 const genSelectFunc = (method, { urlInfo }, isForCollection) => (state = {}, action) => {
-  if(action.entry === undefined){
+  if (action.entry === undefined) {
     return {
       ...state,
       selection: null,
@@ -54,23 +55,21 @@ const genSelectFunc = (method, { urlInfo }, isForCollection) => (state = {}, act
   };
 };
 
-const genStartFunc = (method, options, isForCollection) => (state = {}, action) => {
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-  }));
-};
+const genStartFunc = (method, options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  ...partialState,
+}));
 
 const genCollectionRespondFunc = (method, options, isForCollection) => (state = {}, action) => {
   let {
     mergeNode,
-    mergeCollection = (_, __, action) => action.data,
+    mergeCollection = (_, __, action2) => action2.data,
     updateMembersByCollection,
   } = options;
   let defaultMergeFunc = partialState => ({
     ...partialState,
     collection: mergeCollection(method, partialState.collection, action, options),
   });
-  if(updateMembersByCollection){
+  if (updateMembersByCollection) {
     defaultMergeFunc = partialState => ({
       ...partialState,
       collection: mergeCollection(method, partialState.collection, action, options),
@@ -80,29 +79,25 @@ const genCollectionRespondFunc = (method, options, isForCollection) => (state = 
       },
     });
   }
-  mergeNode = mergeNode || ((method, partialState, defaultMergeFunc) => defaultMergeFunc(partialState))
+  mergeNode = mergeNode || ((method2, partialState, defaultMergeFunc2) => defaultMergeFunc2(partialState));
   return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };
 
-const genCollectionRespondDeleteFunc = (method, options, isForCollection) => (state = {}, action) => {
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-    collection: null,
-  }));
-};
+const genCollectionRespondDeleteFunc = (method, options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  ...partialState,
+  collection: null,
+}));
 
-const genCollectionClearFunc = (options, isForCollection) => (state = {}, action) => {
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-    collection: null,
-  }));
-};
+const genCollectionClearFunc = (options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  ...partialState,
+  collection: null,
+}));
 
 const genRepondFunc = (method, options, isForCollection) => (state = {}, action) => {
-  const id = action.entry.id;
+  const { id } = action.entry;
   let {
     mergeNode,
-    mergeMember = (_, __, action) => action.data,
+    mergeMember = (_, __, action2) => action2.data,
   } = options;
   const defaultMergeFunc = partialState => ({
     ...partialState,
@@ -111,12 +106,12 @@ const genRepondFunc = (method, options, isForCollection) => (state = {}, action)
       [id]: mergeMember(method, partialState.byId && partialState.byId[id], action, options),
     },
   });
-  mergeNode = mergeNode || ((method, partialState, defaultMergeFunc) => defaultMergeFunc(partialState))
+  mergeNode = mergeNode || ((method2, partialState, defaultMergeFunc2) => defaultMergeFunc2(partialState));
   return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };
 
 const genRespondDeleteFunc = (method, options, isForCollection) => (state = {}, action) => {
-  const id = action.entry.id;
+  const { id } = action.entry;
   return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
     ...partialState,
     byId: {
@@ -127,7 +122,7 @@ const genRespondDeleteFunc = (method, options, isForCollection) => (state = {}, 
 };
 
 const genClearFunc = (options, isForCollection) => (state = {}, action) => {
-  const id = action.entry.id;
+  const { id } = action.entry;
   return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
     ...partialState,
     byId: {
@@ -137,20 +132,16 @@ const genClearFunc = (options, isForCollection) => (state = {}, action) => {
   }));
 };
 
-const genClearEachFunc = (options, isForCollection) => (state = {}, action) => {
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-    byId: {},
-  }));
-};
+const genClearEachFunc = (options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  ...partialState,
+  byId: {},
+}));
 
-const genRepondErrorFunc = (method, options, isForCollection) => (state = {}, action) => {
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-  }));
-};
+const genRepondErrorFunc = (method, options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+  ...partialState,
+}));
 
-const genReducerFunctionCreators = (options) => ({
+const genReducerFunctionCreators = options => ({
   selectPath: {
     start: genSelectFunc('selectPath', options),
   },
@@ -222,9 +213,9 @@ const genReducerFunctionCreators = (options) => ({
   },
 });
 
-function createReducerFromFuncMap(funcMap, options){
+function createReducerFromFuncMap(funcMap, options) {
   return (state = {}, action) => {
-    let func = funcMap[action.type] || (state => state);
+    const func = funcMap[action.type] || (state2 => state2);
 
     const {
       middlewares: {
@@ -243,19 +234,21 @@ function createReducerFromFuncMap(funcMap, options){
 export default class ReducerCreator {
   static $name = 'reducers';
 
-  create({ ns, names, url, getShared, methodConfigs }, options, reducerOptions){
-    let shared = {};
-    let exposed = {};
+  create({
+    ns, names, url, getShared, methodConfigs,
+  }, options, reducerOptions) {
+    const shared = {};
+    const exposed = {};
 
-    methodConfigs.forEach(methodConfig => {
+    methodConfigs.forEach((methodConfig) => {
       shared[methodConfig.name] = {};
 
-      let actionTypes = getShared(ActionTypesCreator.$name)[methodConfig.name];
+      const actionTypes = getShared(ActionTypesCreator.$name)[methodConfig.name];
       // console.log('actionTypes :', actionTypes);
 
-      let urlInfo = new UrlInfo(url);
+      const urlInfo = new UrlInfo(url);
 
-      let arg = {
+      const arg = {
         methodName: methodConfig.name,
         names,
       };
@@ -269,16 +262,16 @@ export default class ReducerCreator {
       const reducerExposedName = methodConfig.getReducerName(arg);
       const reducerExposedFuncMapName = `${reducerExposedName}FuncMap`;
       const reducerFunctionCreators = genReducerFunctionCreators(mergedOptions);
-
-      let local = shared[methodConfig.name][reducerExposedFuncMapName] = {};
-      Object.keys(actionTypes).forEach(key => {
+      shared[methodConfig.name][reducerExposedFuncMapName] = {};
+      const local = shared[methodConfig.name][reducerExposedFuncMapName];
+      Object.keys(actionTypes).forEach((key) => {
         local[actionTypes[key]] = reducerFunctionCreators[methodConfig.name][key];
       });
 
       exposed[reducerExposedFuncMapName] = {
         ...exposed[reducerExposedFuncMapName],
         ...local,
-      }
+      };
       exposed[reducerExposedName] = createReducerFromFuncMap(exposed[reducerExposedFuncMapName], mergedOptions);
     });
 

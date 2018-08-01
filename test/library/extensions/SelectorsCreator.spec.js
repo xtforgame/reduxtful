@@ -1,4 +1,4 @@
-/*eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
 import { ModelMap, defaultExtensions } from 'library';
@@ -8,21 +8,22 @@ import {
   testData01,
 } from '../../test-data';
 
-const expect = chai.expect;
+const { expect } = chai;
 
-describe('SelectorsCreator Test Cases', function(){
-  describe('Basic', function(){
+describe('SelectorsCreator Test Cases', () => {
+  describe('Basic', () => {
     it('should export all selectors', () => {
       const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([SelectorsCreator]));
 
       expect(modelMap).to.be.an.instanceof(ModelMap);
       expect(modelMap.selectors, 'Not existed: modelMap.selectors').to.exist;
 
-      const selectors = modelMap.selectors;
-      Object.keys(testData01.modelsDefine).map(key => testData01.modelsDefine[key])
+      const { selectors } = modelMap;
+      Object.keys(testData01.modelsDefine)
+      .map(key => testData01.modelsDefine[key])
       .filter(m => m.extensionConfigs && m.extensionConfigs.selectors && m.extensionConfigs.selectors.baseSelector)
       .map(m => m.names)
-      .map(({
+      .forEach(({
         collection: collectionName,
         member: memberName,
         model: modelName,
@@ -38,5 +39,3 @@ describe('SelectorsCreator Test Cases', function(){
     });
   });
 });
-
-

@@ -1,9 +1,11 @@
-/*eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef */
 
 import chai from 'chai';
 import { ModelMap } from 'library';
 import configureMockStore from 'redux-mock-store';
-import { combineReducers, createStore, applyMiddleware, compose as reduxCompose } from 'redux';
+import {
+  combineReducers, createStore, applyMiddleware, compose as reduxCompose,
+} from 'redux';
 import { combineReducers as combineImmutableReducers } from 'redux-immutable';
 import createReduxWaitForMiddleware,
 {
@@ -16,15 +18,13 @@ import {
   combineEpics,
 } from 'redux-observable';
 
-const expect = chai.expect;
+const { expect } = chai;
 
-describe('Main Test Cases', function(){
-  describe('Basic', function(){
+describe('Main Test Cases', () => {
+  describe('Basic', () => {
     it('ModelMap should be a function', () => {
       expect(ModelMap).to.be.an.instanceof(Function);
       return true;
     });
   });
 });
-
-

@@ -1,22 +1,23 @@
+/* eslint-disable no-underscore-dangle */
 import { toUnderscore, capitalizeFirstLetter } from './common-functions';
 
-let supportedActions = [
+const supportedActions = [
   { name: 'start' },
   { name: 'respond' },
   { name: 'respondError' },
   { name: 'cancel' },
 ];
 
-const getResourceCollectionName = (names) => (names.member === names.collection) ? `${names.member}Collection` : names.collection;
+const getResourceCollectionName = names => ((names.member === names.collection) ? `${names.member}Collection` : names.collection);
 
-let getActionContantName = ({methodName, names, actionTypeName}) => {
+const getActionContantName = ({ methodName, names, actionTypeName }) => {
   const upperCasedMethod = toUnderscore(methodName).toUpperCase();
   const upperCasedModelName = toUnderscore(names.model).toUpperCase();
-  const upperCasedCollecionName = toUnderscore(getResourceCollectionName(names)).toUpperCase();
-  const upperCasedMemberName = names.member && toUnderscore(names.member).toUpperCase();
+  // const upperCasedCollecionName = toUnderscore(getResourceCollectionName(names)).toUpperCase();
+  // const upperCasedMemberName = names.member && toUnderscore(names.member).toUpperCase();
   const upperCasedActionTypeName = toUnderscore(actionTypeName).toUpperCase();
 
-  switch(methodName){
+  switch (methodName) {
   case 'selectPath':
   case 'clearCollectionCache':
   case 'clearCache':
@@ -26,7 +27,7 @@ let getActionContantName = ({methodName, names, actionTypeName}) => {
     break;
   }
 
-  switch(actionTypeName){
+  switch (actionTypeName) {
   case 'respond':
     return `${upperCasedModelName}_RESPOND_${upperCasedMethod}`;
   case 'respondError':
@@ -40,8 +41,8 @@ let getActionContantName = ({methodName, names, actionTypeName}) => {
   return `${upperCasedModelName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
 };
 
-let getActionName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {
-  switch(methodName){
+const getActionName = (isForCollection = false) => ({ methodName, names, actionTypeName }) => {
+  switch (methodName) {
   case 'selectPath':
     return `select${capitalizeFirstLetter(names.model)}Path`;
   case 'clearCollectionCache':
@@ -59,7 +60,7 @@ let getActionName = (isForCollection = false) => ({methodName, names, actionType
   const _methodName = isForCollection ? methodName.substr(0, methodName.length - 'Collection'.length) : methodName;
   let _actionTypeName = actionTypeName;
 
-  switch(actionTypeName){
+  switch (actionTypeName) {
   case 'start':
     _actionTypeName = '';
     break;
@@ -75,18 +76,16 @@ let getActionName = (isForCollection = false) => ({methodName, names, actionType
   return `${_methodName}${capitalizeFirstLetter(resourceName)}${capitalizeFirstLetter(_actionTypeName)}`;
 };
 
-let getReducerName = ({names}) => {
-  return `${names.model}Reducer`;
+const getReducerName = ({ names }) => `${names.model}Reducer`;
+
+const getEpicName = (isForCollection = false) => ({ methodName, names, actionTypeName }) => {
+  const _getActionName = getActionName(isForCollection);
+  return `${_getActionName({ methodName, names, actionTypeName: 'start' })}Epic`;
 };
 
-let getEpicName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {
+const getSagaName = (isForCollection = false) => ({ methodName, names, actionTypeName }) => {
   const _getActionName = getActionName(isForCollection);
-  return `${_getActionName({methodName, names, actionTypeName: 'start'})}Epic`;
-};
-
-let getSagaName = (isForCollection = false) => ({methodName, names, actionTypeName}) => {
-  const _getActionName = getActionName(isForCollection);
-  return `${_getActionName({methodName, names, actionTypeName: 'start'})}Saga`;
+  return `${_getActionName({ methodName, names, actionTypeName: 'start' })}Saga`;
 };
 
 export default function createMethodConfigs(ns, names) {
@@ -105,7 +104,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: true,
       needBody: true,
-      getUrlTemplate: ({names, url}) => url,
+      getUrlTemplate: ({ names2, url }) => url,
       getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
@@ -118,7 +117,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: true,
       needBody: false,
-      getUrlTemplate: ({names, url}) => url,
+      getUrlTemplate: ({ names2, url }) => url,
       getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
@@ -131,7 +130,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: true,
       needBody: true,
-      getUrlTemplate: ({names, url}) => url,
+      getUrlTemplate: ({ names2, url }) => url,
       getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
@@ -144,7 +143,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: true,
       needBody: false,
-      getUrlTemplate: ({names, url}) => url,
+      getUrlTemplate: ({ names2, url }) => url,
       getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
@@ -156,7 +155,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions: [{ name: 'start' }],
       isForCollection: true,
       needBody: false,
-      getUrlTemplate: ({names, url}) => url,
+      getUrlTemplate: ({ names2, url }) => url,
       getActionContantName,
       getActionName: getActionName(true),
       getReducerName,
@@ -169,7 +168,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: false,
       needBody: true,
-      getUrlTemplate: ({names, url}) => `${url}/{id}`,
+      getUrlTemplate: ({ names2, url }) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
       getReducerName,
@@ -182,7 +181,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: false,
       needBody: false,
-      getUrlTemplate: ({names, url}) => `${url}/{id}`,
+      getUrlTemplate: ({ names2, url }) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
       getReducerName,
@@ -195,7 +194,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: false,
       needBody: true,
-      getUrlTemplate: ({names, url}) => `${url}/{id}`,
+      getUrlTemplate: ({ names2, url }) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
       getReducerName,
@@ -208,7 +207,7 @@ export default function createMethodConfigs(ns, names) {
       supportedActions,
       isForCollection: false,
       needBody: false,
-      getUrlTemplate: ({names, url}) => `${url}/{id}`,
+      getUrlTemplate: ({ names2, url }) => `${url}/{id}`,
       getActionContantName,
       getActionName: getActionName(),
       getReducerName,
