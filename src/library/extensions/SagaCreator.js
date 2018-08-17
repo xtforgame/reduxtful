@@ -12,7 +12,7 @@ export default class SagaCreator {
 
   create({
     ns, names, url, getShared, methodConfigs,
-  }, { getId = (action => action.data.id) }, extensionConfig) {
+  }, { getId = (data => data.id) }, extensionConfig) {
     const shared = {};
     const exposed = {};
 

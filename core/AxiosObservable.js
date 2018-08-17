@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
 var _axiosPromise = require('./axiosPromise');
 
 var _axiosPromise2 = _interopRequireDefault(_axiosPromise);
@@ -15,12 +11,6 @@ var _axiosPromise2 = _interopRequireDefault(_axiosPromise);
 var _helperFunctions = require('./helper-functions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var ErrorFromMiddleware = function ErrorFromMiddleware(error) {
-  (0, _classCallCheck3.default)(this, ErrorFromMiddleware);
-
-  this.error = error;
-};
 
 exports.default = function (axios, Observable) {
   return function (axiosOptions) {

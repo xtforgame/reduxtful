@@ -39,34 +39,25 @@ var WaitableActionsCreator = (_temp = _class = function () {
   }
 
   (0, _createClass3.default)(WaitableActionsCreator, [{
-    key: 'getWaitSymbols',
-    value: function getWaitSymbols() {
-      var createReduxWaitForMiddleware = require('redux-wait-for-action');
-      var WAIT_FOR_ACTION = createReduxWaitForMiddleware.WAIT_FOR_ACTION,
-          ERROR_ACTION = createReduxWaitForMiddleware.ERROR_ACTION,
-          CALLBACK_ARGUMENT = createReduxWaitForMiddleware.CALLBACK_ARGUMENT,
-          CALLBACK_ERROR_ARGUMENT = createReduxWaitForMiddleware.CALLBACK_ERROR_ARGUMENT;
-
-      return {
-        WAIT_FOR_ACTION: WAIT_FOR_ACTION,
-        ERROR_ACTION: ERROR_ACTION,
-        CALLBACK_ARGUMENT: CALLBACK_ARGUMENT,
-        CALLBACK_ERROR_ARGUMENT: CALLBACK_ERROR_ARGUMENT
-      };
-    }
-  }, {
     key: 'create',
-    value: function create(_ref, _ref2) {
+    value: function create(_ref, options, waitableActionsOptions) {
       var ns = _ref.ns,
           names = _ref.names,
           getShared = _ref.getShared,
           methodConfigs = _ref.methodConfigs;
-      var actionNoRedundantBody = _ref2.actionNoRedundantBody;
+
+      var mergedOptions = (0, _extends4.default)({}, options, waitableActionsOptions);
 
       var shared = {};
       var exposed = {};
 
-      var symbols = this.getWaitSymbols();
+      var symbols = mergedOptions.symbols;
+
+
+      if (!symbols) {
+        return { shared: shared, exposed: exposed };
+      }
+
       var sharedActionTypes = getShared(_ActionTypesCreator2.default.$name);
       var sharedActions = getShared(_ActionsCreator2.default.$name);
 
@@ -95,7 +86,8 @@ var WaitableActionsCreator = (_temp = _class = function () {
 
           var exposedName = methodConfig.getActionName(arg);
           var sharedName = methodConfig.name;
-          var action = shared[sharedName][key] = WaitableActionsCreator.getActionCreator(type, actions, symbols);
+          shared[sharedName][key] = WaitableActionsCreator.getActionCreator(type, actions, symbols);
+          var action = shared[sharedName][key];
           action.type = type;
           action.actionSet = shared[sharedName];
           action.sharedName = sharedName;
@@ -120,7 +112,7 @@ var WaitableActionsCreator = (_temp = _class = function () {
     var _extends2;
 
     var actionData = actions.start.apply(actions, arguments);
-    var waitToken = Symbol();
+    var waitToken = Symbol('WaitToken');
     actionData.options.transferables = (0, _extends4.default)({}, actionData.options.transferables, {
       waitToken: waitToken
     });

@@ -16,9 +16,9 @@ var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _commonFunctions = require('../core/common-functions');
+var _commonFunctions = require('./common-functions');
 
-var _getMiddlewaresHandler = require('../core/getMiddlewaresHandler');
+var _getMiddlewaresHandler = require('./getMiddlewaresHandler');
 
 var _getMiddlewaresHandler2 = _interopRequireDefault(_getMiddlewaresHandler);
 
@@ -31,34 +31,34 @@ var ErrorFromMiddleware = function ErrorFromMiddleware(error) {
 };
 
 exports.default = function (axios, request) {
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var _options$middlewares = options.middlewares,
-      _options$middlewares$ = _options$middlewares.request,
-      requestMiddlewares = _options$middlewares$ === undefined ? [] : _options$middlewares$,
-      _options$middlewares$2 = _options$middlewares.response,
-      responseMiddlewares = _options$middlewares$2 === undefined ? [] : _options$middlewares$2,
-      _options$middlewares$3 = _options$middlewares.error,
-      errorMiddlewares = _options$middlewares$3 === undefined ? [] : _options$middlewares$3,
-      _options$debugDelay = options.debugDelay,
-      debugDelay = _options$debugDelay === undefined ? 0 : _options$debugDelay,
-      _options$axiosCancelT = options.axiosCancelTokenSource,
-      axiosCancelTokenSource = _options$axiosCancelT === undefined ? axios.CancelToken.source() : _options$axiosCancelT;
+  var op = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var _op$middlewares = op.middlewares,
+      _op$middlewares$reque = _op$middlewares.request,
+      requestMiddlewares = _op$middlewares$reque === undefined ? [] : _op$middlewares$reque,
+      _op$middlewares$respo = _op$middlewares.response,
+      responseMiddlewares = _op$middlewares$respo === undefined ? [] : _op$middlewares$respo,
+      _op$middlewares$error = _op$middlewares.error,
+      errorMiddlewares = _op$middlewares$error === undefined ? [] : _op$middlewares$error,
+      _op$debugDelay = op.debugDelay,
+      debugDelay = _op$debugDelay === undefined ? 0 : _op$debugDelay,
+      _op$axiosCancelTokenS = op.axiosCancelTokenSource,
+      axiosCancelTokenSource = _op$axiosCancelTokenS === undefined ? axios.CancelToken.source() : _op$axiosCancelTokenS;
 
 
   return (0, _commonFunctions.promiseWait)(debugDelay).then(function () {
-    var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(requestMiddlewares), [function (request, _ref) {
+    var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(requestMiddlewares), [function (req, _ref) {
       var options = _ref.options;
-      return axios((0, _extends3.default)({}, request, {
-        cancelToken: options.axiosCancelTokenSource.token
+      return axios((0, _extends3.default)({}, req, {
+        cancelToken: axiosCancelTokenSource.token
       }));
-    }]), [request, { options: options }]);
+    }]), [request, { options: op }]);
     return next();
   }).then(function (response) {
-    var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(responseMiddlewares), [function (response) {
-      return Promise.resolve(response);
-    }]), [response, { request: request, options: options }]);
-    return Promise.resolve().then(next).then(function (response) {
-      return response || Promise.reject(new ErrorFromMiddleware('Malformed Response: ' + response + ', please check you response middlewares'));
+    var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(responseMiddlewares), [function (res) {
+      return Promise.resolve(res);
+    }]), [response, { request: request, options: op }]);
+    return Promise.resolve().then(next).then(function (res) {
+      return res || Promise.reject(new ErrorFromMiddleware('Malformed Response: ' + res + ', please check you response middlewares'));
     }).catch(function (error) {
       return Promise.reject(new ErrorFromMiddleware(error));
     });
@@ -66,9 +66,9 @@ exports.default = function (axios, request) {
     if (error instanceof ErrorFromMiddleware) {
       return Promise.reject(error.error);
     }
-    var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(errorMiddlewares), [function (error) {
-      return Promise.reject(error);
-    }]), [error, { request: request, options: options }]);
+    var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(errorMiddlewares), [function (err) {
+      return Promise.reject(err);
+    }]), [error, { request: request, options: op }]);
     return Promise.resolve().then(next);
   });
 };

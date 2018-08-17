@@ -85,7 +85,7 @@ export default class ActionsCreator {
 
   create({
     ns, names, getShared, methodConfigs,
-  }, { actionNoRedundantBody }) {
+  }, { actionNoRedundantBody, getId = (data => data.id) }) {
     const shared = {};
     const exposed = {};
 
@@ -116,6 +116,7 @@ export default class ActionsCreator {
         action.actionSet = shared[sharedName];
         action.sharedName = sharedName;
         action.exposedName = exposedName;
+        action.getId = getId;
 
         exposed[exposedName] = action;
       });

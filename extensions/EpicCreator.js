@@ -49,8 +49,8 @@ var EpicCreator = (_temp = _class = function () {
           getShared = _ref.getShared,
           methodConfigs = _ref.methodConfigs;
       var _ref2$getId = _ref2.getId,
-          getId = _ref2$getId === undefined ? function (action) {
-        return action.data.id;
+          getId = _ref2$getId === undefined ? function (data) {
+        return data.id;
       } : _ref2$getId;
 
       var shared = {};
@@ -82,7 +82,7 @@ var EpicCreator = (_temp = _class = function () {
         };
 
         if (!methodConfig.getEpicName || !methodConfig.getUrlTemplate) {
-          return { shared: shared, exposed: exposed };
+          return;
         }
 
         var epicName = methodConfig.getEpicName(arg);
@@ -94,13 +94,14 @@ var EpicCreator = (_temp = _class = function () {
 
         shared[methodConfig.name] = function (action$, store) {
           return action$.ofType(actionTypes.start).mergeMap(function (action) {
-            var url = urlInfo.compile(action.entry);
+            var compiledUrl = urlInfo.compile(action.entry);
             var query = action.options.query;
+
             var source = axios.CancelToken.source();
 
             return axiosObservable({
               method: methodConfig.method,
-              url: url,
+              url: compiledUrl,
               headers: getHeaders(),
               data: action.data,
               params: query

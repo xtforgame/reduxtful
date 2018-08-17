@@ -53,8 +53,8 @@ var SagaCreator = (_temp = _class = function () {
           getShared = _ref.getShared,
           methodConfigs = _ref.methodConfigs;
       var _ref2$getId = _ref2.getId,
-          getId = _ref2$getId === undefined ? function (action) {
-        return action.data.id;
+          getId = _ref2$getId === undefined ? function (data) {
+        return data.id;
       } : _ref2$getId;
 
       var shared = {};
@@ -90,7 +90,7 @@ var SagaCreator = (_temp = _class = function () {
         };
 
         if (!methodConfig.getSagaName || !methodConfig.getUrlTemplate) {
-          return { shared: shared, exposed: exposed };
+          return;
         }
 
         var sagaName = methodConfig.getSagaName(arg);
@@ -107,13 +107,13 @@ var SagaCreator = (_temp = _class = function () {
                 case 0:
                   _context2.next = 2;
                   return takeEvery(actionTypes.start, _regenerator2.default.mark(function foo(action) {
-                    var url, query, source, state, _ref3, response, cancelSagas;
+                    var compiledUrl, query, source, state, _ref3, response, cancelSagas;
 
                     return _regenerator2.default.wrap(function foo$(_context) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
-                            url = urlInfo.compile(action.entry);
+                            compiledUrl = urlInfo.compile(action.entry);
                             query = action.options.query;
                             source = axios.CancelToken.source();
                             _context.next = 5;
@@ -128,7 +128,7 @@ var SagaCreator = (_temp = _class = function () {
                             return race({
                               response: call(_axiosPromise2.default, axios, {
                                 method: methodConfig.method,
-                                url: url,
+                                url: compiledUrl,
                                 headers: getHeaders(),
                                 data: action.data,
                                 params: query

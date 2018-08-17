@@ -37,7 +37,11 @@ var ActionsCreator = (_temp = _class = function () {
           names = _ref.names,
           getShared = _ref.getShared,
           methodConfigs = _ref.methodConfigs;
-      var actionNoRedundantBody = _ref2.actionNoRedundantBody;
+      var actionNoRedundantBody = _ref2.actionNoRedundantBody,
+          _ref2$getId = _ref2.getId,
+          getId = _ref2$getId === undefined ? function (data) {
+        return data.id;
+      } : _ref2$getId;
 
       var shared = {};
       var exposed = {};
@@ -57,11 +61,13 @@ var ActionsCreator = (_temp = _class = function () {
 
           var exposedName = methodConfig.getActionName(arg);
           var sharedName = methodConfig.name;
-          var action = shared[sharedName][key] = ActionsCreator.getActionCreator(type, actionTypesForMethod, methodConfig, key, actionNoRedundantBody);
+          shared[sharedName][key] = ActionsCreator.getActionCreator(type, actionTypesForMethod, methodConfig, key, actionNoRedundantBody);
+          var action = shared[sharedName][key];
           action.type = type;
           action.actionSet = shared[sharedName];
           action.sharedName = sharedName;
           action.exposedName = exposedName;
+          action.getId = getId;
 
           exposed[exposedName] = action;
         });
@@ -96,41 +102,59 @@ var ActionsCreator = (_temp = _class = function () {
     return withBodyArg ? function (id, data) {
       var entry = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return { type: type, data: data, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({
+      return {
+        type: type,
+        data: data,
+        entry: (0, _extends3.default)({}, entry, { id: id }),
+        options: (0, _extends3.default)({
           transferables: {},
           actionTypes: actionTypes,
           isForCollection: methodConfig.isForCollection,
           method: methodConfig.name
-        }, options) };
+        }, options)
+      };
     } : function (id) {
       var entry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return { type: type, entry: (0, _extends3.default)({}, entry, { id: id }), options: (0, _extends3.default)({
+      return {
+        type: type,
+        entry: (0, _extends3.default)({}, entry, { id: id }),
+        options: (0, _extends3.default)({
           transferables: {},
           actionTypes: actionTypes,
           isForCollection: methodConfig.isForCollection,
           method: methodConfig.name
-        }, options) };
+        }, options)
+      };
     };
   } else {
     return withBodyArg ? function (data) {
       var entry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return { type: type, data: data, entry: entry, options: (0, _extends3.default)({
+      return {
+        type: type,
+        data: data,
+        entry: entry,
+        options: (0, _extends3.default)({
           transferables: {},
           actionTypes: actionTypes,
           isForCollection: methodConfig.isForCollection,
           method: methodConfig.name
-        }, options) };
+        }, options)
+      };
     } : function () {
       var entry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return { type: type, entry: entry, options: (0, _extends3.default)({
+      return {
+        type: type,
+        entry: entry,
+        options: (0, _extends3.default)({
           transferables: {},
           actionTypes: actionTypes,
           isForCollection: methodConfig.isForCollection,
           method: methodConfig.name
-        }, options) };
+        }, options)
+      };
     };
   }
 }, _temp);

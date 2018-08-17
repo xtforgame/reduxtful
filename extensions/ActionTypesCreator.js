@@ -15,8 +15,6 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _class, _temp;
 
-var _commonFunctions = require('../core/common-functions');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ActionTypesCreator = (_temp = _class = function () {

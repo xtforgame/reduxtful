@@ -22,7 +22,7 @@ var UrlInfo = function () {
       var reservedVars = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['id'];
 
       UrlInfo.parse(url, function (varPart) {
-        reservedVars.map(function (reservedVar) {
+        reservedVars.forEach(function (reservedVar) {
           if (varPart.varName === reservedVar) {
             throw new Error('Invalid url pattern: ' + url + ', \'' + reservedVar + '\' is the reserved variable name.');
           }
@@ -97,6 +97,7 @@ var UrlInfo = function () {
     value: function include(entryA, entryB) {
       for (var i = 0; i < this.varParts.length; i++) {
         var varName = this.varParts[i].varName;
+
         var varA = entryA[varName];
         var varB = entryB[varName];
         if (varA == null) {
@@ -115,6 +116,7 @@ var UrlInfo = function () {
 
       for (var i = 0; i < this.varParts.length; i++) {
         var varName = this.varParts[i].varName;
+
         var varA = entryA[varName];
         var varB = entryB[varName];
         if (varA == null && varB == null && ~terminalVars.indexOf(varName)) {

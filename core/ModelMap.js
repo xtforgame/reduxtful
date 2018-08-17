@@ -55,6 +55,7 @@ var ModelMap = function () {
     Object.keys(modelsDefine).forEach(function (key) {
       var modelDefine = modelsDefine[key];
       var url = modelDefine.url;
+
       if (!url) {
         throw new Error('No url provided: ' + key);
       }
@@ -64,14 +65,15 @@ var ModelMap = function () {
     this.models = {};
     this.Creators = extensions;
 
-    this.Creators.map(function (Creator) {
+    this.Creators.forEach(function (Creator) {
       _this[Creator.$name] = {};
     });
 
     this.methodConfigs = (0, _createMethodConfigs2.default)(this.ns, this.names);
     Object.keys(modelsDefine).forEach(function (key) {
       var modelDefine = modelsDefine[key];
-      var model = _this.models[key] = new _RestModel2.default(ns, modelDefine, _this.Creators, _this.methodConfigs);
+      _this.models[key] = new _RestModel2.default(ns, modelDefine, _this.Creators, _this.methodConfigs);
+      var model = _this.models[key];
       _this.Creators.forEach(function (Creator) {
         var extensionName = Creator.$name;
         _this[extensionName] = (0, _extends3.default)({}, _this[extensionName], model.getExposed(extensionName));

@@ -54,7 +54,7 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
         return null;
       }
       var node = hierarchy;
-      selection.entryPath.map(function (part) {
+      selection.entryPath.forEach(function (part) {
         return node = node && node[part];
       });
       return node;

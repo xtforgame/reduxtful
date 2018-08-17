@@ -20,8 +20,7 @@ var getActionContantName = function getActionContantName(_ref) {
 
   var upperCasedMethod = (0, _commonFunctions.toUnderscore)(methodName).toUpperCase();
   var upperCasedModelName = (0, _commonFunctions.toUnderscore)(names.model).toUpperCase();
-  var upperCasedCollecionName = (0, _commonFunctions.toUnderscore)(getResourceCollectionName(names)).toUpperCase();
-  var upperCasedMemberName = names.member && (0, _commonFunctions.toUnderscore)(names.member).toUpperCase();
+
   var upperCasedActionTypeName = (0, _commonFunctions.toUnderscore)(actionTypeName).toUpperCase();
 
   switch (methodName) {
@@ -92,7 +91,6 @@ var getActionName = function getActionName() {
 
 var getReducerName = function getReducerName(_ref3) {
   var names = _ref3.names;
-
   return names.model + 'Reducer';
 };
 
@@ -135,7 +133,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: true,
     needBody: true,
     getUrlTemplate: function getUrlTemplate(_ref6) {
-      var names = _ref6.names,
+      var names2 = _ref6.names2,
           url = _ref6.url;
       return url;
     },
@@ -151,7 +149,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: true,
     needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref7) {
-      var names = _ref7.names,
+      var names2 = _ref7.names2,
           url = _ref7.url;
       return url;
     },
@@ -167,7 +165,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: true,
     needBody: true,
     getUrlTemplate: function getUrlTemplate(_ref8) {
-      var names = _ref8.names,
+      var names2 = _ref8.names2,
           url = _ref8.url;
       return url;
     },
@@ -183,7 +181,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: true,
     needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref9) {
-      var names = _ref9.names,
+      var names2 = _ref9.names2,
           url = _ref9.url;
       return url;
     },
@@ -198,7 +196,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: true,
     needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref10) {
-      var names = _ref10.names,
+      var names2 = _ref10.names2,
           url = _ref10.url;
       return url;
     },
@@ -214,7 +212,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: false,
     needBody: true,
     getUrlTemplate: function getUrlTemplate(_ref11) {
-      var names = _ref11.names,
+      var names2 = _ref11.names2,
           url = _ref11.url;
       return url + '/{id}';
     },
@@ -230,7 +228,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: false,
     needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref12) {
-      var names = _ref12.names,
+      var names2 = _ref12.names2,
           url = _ref12.url;
       return url + '/{id}';
     },
@@ -246,7 +244,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: false,
     needBody: true,
     getUrlTemplate: function getUrlTemplate(_ref13) {
-      var names = _ref13.names,
+      var names2 = _ref13.names2,
           url = _ref13.url;
       return url + '/{id}';
     },
@@ -262,7 +260,7 @@ function createMethodConfigs(ns, names) {
     isForCollection: false,
     needBody: false,
     getUrlTemplate: function getUrlTemplate(_ref14) {
-      var names = _ref14.names,
+      var names2 = _ref14.names2,
           url = _ref14.url;
       return url + '/{id}';
     },
