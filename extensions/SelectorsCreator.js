@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = undefined;
+exports.default = exports.namingConventions = undefined;
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -31,10 +31,35 @@ var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createSelectors = function createSelectors(createSelector, names, baseSelector, hierarchyLevel) {
+var namingConventions = exports.namingConventions = {
+  noun: {
+    maker: function maker(targetName) {
+      return 'make' + (0, _commonFunctions.capitalizeFirstLetter)(targetName) + 'Selector';
+    },
+    selector: function selector(targetName) {
+      return targetName + 'Selector';
+    }
+  },
+  verb: {
+    maker: function maker(targetName) {
+      return 'makeSelect' + (0, _commonFunctions.capitalizeFirstLetter)(targetName);
+    },
+    selector: function selector(targetName) {
+      return 'select' + (0, _commonFunctions.capitalizeFirstLetter)(targetName);
+    }
+  }
+};
+
+var createSelectors = function createSelectors(createSelector, names, baseSelector, hierarchyLevel, namingConvention, selectorType) {
   var _extends2;
 
   var resourceSelector = baseSelector;
+
+  var makeResourceSelector = function makeResourceSelector() {
+    return createSelector(resourceSelector, function (resources) {
+      return resources;
+    });
+  };
 
   var makeResourceHierarchySelector = function makeResourceHierarchySelector() {
     return createSelector(resourceSelector, function (resources) {
@@ -118,10 +143,24 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
         return null;
       });
     };
-    extra = (_extra = {}, (0, _defineProperty3.default)(_extra, 'makeDefault' + capitalizeModelName + 'NodeSelector', makeDefaultResourceNodeSelector), (0, _defineProperty3.default)(_extra, modelName + 'NodeSelector', makeDefaultResourceNodeSelector()), (0, _defineProperty3.default)(_extra, 'makeDefault' + capitalizeModelName + 'CollectionSelector', makeDefaultResourceCollectionSelector), (0, _defineProperty3.default)(_extra, modelName + 'CollectionSelector', makeDefaultResourceCollectionSelector()), (0, _defineProperty3.default)(_extra, 'makeDefault' + capitalizeModelName + 'ByIdSelector', makeDefaultResourceByIdSelector), (0, _defineProperty3.default)(_extra, modelName + 'ByIdSelector', makeDefaultResourceByIdSelector()), _extra);
+    extra = (_extra = {}, (0, _defineProperty3.default)(_extra, 'default' + capitalizeModelName + 'Node', makeDefaultResourceNodeSelector), (0, _defineProperty3.default)(_extra, 'default' + capitalizeModelName + 'Collection', makeDefaultResourceCollectionSelector), (0, _defineProperty3.default)(_extra, 'default' + capitalizeModelName + 'ById', makeDefaultResourceByIdSelector), _extra);
   }
 
-  return (0, _extends4.default)((_extends2 = {}, (0, _defineProperty3.default)(_extends2, modelName + 'Selector', resourceSelector), (0, _defineProperty3.default)(_extends2, 'make' + capitalizeModelName + 'HierarchySelector', makeResourceHierarchySelector), (0, _defineProperty3.default)(_extends2, modelName + 'HierarchySelector', makeResourceHierarchySelector()), (0, _defineProperty3.default)(_extends2, 'make' + capitalizeModelName + 'SelectionSelector', makeResourceSelectionSelector), (0, _defineProperty3.default)(_extends2, modelName + 'SelectionSelector', makeResourceSelectionSelector()), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'NodeSelector', makeSelectedResourceNodeSelector()), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'CollectionSelector', makeSelectedResourceCollectionSelector()), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'ByIdSelector', makeSelectedResourceByIdSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'ByIdSelector', makeSelectedResourceByIdSelector()), (0, _defineProperty3.default)(_extends2, 'makeSelected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'Selector', makeSelectedResourceSelector()), _extends2), extra);
+  var targetMakers = (0, _extends4.default)((_extends2 = {}, (0, _defineProperty3.default)(_extends2, '' + modelName, makeResourceSelector), (0, _defineProperty3.default)(_extends2, modelName + 'Hierarchy', makeResourceHierarchySelector), (0, _defineProperty3.default)(_extends2, modelName + 'Selection', makeResourceSelectionSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'Node', makeSelectedResourceNodeSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'Collection', makeSelectedResourceCollectionSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName + 'ById', makeSelectedResourceByIdSelector), (0, _defineProperty3.default)(_extends2, 'selected' + capitalizeModelName, makeSelectedResourceSelector), _extends2), extra);
+
+  var selectors = {};
+
+  Object.keys(targetMakers).forEach(function (targetName) {
+    var makeFunction = targetMakers[targetName];
+    if (selectorType === 'all' || selectorType === 'maker') {
+      selectors[namingConventions[namingConvention].maker(targetName)] = makeFunction;
+    }
+
+    if (selectorType === 'all' || selectorType === 'selector') {
+      selectors[namingConventions[namingConvention].selector(targetName)] = makeFunction();
+    }
+  });
+  return selectors;
 };
 
 var SelectorsCreator = (_temp = _class = function () {
@@ -139,16 +178,20 @@ var SelectorsCreator = (_temp = _class = function () {
       var shared = {};
       var exposed = {};
 
-      if (!extensionConfig.baseSelector) {
+      var createSelector = extensionConfig.createSelector,
+          baseSelector = extensionConfig.baseSelector,
+          _extensionConfig$nami = extensionConfig.namingConvention,
+          namingConvention = _extensionConfig$nami === undefined ? 'noun' : _extensionConfig$nami,
+          _extensionConfig$sele = extensionConfig.selectorType,
+          selectorType = _extensionConfig$sele === undefined ? 'all' : _extensionConfig$sele;
+
+      if (!baseSelector) {
         return { shared: shared, exposed: exposed };
       }
 
-      var createSelector = extensionConfig.createSelector;
-
-
       var hierarchyLevel = _UrlInfo2.default.parse(url).varParts.length;
 
-      shared = createSelectors(createSelector, names, extensionConfig.baseSelector, hierarchyLevel);
+      shared = createSelectors(createSelector, names, baseSelector, hierarchyLevel, namingConvention, selectorType);
       exposed = (0, _extends4.default)({}, shared);
 
       return { shared: shared, exposed: exposed };
