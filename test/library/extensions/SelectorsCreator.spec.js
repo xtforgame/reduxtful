@@ -29,12 +29,23 @@ describe('SelectorsCreator Test Cases', () => {
         model: modelName,
       }) => {
         const capitalizeModelName = capitalizeFirstLetter(modelName);
-        expect(selectors[`${modelName}Selector`], `Not existed: ${modelName}Selector`).to.be.an.instanceof(Function);
-        expect(selectors[`make${capitalizeModelName}HierarchySelector`], `Not existed: make${capitalizeModelName}HierarchySelector`).to.be.an.instanceof(Function);
-        expect(selectors[`make${capitalizeModelName}SelectionSelector`], `Not existed: make${capitalizeModelName}SelectionSelector`).to.be.an.instanceof(Function);
-        expect(selectors[`makeSelected${capitalizeModelName}NodeSelector`], `Not existed: makeSelected${capitalizeModelName}NodeSelector`).to.be.an.instanceof(Function);
-        expect(selectors[`makeSelected${capitalizeModelName}CollectionSelector`], `Not existed: makeSelected${capitalizeModelName}CollectionSelector`).to.be.an.instanceof(Function);
-        expect(selectors[`makeSelected${capitalizeModelName}Selector`], `Not existed: makeSelected${capitalizeModelName}Selector`).to.be.an.instanceof(Function);
+        [
+          `${modelName}Selector`,
+          `make${capitalizeModelName}HierarchySelector`,
+          `${modelName}HierarchySelector`,
+          `make${capitalizeModelName}SelectionSelector`,
+          `${modelName}SelectionSelector`,
+          `makeSelected${capitalizeModelName}NodeSelector`,
+          `selected${capitalizeModelName}NodeSelector`,
+          `makeSelected${capitalizeModelName}CollectionSelector`,
+          `selected${capitalizeModelName}CollectionSelector`,
+          `makeSelected${capitalizeModelName}ByIdSelector`,
+          `selected${capitalizeModelName}ByIdSelector`,
+          `makeSelected${capitalizeModelName}Selector`,
+          `selected${capitalizeModelName}Selector`,
+        ].forEach((nameToCheck) => {
+          expect(selectors[`${nameToCheck}`], `Not existed: ${nameToCheck}`).to.be.an.instanceof(Function);
+        });
       });
     });
   });

@@ -90,19 +90,28 @@ const createSelectors = (createSelector, names, baseSelector, hierarchyLevel) =>
     );
     extra = {
       [`makeDefault${capitalizeModelName}NodeSelector`]: makeDefaultResourceNodeSelector,
+      [`${modelName}NodeSelector`]: makeDefaultResourceNodeSelector(),
       [`makeDefault${capitalizeModelName}CollectionSelector`]: makeDefaultResourceCollectionSelector,
+      [`${modelName}CollectionSelector`]: makeDefaultResourceCollectionSelector(),
       [`makeDefault${capitalizeModelName}ByIdSelector`]: makeDefaultResourceByIdSelector,
+      [`${modelName}ByIdSelector`]: makeDefaultResourceByIdSelector(),
     };
   }
 
   return {
     [`${modelName}Selector`]: resourceSelector,
     [`make${capitalizeModelName}HierarchySelector`]: makeResourceHierarchySelector,
+    [`${modelName}HierarchySelector`]: makeResourceHierarchySelector(),
     [`make${capitalizeModelName}SelectionSelector`]: makeResourceSelectionSelector,
+    [`${modelName}SelectionSelector`]: makeResourceSelectionSelector(),
     [`makeSelected${capitalizeModelName}NodeSelector`]: makeSelectedResourceNodeSelector,
+    [`selected${capitalizeModelName}NodeSelector`]: makeSelectedResourceNodeSelector(),
     [`makeSelected${capitalizeModelName}CollectionSelector`]: makeSelectedResourceCollectionSelector,
+    [`selected${capitalizeModelName}CollectionSelector`]: makeSelectedResourceCollectionSelector(),
     [`makeSelected${capitalizeModelName}ByIdSelector`]: makeSelectedResourceByIdSelector,
+    [`selected${capitalizeModelName}ByIdSelector`]: makeSelectedResourceByIdSelector(),
     [`makeSelected${capitalizeModelName}Selector`]: makeSelectedResourceSelector,
+    [`selected${capitalizeModelName}Selector`]: makeSelectedResourceSelector(),
     ...extra,
   };
 };
@@ -121,11 +130,12 @@ export default class SelectorsCreator {
 
     const {
       createSelector,
+      baseSelector,
     } = extensionConfig;
 
     const hierarchyLevel = UrlInfo.parse(url).varParts.length;
 
-    shared = createSelectors(createSelector, names, extensionConfig.baseSelector, hierarchyLevel);
+    shared = createSelectors(createSelector, names, baseSelector, hierarchyLevel);
     exposed = { ...shared };
 
     return { shared, exposed };
