@@ -25,6 +25,10 @@ export default class SagaCreator {
       middlewares = {},
     } = extensionConfig;
 
+    if (!axios) {
+      return { shared, exposed };
+    }
+
     methodConfigs.forEach((methodConfig) => {
       if (methodConfig.supportedActions.length <= 1) {
         return;

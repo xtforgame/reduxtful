@@ -22,6 +22,10 @@ export default class EpicCreator {
       middlewares = {},
     } = extensionConfig;
 
+    if (!axios) {
+      return { shared, exposed };
+    }
+
     const axiosObservable = AxiosObservable(axios, Observable);
 
     methodConfigs.forEach((methodConfig) => {

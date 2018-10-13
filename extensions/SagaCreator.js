@@ -76,6 +76,10 @@ var SagaCreator = (_temp = _class = function () {
           middlewares = _extensionConfig$midd === undefined ? {} : _extensionConfig$midd;
 
 
+      if (!axios) {
+        return { shared: shared, exposed: exposed };
+      }
+
       methodConfigs.forEach(function (methodConfig) {
         if (methodConfig.supportedActions.length <= 1) {
           return;

@@ -66,6 +66,10 @@ var EpicCreator = (_temp = _class = function () {
           middlewares = _extensionConfig$midd === undefined ? {} : _extensionConfig$midd;
 
 
+      if (!axios) {
+        return { shared: shared, exposed: exposed };
+      }
+
       var axiosObservable = (0, _AxiosObservable2.default)(axios, Observable);
 
       methodConfigs.forEach(function (methodConfig) {
