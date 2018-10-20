@@ -19,7 +19,7 @@
     }],
     "no-bitwise": ["error", { "allow": ["~"] }],
     "no-else-return": "off",
-    "indent": ["error", 2, { "MemberExpression": "off" }],
+    "indent": ["error", 2, { "MemberExpression": "off", "SwitchCase": 1 }],
     "no-plusplus": "off",
     "no-continue": "off",
 

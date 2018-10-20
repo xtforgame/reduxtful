@@ -18,24 +18,24 @@ const getActionContantName = ({ methodName, names, actionTypeName }) => {
   const upperCasedActionTypeName = toUnderscore(actionTypeName).toUpperCase();
 
   switch (methodName) {
-  case 'selectPath':
-  case 'clearCollectionCache':
-  case 'clearCache':
-  case 'clearEachCache':
-    return `${upperCasedModelName}_${upperCasedMethod}`;
-  default:
-    break;
+    case 'selectPath':
+    case 'clearCollectionCache':
+    case 'clearCache':
+    case 'clearEachCache':
+      return `${upperCasedModelName}_${upperCasedMethod}`;
+    default:
+      break;
   }
 
   switch (actionTypeName) {
-  case 'respond':
-    return `${upperCasedModelName}_RESPOND_${upperCasedMethod}`;
-  case 'respondError':
-    return `${upperCasedModelName}_RESPOND_${upperCasedMethod}_ERROR`;
-  case 'cancel':
-    return `${upperCasedModelName}_CANCEL_${upperCasedMethod}`;
-  default:
-    break;
+    case 'respond':
+      return `${upperCasedModelName}_RESPOND_${upperCasedMethod}`;
+    case 'respondError':
+      return `${upperCasedModelName}_RESPOND_${upperCasedMethod}_ERROR`;
+    case 'cancel':
+      return `${upperCasedModelName}_CANCEL_${upperCasedMethod}`;
+    default:
+      break;
   }
 
   return `${upperCasedModelName}_${upperCasedMethod}_${upperCasedActionTypeName}`;
@@ -43,16 +43,16 @@ const getActionContantName = ({ methodName, names, actionTypeName }) => {
 
 const getActionName = (isForCollection = false) => ({ methodName, names, actionTypeName }) => {
   switch (methodName) {
-  case 'selectPath':
-    return `select${capitalizeFirstLetter(names.model)}Path`;
-  case 'clearCollectionCache':
-    return `clear${capitalizeFirstLetter(getResourceCollectionName(names))}Cache`;
-  case 'clearCache':
-    return `clear${capitalizeFirstLetter(names.member)}Cache`;
-  case 'clearEachCache':
-    return `clearEach${capitalizeFirstLetter(names.member)}Cache`;
-  default:
-    break;
+    case 'selectPath':
+      return `select${capitalizeFirstLetter(names.model)}Path`;
+    case 'clearCollectionCache':
+      return `clear${capitalizeFirstLetter(getResourceCollectionName(names))}Cache`;
+    case 'clearCache':
+      return `clear${capitalizeFirstLetter(names.member)}Cache`;
+    case 'clearEachCache':
+      return `clearEach${capitalizeFirstLetter(names.member)}Cache`;
+    default:
+      break;
   }
 
   const resourceCollectionName = getResourceCollectionName(names);
@@ -61,17 +61,17 @@ const getActionName = (isForCollection = false) => ({ methodName, names, actionT
   let _actionTypeName = actionTypeName;
 
   switch (actionTypeName) {
-  case 'start':
-    _actionTypeName = '';
-    break;
-  case 'respond':
-    return `${_actionTypeName}${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}`;
-  case 'respondError':
-    return `respond${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}Error`;
-  case 'cancel':
-    return `${_actionTypeName}${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}`;
-  default:
-    break;
+    case 'start':
+      _actionTypeName = '';
+      break;
+    case 'respond':
+      return `${_actionTypeName}${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}`;
+    case 'respondError':
+      return `respond${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}Error`;
+    case 'cancel':
+      return `${_actionTypeName}${capitalizeFirstLetter(_methodName)}${capitalizeFirstLetter(resourceName)}`;
+    default:
+      break;
   }
   return `${_methodName}${capitalizeFirstLetter(resourceName)}${capitalizeFirstLetter(_actionTypeName)}`;
 };
