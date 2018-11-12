@@ -61,8 +61,9 @@ var SagaCreator = (_temp = _class = function () {
       var exposed = {};
 
       var axios = extensionConfig.axios,
-          _extensionConfig$effe = extensionConfig.effects,
-          takeEvery = _extensionConfig$effe.takeEvery,
+          _extensionConfig$effe = extensionConfig.effects;
+      _extensionConfig$effe = _extensionConfig$effe === undefined ? {} : _extensionConfig$effe;
+      var takeEvery = _extensionConfig$effe.takeEvery,
           call = _extensionConfig$effe.call,
           put = _extensionConfig$effe.put,
           race = _extensionConfig$effe.race,

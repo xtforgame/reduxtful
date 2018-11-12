@@ -20,7 +20,7 @@ export default class SagaCreator {
       axios,
       effects: {
         takeEvery, call, put, race, take, select,
-      },
+      } = {},
       getHeaders = () => ({}),
       middlewares = {},
     } = extensionConfig;
