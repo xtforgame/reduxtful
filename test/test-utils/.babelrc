@@ -3,23 +3,15 @@
   "plugins": [
     "transform-decorators-legacy",
     "transform-class-properties",
-    "transform-object-rest-spread",
-    [
-      "transform-runtime",
-      {
-        "polyfill": false,
-        "regenerator": true
-      }
-    ]
+    "transform-object-rest-spread"
   ],
   "env": {
     "development": {
       "plugins": [
         ["module-resolver", {
           "alias": {
-            "~": "./src/test/library",
+            "~": "./src/test-utils",
             "library": "./src/library",
-            "test-utils": "./src/test-utils",
             "test-data": "./src/test-data"
           }
         }]
@@ -29,9 +21,8 @@
       "plugins": [
         ["module-resolver", {
           "alias": {
-            "~": "./src/test/library",
+            "~": "./src/test-utils",
             "library": "./src/library",
-            "test-utils": "./src/test-utils",
             "test-data": "./src/test-data"
           }
         }]
@@ -41,9 +32,8 @@
       "plugins": [
         ["module-resolver", {
           "alias": {
-            "~": "./src/test/library",
+            "~": "./src/test-utils",
             "library": "./src/library",
-            "test-utils": "./src/test-utils",
             "test-data": "./src/test-data"
           }
         }]

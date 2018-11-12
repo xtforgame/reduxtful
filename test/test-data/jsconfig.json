@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "paths": {
+      "~/*": ["./test/test-data/*"],
+      "library": ["src/library"],
+      "library/*": ["src/library/*"],
+      "test-utils": ["./test/test-utils"],
+      "test-utils/*": ["./test/test-utils/*"]
+    },
+  }
+}
