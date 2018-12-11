@@ -304,7 +304,7 @@ describe('Saga CRUD Test Cases', () => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({ 'user.hierarchy.byId[1]': null });
+          expect(global).to.not.have.nested.property('user.hierarchy.byId[1]');
         }));
 
       it('should be able to cancel', () => {
@@ -331,7 +331,7 @@ describe('Saga CRUD Test Cases', () => {
 
           store.dispatch(modelMap.actions.clearUserCache(1));
           global = store.getState().get('global');
-          expect(global).to.nested.include({ 'user.hierarchy.byId[1]': null });
+          expect(global).to.not.have.nested.property('user.hierarchy.byId[1]');
         }));
 
       it('should be able to clear each member', () => store.dispatch(modelMap.waitableActions.getUser(1))
@@ -383,7 +383,7 @@ describe('Saga CRUD Test Cases', () => {
           // console.log('payload :', payload);
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
-          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1]': null });
+          expect(global).to.not.have.nested.property('ownedTask.hierarchy[1].byId[1]');
         }));
 
       it('should be able to cancel', () => {
@@ -410,7 +410,7 @@ describe('Saga CRUD Test Cases', () => {
 
           store.dispatch(modelMap.actions.clearOwnedTaskCache(1, { userId: 1 }));
           global = store.getState().get('global');
-          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1]': null });
+          expect(global).to.not.have.nested.property('ownedTask.hierarchy[1].byId[1]');
         }));
 
       it('should be able to clear each member', () => store.dispatch(modelMap.waitableActions.getOwnedTask(1, { userId: 1 }))

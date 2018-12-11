@@ -21,9 +21,9 @@ var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
-var _extends6 = require('babel-runtime/helpers/extends');
+var _extends4 = require('babel-runtime/helpers/extends');
 
-var _extends7 = _interopRequireDefault(_extends6);
+var _extends5 = _interopRequireDefault(_extends4);
 
 var _toArray2 = require('babel-runtime/helpers/toArray');
 
@@ -58,7 +58,7 @@ var mergePartialState = function mergePartialState() {
         id = _entryPath[0],
         rest = _entryPath.slice(1);
 
-    return (0, _extends7.default)({}, state, (0, _defineProperty3.default)({}, id, mergePartialState(state[id], action, options, isForCollection, rest, mergeFunc)));
+    return (0, _extends5.default)({}, state, (0, _defineProperty3.default)({}, id, mergePartialState(state[id], action, options, isForCollection, rest, mergeFunc)));
   } else {
     var _options$middlewares = options.middlewares;
     _options$middlewares = _options$middlewares === undefined ? {} : _options$middlewares;
@@ -90,14 +90,14 @@ var genSelectFunc = function genSelectFunc(method, _ref, isForCollection) {
     var action = arguments[1];
 
     if (action.entry === undefined) {
-      return (0, _extends7.default)({}, state, {
+      return (0, _extends5.default)({}, state, {
         selection: null
       });
     }
     var entryPath = urlInfo.entryToPath(action.entry);
-    return (0, _extends7.default)({}, state, {
+    return (0, _extends5.default)({}, state, {
       selection: {
-        entry: (0, _extends7.default)({}, action.entry),
+        entry: (0, _extends5.default)({}, action.entry),
         entryPath: entryPath,
         id: action.entry.id
       }
@@ -110,7 +110,7 @@ var genStartFunc = function genStartFunc(method, options, isForCollection) {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState);
+      return (0, _extends5.default)({}, partialState);
     });
   };
 };
@@ -127,15 +127,15 @@ var genCollectionRespondFunc = function genCollectionRespondFunc(method, options
         updateMembersByCollection = options.updateMembersByCollection;
 
     var defaultMergeFunc = function defaultMergeFunc(partialState) {
-      return (0, _extends7.default)({}, partialState, {
+      return (0, _extends5.default)({}, partialState, {
         collection: mergeCollection(method, partialState.collection, action, options)
       });
     };
     if (updateMembersByCollection) {
       defaultMergeFunc = function defaultMergeFunc(partialState) {
-        return (0, _extends7.default)({}, partialState, {
+        return (0, _extends5.default)({}, partialState, {
           collection: mergeCollection(method, partialState.collection, action, options),
-          byId: (0, _extends7.default)({}, partialState.byId, updateMembersByCollection(action.data))
+          byId: (0, _extends5.default)({}, partialState.byId, updateMembersByCollection(action.data))
         });
       };
     }
@@ -153,7 +153,7 @@ var genCollectionRespondDeleteFunc = function genCollectionRespondDeleteFunc(met
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState, {
+      return (0, _extends5.default)({}, partialState, {
         collection: null
       });
     });
@@ -165,7 +165,7 @@ var genCollectionClearFunc = function genCollectionClearFunc(options, isForColle
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState, {
+      return (0, _extends5.default)({}, partialState, {
         collection: null
       });
     });
@@ -184,8 +184,8 @@ var genRepondFunc = function genRepondFunc(method, options, isForCollection) {
     } : _options$mergeMember;
 
     var defaultMergeFunc = function defaultMergeFunc(partialState) {
-      return (0, _extends7.default)({}, partialState, {
-        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, mergeMember(method, partialState.byId && partialState.byId[id], action, options)))
+      return (0, _extends5.default)({}, partialState, {
+        byId: (0, _extends5.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, mergeMember(method, partialState.byId && partialState.byId[id], action, options)))
       });
     };
     mergeNode = mergeNode || function (method2, partialState, defaultMergeFunc2) {
@@ -202,35 +202,53 @@ var genRespondDeleteFunc = function genRespondDeleteFunc(method, options, isForC
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     var id = action.entry.id;
+    var mergeNode = options.mergeNode;
 
-    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState, {
-        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, null))
+    var defaultMergeFunc = function defaultMergeFunc(partialState) {
+      var newPartialState = (0, _extends5.default)({}, partialState, {
+        byId: (0, _extends5.default)({}, partialState.byId)
       });
+      delete newPartialState.byId[id];
+      return newPartialState;
+    };
+    mergeNode = mergeNode || function (method2, partialState, defaultMergeFunc2) {
+      return defaultMergeFunc2(partialState);
+    };
+    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
+      return mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection);
     });
   };
 };
 
-var genClearFunc = function genClearFunc(options, isForCollection) {
+var genClearFunc = function genClearFunc(method, options, isForCollection) {
   return function () {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     var id = action.entry.id;
+    var mergeNode = options.mergeNode;
 
-    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState, {
-        byId: (0, _extends7.default)({}, partialState.byId, (0, _defineProperty3.default)({}, id, null))
+    var defaultMergeFunc = function defaultMergeFunc(partialState) {
+      var newPartialState = (0, _extends5.default)({}, partialState, {
+        byId: (0, _extends5.default)({}, partialState.byId)
       });
+      delete newPartialState.byId[id];
+      return newPartialState;
+    };
+    mergeNode = mergeNode || function (method2, partialState, defaultMergeFunc2) {
+      return defaultMergeFunc2(partialState);
+    };
+    return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
+      return mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection);
     });
   };
 };
 
-var genClearEachFunc = function genClearEachFunc(options, isForCollection) {
+var genClearEachFunc = function genClearEachFunc(method, options, isForCollection) {
   return function () {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState, {
+      return (0, _extends5.default)({}, partialState, {
         byId: {}
       });
     });
@@ -242,7 +260,7 @@ var genRepondErrorFunc = function genRepondErrorFunc(method, options, isForColle
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments[1];
     return deepMergeByPathArray(state, action, options, isForCollection)(function (partialState) {
-      return (0, _extends7.default)({}, partialState);
+      return (0, _extends5.default)({}, partialState);
     });
   };
 };
@@ -307,13 +325,13 @@ var genReducerFunctionCreators = function genReducerFunctionCreators(options) {
       cancel: null
     },
     clearCache: {
-      start: genClearFunc(options),
+      start: genClearFunc('clearCache', options),
       respond: null,
       respondError: null,
       cancel: null
     },
     clearEachCache: {
-      start: genClearEachFunc(options),
+      start: genClearEachFunc('clearEachCache', options),
       respond: null,
       respondError: null,
       cancel: null
@@ -371,7 +389,7 @@ var ReducerCreator = (_temp = _class = function () {
           names: names
         };
 
-        var mergedOptions = (0, _extends7.default)({}, options, reducerOptions, {
+        var mergedOptions = (0, _extends5.default)({}, options, reducerOptions, {
           urlInfo: urlInfo
         });
 
@@ -384,7 +402,7 @@ var ReducerCreator = (_temp = _class = function () {
           local[actionTypes[key]] = reducerFunctionCreators[methodConfig.name][key];
         });
 
-        exposed[reducerExposedFuncMapName] = (0, _extends7.default)({}, exposed[reducerExposedFuncMapName], local);
+        exposed[reducerExposedFuncMapName] = (0, _extends5.default)({}, exposed[reducerExposedFuncMapName], local);
         exposed[reducerExposedName] = createReducerFromFuncMap(exposed[reducerExposedFuncMapName], mergedOptions);
       });
 

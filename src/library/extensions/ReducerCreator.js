@@ -112,27 +112,43 @@ const genRepondFunc = (method, options, isForCollection) => (state = {}, action)
 
 const genRespondDeleteFunc = (method, options, isForCollection) => (state = {}, action) => {
   const { id } = action.entry;
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-    byId: {
-      ...partialState.byId,
-      [id]: null,
-    },
-  }));
+  let {
+    mergeNode,
+  } = options;
+  const defaultMergeFunc = (partialState) => {
+    const newPartialState = {
+      ...partialState,
+      byId: {
+        ...partialState.byId,
+      },
+    };
+    delete newPartialState.byId[id];
+    return newPartialState;
+  };
+  mergeNode = mergeNode || ((method2, partialState, defaultMergeFunc2) => defaultMergeFunc2(partialState));
+  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };
 
-const genClearFunc = (options, isForCollection) => (state = {}, action) => {
+const genClearFunc = (method, options, isForCollection) => (state = {}, action) => {
   const { id } = action.entry;
-  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
-    ...partialState,
-    byId: {
-      ...partialState.byId,
-      [id]: null,
-    },
-  }));
+  let {
+    mergeNode,
+  } = options;
+  const defaultMergeFunc = (partialState) => {
+    const newPartialState = {
+      ...partialState,
+      byId: {
+        ...partialState.byId,
+      },
+    };
+    delete newPartialState.byId[id];
+    return newPartialState;
+  };
+  mergeNode = mergeNode || ((method2, partialState, defaultMergeFunc2) => defaultMergeFunc2(partialState));
+  return deepMergeByPathArray(state, action, options, isForCollection)(partialState => mergeNode(method, partialState, defaultMergeFunc, state, action, options, isForCollection));
 };
 
-const genClearEachFunc = (options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
+const genClearEachFunc = (method, options, isForCollection) => (state = {}, action) => deepMergeByPathArray(state, action, options, isForCollection)(partialState => ({
   ...partialState,
   byId: {},
 }));
@@ -200,13 +216,13 @@ const genReducerFunctionCreators = options => ({
     cancel: null,
   },
   clearCache: {
-    start: genClearFunc(options),
+    start: genClearFunc('clearCache', options),
     respond: null,
     respondError: null,
     cancel: null,
   },
   clearEachCache: {
-    start: genClearEachFunc(options),
+    start: genClearEachFunc('clearEachCache', options),
     respond: null,
     respondError: null,
     cancel: null,

@@ -1,6 +1,6 @@
 {
   "name": "reduxtful",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Redux + RESTful",
   "main": "index.js",
   "repository": {
