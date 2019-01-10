@@ -67,10 +67,14 @@ var mergePartialState = function mergePartialState() {
         _options$middlewares$2 = _options$middlewares.collection,
         collectionMiddlewares = _options$middlewares$2 === undefined ? [] : _options$middlewares$2,
         _options$middlewares$3 = _options$middlewares.member,
-        memberMiddlewares = _options$middlewares$3 === undefined ? [] : _options$middlewares$3;
+        memberMiddlewares = _options$middlewares$3 === undefined ? [] : _options$middlewares$3,
+        entryInfo = options.entryInfo;
 
     var middlewares = [].concat((0, _toConsumableArray3.default)(nodeMiddlewares), (0, _toConsumableArray3.default)(isForCollection ? collectionMiddlewares : memberMiddlewares), [mergeFunc]);
-    var next = (0, _getMiddlewaresHandler2.default)(middlewares, [state, action, options]);
+    var s = (0, _extends5.default)({}, state, {
+      entryInfo: entryInfo
+    });
+    var next = (0, _getMiddlewaresHandler2.default)(middlewares, [s, action, options]);
     return next();
   }
 };
@@ -78,8 +82,9 @@ var mergePartialState = function mergePartialState() {
 var deepMergeByPathArray = function deepMergeByPathArray(state, action, options) {
   var isForCollection = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   return function (mergeFunc) {
-    var entryPath = options.urlInfo.entryToPath(action.entry);
-    return mergePartialState(state, action, options, isForCollection, ['hierarchy'].concat((0, _toConsumableArray3.default)(entryPath)), mergeFunc);
+    var entryInfo = options.urlInfo.entryToEntryInfo(action.entry);
+    options.entryInfo = entryInfo;
+    return mergePartialState(state, action, options, isForCollection, ['hierarchy'].concat((0, _toConsumableArray3.default)(entryInfo.path)), mergeFunc);
   };
 };
 

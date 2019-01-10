@@ -117,4 +117,12 @@ export default class UrlInfo {
   entryToPath(entry = {}) {
     return this.varParts.map(part => entry[part.varName]);
   }
+
+  entryToEntryInfo(entry = {}) {
+    const result = { map: {} };
+    result.path = this.varParts.map(
+      part => result.map[part.varName] = entry[part.varName] // eslint-disable-line no-return-assign
+    );
+    return result;
+  }
 }

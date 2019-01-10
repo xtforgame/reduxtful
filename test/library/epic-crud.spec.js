@@ -348,6 +348,7 @@ describe('Epic CRUD Test Cases', () => {
           // console.log('store.getState().get("global") :', JSON.stringify(store.getState().get('global'), null, 2));
           const global = store.getState().get('global');
           expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1' });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].entryInfo.map.userId': 1 });
         }));
 
       it('should be able to patch member', () => store.dispatch(modelMap.waitableActions.patchOwnedTask(1, { name: 'develop reduxtful lib.' }, { userId: 1 }, {}))
@@ -357,6 +358,7 @@ describe('Epic CRUD Test Cases', () => {
           const global = store.getState().get('global');
           expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].url': '/api/users/1/tasks/1' });
           expect(global).to.nested.include({ 'ownedTask.hierarchy[1].byId[1].name': 'develop reduxtful lib.' });
+          expect(global).to.nested.include({ 'ownedTask.hierarchy[1].entryInfo.map.userId': 1 });
         }));
 
       it('should be able to delete member', () => store.dispatch(modelMap.waitableActions.deleteOwnedTask(1, { userId: 1 }))

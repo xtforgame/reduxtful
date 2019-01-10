@@ -153,6 +153,17 @@ var UrlInfo = function () {
         return entry[part.varName];
       });
     }
+  }, {
+    key: 'entryToEntryInfo',
+    value: function entryToEntryInfo() {
+      var entry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      var result = { map: {} };
+      result.path = this.varParts.map(function (part) {
+        return result.map[part.varName] = entry[part.varName];
+      });
+      return result;
+    }
   }]);
   return UrlInfo;
 }();

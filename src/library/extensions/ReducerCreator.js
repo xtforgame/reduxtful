@@ -17,20 +17,26 @@ const mergePartialState = (state = {}, action, options, isForCollection, entryPa
         collection: collectionMiddlewares = [],
         member: memberMiddlewares = [],
       } = {},
+      entryInfo,
     } = options;
     const middlewares = [
       ...nodeMiddlewares,
       ...(isForCollection ? collectionMiddlewares : memberMiddlewares),
       mergeFunc,
     ];
-    const next = getMiddlewaresHandler(middlewares, [state, action, options]);
+    const s = {
+      ...state,
+      entryInfo,
+    };
+    const next = getMiddlewaresHandler(middlewares, [s, action, options]);
     return next();
   }
 };
 
 const deepMergeByPathArray = (state, action, options, isForCollection = false) => (mergeFunc) => {
-  const entryPath = options.urlInfo.entryToPath(action.entry);
-  return mergePartialState(state, action, options, isForCollection, ['hierarchy', ...entryPath], mergeFunc);
+  const entryInfo = options.urlInfo.entryToEntryInfo(action.entry);
+  options.entryInfo = entryInfo; // eslint-disable-line no-param-reassign
+  return mergePartialState(state, action, options, isForCollection, ['hierarchy', ...entryInfo.path], mergeFunc);
 };
 
 // ===============================
