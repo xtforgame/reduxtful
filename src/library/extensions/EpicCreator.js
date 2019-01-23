@@ -2,6 +2,7 @@ import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
 import AxiosObservable from '../core/AxiosObservable';
 import UrlInfo from '../core/UrlInfo';
+import defaultGetId from '../core/defaultGetId';
 import {
   getRespondActionCreators,
 } from '../core/helper-functions';
@@ -11,7 +12,7 @@ export default class EpicCreator {
 
   create({
     ns, names, url, getShared, methodConfigs,
-  }, { getId = (data => data.id) }, extensionConfig) {
+  }, { getId = defaultGetId }, extensionConfig) {
     const shared = {};
     const exposed = {};
 

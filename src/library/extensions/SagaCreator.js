@@ -2,6 +2,7 @@ import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
 import axiosPromise from '../core/axiosPromise';
 import UrlInfo from '../core/UrlInfo';
+import defaultGetId from '../core/defaultGetId';
 import {
   toNull,
   getRespondActionCreators,
@@ -12,7 +13,7 @@ export default class SagaCreator {
 
   create({
     ns, names, url, getShared, methodConfigs,
-  }, { getId = (data => data.id) }, extensionConfig) {
+  }, { getId = defaultGetId }, extensionConfig) {
     const shared = {};
     const exposed = {};
 

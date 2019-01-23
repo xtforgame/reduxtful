@@ -35,6 +35,10 @@ var _UrlInfo = require('../core/UrlInfo');
 
 var _UrlInfo2 = _interopRequireDefault(_UrlInfo);
 
+var _defaultGetId = require('../core/defaultGetId');
+
+var _defaultGetId2 = _interopRequireDefault(_defaultGetId);
+
 var _helperFunctions = require('../core/helper-functions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -53,9 +57,7 @@ var SagaCreator = (_temp = _class = function () {
           getShared = _ref.getShared,
           methodConfigs = _ref.methodConfigs;
       var _ref2$getId = _ref2.getId,
-          getId = _ref2$getId === undefined ? function (data) {
-        return data.id;
-      } : _ref2$getId;
+          getId = _ref2$getId === undefined ? _defaultGetId2.default : _ref2$getId;
 
       var shared = {};
       var exposed = {};

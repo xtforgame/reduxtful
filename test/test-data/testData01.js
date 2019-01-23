@@ -61,7 +61,6 @@ export default {
       singleton: true,
       config: {
         // actionNoRedundantBody: true,
-        getId: data => 'api', // data.user_id,
       },
       extensionConfigs: {
         waitableActions,
@@ -189,60 +188,64 @@ export default {
     },
   },
   setupMock: mock => mock
-    .onGet('/api', { params: { delay: 1000 } }).reply(config => new Promise(resolve => setTimeout(() => resolve([200, { url: '/api' }]), 1000)))
-    .onGet('/api').reply(200, { url: '/api' })
+    .onGet('/api', { params: { delay: 1000 } })
+      .reply(config => new Promise(resolve => setTimeout(() => resolve([200, { url: '/api' }]), 1000)))
+    .onGet('/api')
+      .reply(200, { url: '/api' })
+    .onPost('/api')
+      .reply(200, { url: '/api' })
     .onPost('/api/users')
-.reply(201, { url: '/api/users/1', id: 1 })
+      .reply(201, { url: '/api/users/1', id: 1 })
     .onGet('/api/users', { params: { offset: 0, limit: 1 } })
-.reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1', id: 1 }], next: { offset: 1, limit: 1 } })
+      .reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1', id: 1 }], next: { offset: 1, limit: 1 } })
     .onGet('/api/users', { params: { offset: 1, limit: 1 } })
-.reply(200, { url: '/api/users', users: [{ name: 'foo', url: '/api/users/2', id: 2 }], next: null })
+      .reply(200, { url: '/api/users', users: [{ name: 'foo', url: '/api/users/2', id: 2 }], next: null })
     .onGet('/api/users')
-.reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1', id: 1 }, { name: 'foo', url: '/api/users/2', id: 2 }] })
+      .reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1', id: 1 }, { name: 'foo', url: '/api/users/2', id: 2 }] })
     .onPatch('/api/users')
-.reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1', id: 1 }, { name: 'foo', url: '/api/users/2', id: 2 }] })
+      .reply(200, { url: '/api/users', users: [{ name: 'rick', url: '/api/users/1', id: 1 }, { name: 'foo', url: '/api/users/2', id: 2 }] })
     .onDelete('/api/users')
-.reply(200, { url: '/api/users' })
+      .reply(200, { url: '/api/users' })
 
     .onGet('/api/users/1')
-.reply(200, { url: '/api/users/1', id: 1 })
+      .reply(200, { url: '/api/users/1', id: 1 })
     .onPatch('/api/users/1', { name: 'rick' })
-.reply(200, { name: 'rick', url: '/api/users/1', id: 1 })
+      .reply(200, { name: 'rick', url: '/api/users/1', id: 1 })
     .onPatch('/api/users/1')
-.reply(200, { url: '/api/users/1', id: 1 })
+      .reply(200, { url: '/api/users/1', id: 1 })
     .onDelete('/api/users/1')
-.reply(200, { url: '/api/users/1', id: 1 })
+      .reply(200, { url: '/api/users/1', id: 1 })
 
     .onGet('/api/users/2')
-.reply(200, { url: '/api/users/2', id: 2 })
+      .reply(200, { url: '/api/users/2', id: 2 })
     .onPatch('/api/users/2', { name: 'rick' })
-.reply(200, { name: 'foo', url: '/api/users/2', id: 2 })
+      .reply(200, { name: 'foo', url: '/api/users/2', id: 2 })
     .onPatch('/api/users/2')
-.reply(200, { url: '/api/users/2', id: 2 })
+      .reply(200, { url: '/api/users/2', id: 2 })
     .onDelete('/api/users/2')
-.reply(200, { url: '/api/users/2', id: 2 })
+      .reply(200, { url: '/api/users/2', id: 2 })
 
     .onGet('/api/users/can-be-cancel')
-.reply(config => new Promise(resolve => setTimeout(() => resolve([200, { url: '/api/users/can-be-cancel' }]), 1000)))
+      .reply(config => new Promise(resolve => setTimeout(() => resolve([200, { url: '/api/users/can-be-cancel' }]), 1000)))
 
     .onGet('/api/users/1/tasks/1')
-.reply(200, { url: '/api/users/1/tasks/1', id: 1 })
+      .reply(200, { url: '/api/users/1/tasks/1', id: 1 })
     .onPatch('/api/users/1/tasks/1', { name: 'develop reduxtful lib.' })
-.reply(200, { name: 'develop reduxtful lib.', url: '/api/users/1/tasks/1', id: 1 })
+      .reply(200, { name: 'develop reduxtful lib.', url: '/api/users/1/tasks/1', id: 1 })
     .onPatch('/api/users/1/tasks/1')
-.reply(200, { url: '/api/users/1/tasks/1', id: 1 })
+      .reply(200, { url: '/api/users/1/tasks/1', id: 1 })
     .onDelete('/api/users/1/tasks/1')
-.reply(200, { url: '/api/users/1/tasks/1', id: 1 })
+      .reply(200, { url: '/api/users/1/tasks/1', id: 1 })
 
     .onGet('/api/users/1/tasks/2')
-.reply(200, { url: '/api/users/1/tasks/2', id: 2 })
+      .reply(200, { url: '/api/users/1/tasks/2', id: 2 })
     .onPatch('/api/users/1/tasks/2', { name: 'develop back-end api.' })
-.reply(200, { name: 'develop back-end api.', url: '/api/users/1/tasks/2', id: 2 })
+      .reply(200, { name: 'develop back-end api.', url: '/api/users/1/tasks/2', id: 2 })
     .onPatch('/api/users/1/tasks/2')
-.reply(200, { url: '/api/users/1/tasks/2', id: 2 })
+      .reply(200, { url: '/api/users/1/tasks/2', id: 2 })
     .onDelete('/api/users/1/tasks/2')
-.reply(200, { url: '/api/users/1/tasks/2', id: 2 })
+      .reply(200, { url: '/api/users/1/tasks/2', id: 2 })
 
     .onGet('/api/users/1/tasks/can-be-cancel')
-.reply(config => new Promise(resolve => setTimeout(() => resolve([200, { url: '/api/users/1/tasks/can-be-cancel' }]), 1000))),
+      .reply(config => new Promise(resolve => setTimeout(() => resolve([200, { url: '/api/users/1/tasks/can-be-cancel' }]), 1000))),
 };
