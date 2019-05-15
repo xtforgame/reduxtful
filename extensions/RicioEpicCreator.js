@@ -82,6 +82,10 @@ var RicioEpicCreator = (_temp = _class = function () {
           errorMiddlewares = _extensionConfig$midd4 === undefined ? [] : _extensionConfig$midd4;
 
 
+      if (!Observable || !wsProtocol) {
+        return { shared: shared, exposed: exposed };
+      }
+
       methodConfigs.forEach(function (methodConfig) {
         if (methodConfig.supportedActions.length <= 1) {
           return;

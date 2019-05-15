@@ -36,6 +36,10 @@ export default class RicioEpicCreator {
       } = {},
     } = extensionConfig;
 
+    if (!Observable || !wsProtocol) {
+      return { shared, exposed };
+    }
+
     methodConfigs.forEach((methodConfig) => {
       if (methodConfig.supportedActions.length <= 1) {
         return;
