@@ -145,6 +145,8 @@ var RicioSagaCreator = (_temp = _class = function () {
 
                             if (!cancelToken) {
                               cancelToken = {
+                                setHandled: function setHandled() {},
+                                setCancelFunc: function setCancelFunc() {},
                                 cancel: function cancel() {}
                               };
                             }

@@ -77,6 +77,8 @@ export default class RicioEpicCreator {
             let cancelToken = CancelToken && new CancelToken();
             if (!cancelToken) {
               cancelToken = {
+                setHandled: () => {},
+                setCancelFunc: () => {},
                 cancel: () => {},
               };
             }

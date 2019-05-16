@@ -122,6 +122,8 @@ var RicioEpicCreator = (_temp = _class = function () {
             var cancelToken = CancelToken && new CancelToken();
             if (!cancelToken) {
               cancelToken = {
+                setHandled: function setHandled() {},
+                setCancelFunc: function setCancelFunc() {},
                 cancel: function cancel() {}
               };
             }

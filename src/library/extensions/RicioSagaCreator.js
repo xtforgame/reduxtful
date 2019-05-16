@@ -80,6 +80,8 @@ export default class RicioSagaCreator {
           let cancelToken = CancelToken && new CancelToken();
           if (!cancelToken) {
             cancelToken = {
+              setHandled: () => {},
+              setCancelFunc: () => {},
               cancel: () => {},
             };
           }
