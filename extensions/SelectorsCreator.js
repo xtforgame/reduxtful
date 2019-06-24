@@ -63,13 +63,13 @@ var createSelectors = function createSelectors(createSelector, names, baseSelect
 
   var makeResourceHierarchySelector = function makeResourceHierarchySelector() {
     return createSelector(resourceSelector, function (resources) {
-      return resources.hierarchy;
+      return resources && resources.hierarchy;
     });
   };
 
   var makeResourceSelectionSelector = function makeResourceSelectionSelector() {
     return createSelector(resourceSelector, function (resources) {
-      return resources.selection;
+      return resources && resources.selection;
     });
   };
 

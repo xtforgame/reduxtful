@@ -22,12 +22,12 @@ const createSelectors = (createSelector, names, baseSelector, hierarchyLevel, na
 
   const makeResourceHierarchySelector = () => createSelector(
     resourceSelector,
-    resources => resources.hierarchy,
+    resources => resources && resources.hierarchy,
   );
 
   const makeResourceSelectionSelector = () => createSelector(
     resourceSelector,
-    resources => resources.selection,
+    resources => resources && resources.selection,
   );
 
   const makeSelectedResourceNodeSelector = () => createSelector(
