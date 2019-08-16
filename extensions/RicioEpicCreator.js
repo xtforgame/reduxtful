@@ -109,7 +109,7 @@ var RicioEpicCreator = (_temp = _class = function () {
             respondCreator = _getRespondActionCrea.respondCreator,
             respondErrorCreator = _getRespondActionCrea.respondErrorCreator;
 
-        shared[methodConfig.name] = function (action$, store) {
+        shared[methodConfig.name] = function (action$, state$) {
           return action$.ofType(actionTypes.start).pipe(mergeMap(function (action) {
             var compiledUrl = urlInfo.compile(action.entry);
             var query = action.options.query;
@@ -137,7 +137,7 @@ var RicioEpicCreator = (_temp = _class = function () {
               error: respondErrorCreator(actions, action)
             }, {
               startAction: action,
-              state: store.value,
+              state: state$.value,
               actionTypes: actionTypes,
               actions: actions,
               middlewares: middlewares,

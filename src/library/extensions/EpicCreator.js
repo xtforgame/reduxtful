@@ -65,7 +65,7 @@ export default class EpicCreator {
         respondErrorCreator,
       } = getRespondActionCreators(methodConfig);
 
-      shared[methodConfig.name] = (action$, store) => action$.ofType(actionTypes.start)
+      shared[methodConfig.name] = (action$, state$) => action$.ofType(actionTypes.start)
         .pipe(
           mergeMap((action) => {
             const compiledUrl = urlInfo.compile(action.entry);
@@ -84,7 +84,7 @@ export default class EpicCreator {
               // cancel: actions.clearError,
             }, {
               startAction: action,
-              state: store.value,
+              state: state$.value,
               actionTypes,
               actions,
               middlewares,
