@@ -1,19 +1,11 @@
 import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
+import RicioObservable from '../core/RicioObservable';
 import UrlInfo from '../core/UrlInfo';
 import defaultGetId from '../core/defaultGetId';
 import {
-  toNull,
   getRespondActionCreators,
 } from '../core/helper-functions';
-import getMiddlewaresHandler from '../core/getMiddlewaresHandler';
-
-
-class ErrorFromMiddleware {
-  constructor(error) {
-    this.error = error;
-  }
-}
 
 export default class RicioEpicCreator {
   static $name = 'wsEpics';
@@ -26,19 +18,28 @@ export default class RicioEpicCreator {
 
     const {
       qs,
-      Observable,
       wsProtocol,
       CancelToken,
-      middlewares: {
-        request: requestMiddlewares = [],
-        response: responseMiddlewares = [],
-        error: errorMiddlewares = [],
-      } = {},
+      operators,
+      rxjs,
+      getHeaders = () => ({}),
+      middlewares = {},
     } = extensionConfig;
 
-    if (!Observable || !wsProtocol) {
+    if (!wsProtocol || !CancelToken || !operators || !rxjs) {
       return { shared, exposed };
     }
+
+    const {
+      filter,
+      mergeMap,
+    } = operators;
+
+    // const {
+    //   from, of, race, Observable,
+    // } = rxjs;
+
+    const ricioObservable = RicioObservable(wsProtocol, operators, rxjs);
 
     methodConfigs.forEach((methodConfig) => {
       if (methodConfig.supportedActions.length <= 1) {
@@ -67,10 +68,13 @@ export default class RicioEpicCreator {
       } = getRespondActionCreators(methodConfig);
 
       shared[methodConfig.name] = (action$, store) => action$.ofType(actionTypes.start)
-          .mergeMap((action) => {
-            const path = urlInfo.compile(action.entry);
+        .pipe(
+          mergeMap((action) => {
+            const compiledUrl = urlInfo.compile(action.entry);
             const { query } = action.options;
-            const headers = {};
+            const headers = {
+              ...getHeaders(),
+            };
             if (query) {
               headers.query = qs.stringify(query);
             }
@@ -82,64 +86,34 @@ export default class RicioEpicCreator {
                 cancel: () => {},
               };
             }
-            const request = {
+
+            return ricioObservable({
               method: methodConfig.method,
-              path,
+              path: compiledUrl,
               headers,
               body: action.data,
-            };
-            return Observable.fromPromise(
-              // promiseWait(1000)
-              Promise.resolve()
-              .then(() => {
-                const next = getMiddlewaresHandler([
-                  ...requestMiddlewares,
-                  (req, { options: { cancelToken: c } }) => wsProtocol.open()
-                  .then(() => wsProtocol.request(req, { cancelToken: c })),
-                ],
-                [request, { options: { cancelToken } }]);
-                return next();
-              })
-              .then((response) => {
-                const next = getMiddlewaresHandler([
-                  ...responseMiddlewares,
-                  res => Promise.resolve(res),
-                ],
-                [response, { request, options: extensionConfig }]);
-                return Promise.resolve()
-                .then(next)
-                .then(res => res || Promise.reject(new ErrorFromMiddleware(`Malformed Response: ${res}, please check you response middlewares`)))
-                .catch(error => Promise.reject(new ErrorFromMiddleware(error)));
-              })
-              .catch((error) => {
-                if (error instanceof ErrorFromMiddleware) {
-                  return Promise.reject(error.error);
-                }
-                const next = getMiddlewaresHandler([
-                  ...errorMiddlewares,
-                  err => Promise.reject(err),
-                ],
-                [error, { request, options: extensionConfig }]);
-                return Promise.resolve()
-                .then(next);
-              })
-            )
-            .map(respondCreator(actions, action, getId))
-            .catch(error => Observable.of(respondErrorCreator(actions, action)(error)))
-            .race(
-              action$.filter((cancelAction) => {
-                if (cancelAction.type !== actionTypes.cancel) {
-                  return false;
-                }
-                return urlInfo.include(cancelAction.entry, action.entry);
-              })
-                .map((cancelAction) => {
-                  cancelToken.cancel('Operation canceled by the user.');
-                  return toNull();
+            }, {
+              success: respondCreator(actions, action, getId),
+              error: respondErrorCreator(actions, action),
+              // cancel: actions.clearError,
+            }, {
+              startAction: action,
+              state: store.value,
+              actionTypes,
+              actions,
+              middlewares,
+              ricioCancelToken: cancelToken,
+              cancelStream$: action$.pipe(
+                filter((cancelAction) => {
+                  if (cancelAction.type !== actionTypes.cancel) {
+                    return false;
+                  }
+                  return urlInfo.include(cancelAction.entry, action.entry);
                 })
-                .take(1)
-            );
-          });
+              ),
+            });
+          })
+        );
       exposed[epicName] = shared[methodConfig.name];
     });
     return { shared, exposed };

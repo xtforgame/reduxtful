@@ -1,23 +1,23 @@
-import axiosPromise from './axiosPromise';
+import ricioPromise from './ricioPromise';
 import {
   toNull,
 } from './helper-functions';
 
-export default (axios, {
+export default (wsProtocol, {
   map, catchError, take,
 }, {
   race, from, of,
-}) => (axiosOptions, {
+}) => (ricioOptions, {
   success: successAction = toNull,
   error: errorAction = toNull,
   cancel: cancelAction = toNull,
 } = {}, options = {}) => {
   const {
     cancelStream$,
-    axiosCancelTokenSource,
+    ricioCancelToken,
   } = options;
 
-  const observable = from(axiosPromise(axios, axiosOptions, { ...options, axiosCancelTokenSource }))
+  const observable = from(ricioPromise(wsProtocol, ricioOptions, options))
   .pipe(
     map(successAction),
     catchError(error => of(errorAction(error))),
@@ -29,7 +29,7 @@ export default (axios, {
       cancelStream$
         .pipe(
           map((value) => {
-            axiosCancelTokenSource.cancel('Operation canceled by the user.');
+            ricioCancelToken.cancel('Operation canceled by the user.');
             return cancelAction(value);
           }),
           take(1),

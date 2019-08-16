@@ -59,7 +59,8 @@ var EpicCreator = (_temp = _class = function () {
       var exposed = {};
 
       var axios = extensionConfig.axios,
-          Observable = extensionConfig.Observable,
+          operators = extensionConfig.operators,
+          rxjs = extensionConfig.rxjs,
           _extensionConfig$getH = extensionConfig.getHeaders,
           getHeaders = _extensionConfig$getH === undefined ? function () {
         return {};
@@ -68,11 +69,15 @@ var EpicCreator = (_temp = _class = function () {
           middlewares = _extensionConfig$midd === undefined ? {} : _extensionConfig$midd;
 
 
-      if (!axios) {
+      if (!axios || !operators || !rxjs) {
         return { shared: shared, exposed: exposed };
       }
 
-      var axiosObservable = (0, _AxiosObservable2.default)(axios, Observable);
+      var filter = operators.filter,
+          mergeMap = operators.mergeMap;
+
+
+      var axiosObservable = (0, _AxiosObservable2.default)(axios, operators, rxjs);
 
       methodConfigs.forEach(function (methodConfig) {
         if (methodConfig.supportedActions.length <= 1) {
@@ -99,7 +104,7 @@ var EpicCreator = (_temp = _class = function () {
             respondErrorCreator = _getRespondActionCrea.respondErrorCreator;
 
         shared[methodConfig.name] = function (action$, store) {
-          return action$.ofType(actionTypes.start).mergeMap(function (action) {
+          return action$.ofType(actionTypes.start).pipe(mergeMap(function (action) {
             var compiledUrl = urlInfo.compile(action.entry);
             var query = action.options.query;
 
@@ -116,19 +121,19 @@ var EpicCreator = (_temp = _class = function () {
               error: respondErrorCreator(actions, action)
             }, {
               startAction: action,
-              state: store.getState(),
+              state: store.value,
               actionTypes: actionTypes,
               actions: actions,
               middlewares: middlewares,
               axiosCancelTokenSource: source,
-              cancelStream$: action$.filter(function (cancelAction) {
+              cancelStream$: action$.pipe(filter(function (cancelAction) {
                 if (cancelAction.type !== actionTypes.cancel) {
                   return false;
                 }
                 return urlInfo.include(cancelAction.entry, action.entry);
-              })
+              }))
             });
-          });
+          }));
         };
         exposed[epicName] = shared[methodConfig.name];
       });

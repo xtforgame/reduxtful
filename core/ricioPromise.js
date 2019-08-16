@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
@@ -30,7 +26,7 @@ var ErrorFromMiddleware = function ErrorFromMiddleware(error) {
   this.error = error;
 };
 
-exports.default = function (axios, request) {
+exports.default = function (wsProtocol, request) {
   var op = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var _op$middlewares = op.middlewares,
       _op$middlewares$reque = _op$middlewares.request,
@@ -41,15 +37,15 @@ exports.default = function (axios, request) {
       errorMiddlewares = _op$middlewares$error === undefined ? [] : _op$middlewares$error,
       _op$debugDelay = op.debugDelay,
       debugDelay = _op$debugDelay === undefined ? 0 : _op$debugDelay,
-      axiosCancelTokenSource = op.axiosCancelTokenSource;
+      ricioCancelToken = op.ricioCancelToken;
 
 
   return (0, _commonFunctions.promiseWait)(debugDelay).then(function () {
     var next = (0, _getMiddlewaresHandler2.default)([].concat((0, _toConsumableArray3.default)(requestMiddlewares), [function (req, _ref) {
       var options = _ref.options;
-      return axios((0, _extends3.default)({}, req, {
-        cancelToken: axiosCancelTokenSource.token
-      }));
+      return wsProtocol.open().then(function () {
+        return wsProtocol.request(req, { cancelToken: ricioCancelToken });
+      });
     }]), [request, { options: op }]);
     return next();
   }).then(function (response) {

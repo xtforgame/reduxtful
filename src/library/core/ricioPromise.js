@@ -7,7 +7,7 @@ class ErrorFromMiddleware {
   }
 }
 
-export default (axios, request, op = {}) => {
+export default (wsProtocol, request, op = {}) => {
   const {
     middlewares: {
       request: requestMiddlewares = [],
@@ -15,17 +15,15 @@ export default (axios, request, op = {}) => {
       error: errorMiddlewares = [],
     },
     debugDelay = 0,
-    axiosCancelTokenSource,
+    ricioCancelToken,
   } = op;
 
   return promiseWait(debugDelay)
   .then(() => {
     const next = getMiddlewaresHandler([
       ...requestMiddlewares,
-      (req, { options }) => axios({
-        ...req,
-        cancelToken: axiosCancelTokenSource.token,
-      }),
+      (req, { options }) => wsProtocol.open()
+      .then(() => wsProtocol.request(req, { cancelToken: ricioCancelToken })),
     ],
     [request, { options: op }]);
     return next();

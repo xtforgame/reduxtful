@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { Observable } from 'rxjs';
+import * as rxjs from 'rxjs';
+import * as operators from 'rxjs/operators';
 import {
   takeEvery, call, put, race, take, select,
 } from 'redux-saga/effects';
@@ -33,7 +34,8 @@ const waitableActions = {
 
 const epics = {
   axios,
-  Observable,
+  rxjs,
+  operators,
   getHeaders,
   middlewares: {
     request: [requestMiddleware],

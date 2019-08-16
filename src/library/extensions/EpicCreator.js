@@ -18,16 +18,26 @@ export default class EpicCreator {
 
     const {
       axios,
-      Observable,
+      operators,
+      rxjs,
       getHeaders = () => ({}),
       middlewares = {},
     } = extensionConfig;
 
-    if (!axios) {
+    if (!axios || !operators || !rxjs) {
       return { shared, exposed };
     }
 
-    const axiosObservable = AxiosObservable(axios, Observable);
+    const {
+      filter,
+      mergeMap,
+    } = operators;
+
+    // const {
+    //   from, of, race, Observable,
+    // } = rxjs;
+
+    const axiosObservable = AxiosObservable(axios, operators, rxjs);
 
     methodConfigs.forEach((methodConfig) => {
       if (methodConfig.supportedActions.length <= 1) {
@@ -56,7 +66,8 @@ export default class EpicCreator {
       } = getRespondActionCreators(methodConfig);
 
       shared[methodConfig.name] = (action$, store) => action$.ofType(actionTypes.start)
-          .mergeMap((action) => {
+        .pipe(
+          mergeMap((action) => {
             const compiledUrl = urlInfo.compile(action.entry);
             const { query } = action.options;
             const source = axios.CancelToken.source();
@@ -73,19 +84,22 @@ export default class EpicCreator {
               // cancel: actions.clearError,
             }, {
               startAction: action,
-              state: store.getState(),
+              state: store.value,
               actionTypes,
               actions,
               middlewares,
               axiosCancelTokenSource: source,
-              cancelStream$: action$.filter((cancelAction) => {
-                if (cancelAction.type !== actionTypes.cancel) {
-                  return false;
-                }
-                return urlInfo.include(cancelAction.entry, action.entry);
-              }),
+              cancelStream$: action$.pipe(
+                filter((cancelAction) => {
+                  if (cancelAction.type !== actionTypes.cancel) {
+                    return false;
+                  }
+                  return urlInfo.include(cancelAction.entry, action.entry);
+                })
+              ),
             });
-          });
+          })
+        );
       exposed[epicName] = shared[methodConfig.name];
     });
     return { shared, exposed };

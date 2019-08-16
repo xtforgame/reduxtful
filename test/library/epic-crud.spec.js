@@ -46,9 +46,11 @@ describe('Epic CRUD Test Cases', () => {
     it('should be able to pass the mockStore test', () => {
       const modelMap = new ModelMap('global', testData01.modelsDefine, defaultExtensions.concat([EpicCreator, SelectorsCreator, WaitableActionsCreator]));
       const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
-      const middlewares = [createEpicMiddleware(epic), createReduxWaitForMiddleware()];
+      const epicMiddleware = createEpicMiddleware();
+      const middlewares = [epicMiddleware, createReduxWaitForMiddleware()];
       const mockStore = configureMockStore(middlewares);
       const store = mockStore(ImmutableMap({ global: {} }));
+      epicMiddleware.run(epic);
 
       return store.dispatch({
         ...modelMap.actions.getApi(),
@@ -68,6 +70,7 @@ describe('Epic CRUD Test Cases', () => {
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
       const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
+      const epicMiddleware = createEpicMiddleware();
       const store = createStore(
         combineImmutableReducers({
           global: combineReducers({
@@ -78,8 +81,9 @@ describe('Epic CRUD Test Cases', () => {
           }),
         }),
         ImmutableMap({ global: {} }),
-        reduxCompose(applyMiddleware(createEpicMiddleware(epic), createReduxWaitForMiddleware()))
+        reduxCompose(applyMiddleware(epicMiddleware, createReduxWaitForMiddleware()))
       );
+      epicMiddleware.run(epic);
       return store.dispatch({
         ...modelMap.actions.getApi(),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
@@ -101,6 +105,7 @@ describe('Epic CRUD Test Cases', () => {
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
       const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
+      const epicMiddleware = createEpicMiddleware();
       const store = createStore(
         combineImmutableReducers({
           global: combineReducers({
@@ -111,8 +116,9 @@ describe('Epic CRUD Test Cases', () => {
           }),
         }),
         ImmutableMap({ global: {} }),
-        reduxCompose(applyMiddleware(createEpicMiddleware(epic), createReduxWaitForMiddleware()))
+        reduxCompose(applyMiddleware(epicMiddleware, createReduxWaitForMiddleware()))
       );
+      epicMiddleware.run(epic);
       const p = store.dispatch({
         ...modelMap.actions.getApi({}, { query: { delay: 1000 } }),
         [WAIT_FOR_ACTION]: action => action.type === modelMap.types.respondGetApi,
@@ -146,6 +152,7 @@ describe('Epic CRUD Test Cases', () => {
       expect(modelMap).to.be.an.instanceof(ModelMap);
 
       const epic = combineEpics(...Object.keys(modelMap.epics).map(key => modelMap.epics[key]));
+      const epicMiddleware = createEpicMiddleware();
       store = createStore(
         combineImmutableReducers({
           global: combineReducers({
@@ -156,8 +163,9 @@ describe('Epic CRUD Test Cases', () => {
           }),
         }),
         ImmutableMap({ global: {} }),
-        reduxCompose(applyMiddleware(createEpicMiddleware(epic), createReduxWaitForMiddleware()))
+        reduxCompose(applyMiddleware(epicMiddleware, createReduxWaitForMiddleware()))
       );
+      epicMiddleware.run(epic);
     });
 
     describe('Collection', () => {

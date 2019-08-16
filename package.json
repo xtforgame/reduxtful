@@ -48,15 +48,15 @@
     "gulp": "^4.0.0",
     "immutable": "^3.8.1",
     "mocha": "^5.2.0",
-    "redux": "3.7.2",
+    "redux": "^4.0.4",
     "redux-immutable": "^4.0.0",
     "redux-mock-store": "^1.5.1",
-    "redux-observable": "^0.16.0",
+    "redux-observable": "^1.1.0",
     "redux-wait-for-action": "^0.0.7",
     "redux-saga": "^0.16.0",
     "reselect": "^3.0.1",
     "rimraf": "^2.5.4",
-    "rxjs": "^5.4.3",
+    "rxjs": "^6.5.2",
     "sinon": "^4.3.0"
   },
   "false": {}
