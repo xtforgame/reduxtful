@@ -28,7 +28,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "axios-mock-adapter": "^1.15.0",
     "az-gulp-env-lite": "git+https://github.com/xtforgame/az-gulp-env-lite#v1.0.0-alpha.2",
     "babel-core": "^6.14.0",
